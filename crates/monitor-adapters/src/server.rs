@@ -447,10 +447,10 @@ pub fn normalize_quota(
     for key in ["primary_window", "secondary_window"] {
         if let Some(value) = rate.get(key).filter(|value| !value.is_null()) {
             if !value.is_object()
-                || !value
+                || value
                     .get("limit_window_seconds")
                     .and_then(Value::as_u64)
-                    .is_some_and(|seconds| seconds > 0)
+                    .is_none_or(|seconds| seconds == 0)
             {
                 return Err(incompatible());
             }
