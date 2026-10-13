@@ -41,3 +41,20 @@ Schema 2 事务升级保留 P0 合成数据与安装 ID，新增文件游标、�
 ## 来源与边界
 
 Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/develop/calling-rust/) 与 [配置参考](https://v2.tauri.app/reference/config/)。A 阶段有本地日志读取，账号网络适配器与凭据读取仍不存在。真实账号账本及设备校准属于后续独立验收。
+
+## A 阶段验证（2026-10-12 America/Phoenix）
+
+版本 `0.2.0` 的代码提交 `db7e7c868fe230f9e7b70ea4f3ac18f553f2a93a` 在 [CI 38350590895](https://github.com/upuphero/agent-usage-monitor/actions/runs/38350590895) 全部通过：21 项前端契约/界面测试、3 项源码边界、3 项 SQL 迁移测试；Linux 36 项 Rust 测试与 Windows 35 项 Rust 测试（Unix symlink 用例按平台执行）；核心和原生 host 严格 clippy；Windows NSIS 与 portable ZIP 构建；原生合成输入验证了完整行、半行追加、检查点重启恢复和归档副本去重。
+
+本机下载产物重新校验 SHA-256 后，用新程序只读同步真实会话目录。重复同步实际只解析变化来源，未变化来源未重解析；检查点与事件唯一键校验通过。旧 P0 SQLite 副本升级至 Schema 2，8 个合成账号快照保留，真实本机视图未混入这些快照。账号查询开关始终为 false，账号 DTO 空、quota null、无跨设备结果。
+
+浏览器只读绑定实际 CLI 白名单报告，检查了真实概览、历史、模型配置/会话、质量原因、账号/执行范围筛选；控制台无 error/warn。数据库、实际报告与截图仅留本机，未上传 public 仓库。原生 WebView 的完整交互、安装升级、睡眠和独立控窗校准仍不由这些检查代表。
+
+[Windows 安装包与便携包](https://github.com/upuphero/agent-usage-monitor/actions/runs/38350590895/artifacts/11790754336)，保留 14 天。
+
+| 文件 | SHA-256 |
+| --- | --- |
+| `Agent Usage Monitor_0.2.0_x64-setup.exe` | `df44c4c88d6bbac0bcbabc1d04c423570daaf54789abc5dc38c8f444cff270b3` |
+| `Agent-Usage-Monitor_0.2.0_x64-portable.zip` | `399eec1b0cd6da8623dd5eae244b94343b349d7d24eb49adee904f3a830058bf` |
+
+真实日志仍存在继承、累计回退、计数间隙与跨日歧义，所以当前显示已观测部分，完整 Windows 真值和设备归因误差仍未知。

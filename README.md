@@ -56,7 +56,7 @@ GitHub Actions 在 Linux 执行前端与核心验证，在 Windows 编译、测�
 
 数据协议见 [api-contracts.md](docs/api-contracts.md)，验证记录见 [p0-validation.md](docs/p0-validation.md)。复用来源与许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 和 [LICENSE](LICENSE)。
 
-A 阶段验证将在本轮完成后更新至数据协议。开发者可用 `--verify-local-collector` 检查合成日志的增量、半行、重启与归档行为，必须显式设置 `AGENT_USAGE_MONITOR_DATA_DIR`。`--sync-local` 按需读取本机日志并在该独立目录保存 `local-dashboard.json`；不会查询账号。该报告留在本机，禁止加入 public 提交。
+A 阶段 [CI 与本机验证](docs/api-contracts.md#a-阶段验证2026-10-12-americaphoenix) 已通过，Windows `0.2.0` 安装包与便携包已产出。开发者可用 `--verify-local-collector` 检查合成日志的增量、半行、重启与归档行为，必须显式设置 `AGENT_USAGE_MONITOR_DATA_DIR`。`--sync-local` 按需读取本机日志并在该独立目录保存 `local-dashboard.json`；不会查询账号。该报告留在本机，禁止加入 public 提交。
 
 开发期可把本机白名单报告放在项目 `.local-data/preview-dashboard.json`，用 `http://127.0.0.1:1430/?local-report=1` 检查只读界面。该专用预览只读固定报告文件，不提供任意文件路径读取或同步功能。
 
