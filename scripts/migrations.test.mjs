@@ -4,12 +4,13 @@ import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 const migration = readFileSync(new URL('../crates/monitor-adapters/migrations/001_dual_ledger.sql', import.meta.url), 'utf8');
+const localMigration = readFileSync(new URL('../crates/monitor-adapters/migrations/002_incremental_local.sql', import.meta.url), 'utf8');
 test('SQLite migration creates the isolated dual-ledger schema transactionally', () => {
   const db = new DatabaseSync(':memory:');
   try {
-    db.exec('PRAGMA foreign_keys=ON; BEGIN;'); db.exec(migration); db.exec('PRAGMA user_version=1; COMMIT;');
-    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 1);
-    for (const table of ['accounts', 'source_checkpoints', 'local_usage_events', 'local_daily', 'server_daily_snapshots', 'quota_snapshots', 'calibration_runs', 'attribution_results', 'app_settings', 'app_audit']) {
+    db.exec('PRAGMA foreign_keys=ON; BEGIN;'); db.exec(migration); db.exec(localMigration); db.exec('PRAGMA user_version=2; COMMIT;');
+    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 2);
+    for (const table of ['accounts', 'source_checkpoints', 'local_usage_events', 'local_daily', 'server_daily_snapshots', 'quota_snapshots', 'calibration_runs', 'attribution_results', 'app_settings', 'app_audit', 'local_streams', 'local_raw_snapshots', 'local_source_snapshots']) {
       assert.equal(db.prepare('SELECT count(*) AS count FROM sqlite_master WHERE type=? AND name=?').get('table', table).count, 1);
     }
     db.exec("INSERT INTO accounts VALUES ('codex','demo','verified');");
@@ -26,9 +27,23 @@ test('SQLite DDL failure preserves the pre-migration database', () => {
   const db = new DatabaseSync(':memory:');
   try {
     db.exec('CREATE TABLE existing_ledger(value INTEGER); INSERT INTO existing_ledger VALUES (7); BEGIN;');
-    assert.throws(() => db.exec(`${migration}\nINVALID SQL;`)); db.exec('ROLLBACK;');
+    assert.throws(() => db.exec(`${migration}\n${localMigration}\nINVALID SQL;`)); db.exec('ROLLBACK;');
     assert.equal(db.prepare('SELECT value FROM existing_ledger').get().value, 7);
     assert.equal(db.prepare("SELECT count(*) AS count FROM sqlite_master WHERE name='accounts'").get().count, 0);
     assert.equal(db.prepare('PRAGMA user_version').get().user_version, 0);
+  } finally { db.close(); }
+});
+test('Schema 1 upgrade preserves cached data and admits known total with missing cache', () => {
+  const db = new DatabaseSync(':memory:');
+  try {
+    db.exec(migration); db.exec('PRAGMA user_version=1;');
+    db.exec("INSERT INTO app_meta VALUES ('installation-ref','preserved'); INSERT INTO accounts VALUES ('codex','demo','unknown');");
+    db.prepare('INSERT INTO local_daily VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run('demo','codex','codex-desktop','demo','2026-10-01','2026-10-02T00:00:00Z','synthetic',3,4,7,2,null,9,'{}');
+    db.exec('BEGIN;'); db.exec(localMigration); db.exec('PRAGMA user_version=2; COMMIT;');
+    assert.equal(db.prepare("SELECT value FROM app_meta WHERE key='installation-ref'").get().value, 'preserved');
+    assert.equal(db.prepare("SELECT text_total FROM local_daily WHERE row_id='demo'").get().text_total, 9);
+    db.prepare('INSERT INTO local_daily VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run('partial','codex','codex-local',null,'2026-10-01','2026-10-02T00:00:00Z','observed',null,null,7,2,null,9,'{}');
+    assert.equal(db.prepare("SELECT text_total FROM local_daily WHERE row_id='partial'").get().text_total, 9);
+    assert.equal(db.prepare('SELECT count(*) AS count FROM schema_migrations').get().count, 2);
   } finally { db.close(); }
 });

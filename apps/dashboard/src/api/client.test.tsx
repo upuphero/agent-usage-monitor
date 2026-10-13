@@ -8,6 +8,7 @@ import { compactCount, formatCount, latestRows, percentOf } from '../components/
 import { I18nProvider } from '../i18n/I18nContext';
 import { Overview, History, Sessions, Quality, Settings, selectDay } from '../features/DashboardPages';
 import { seriesPaths, seriesPoints } from '../features/TrendChart';
+import { filterLocalScope } from '../app/App';
 
 describe('independent dual ledger contract', () => {
   it.each(['ready', 'missing', 'negative', 'empty'] as const)('accepts the %s fixture without mutation', async scenario => {
@@ -58,7 +59,7 @@ describe('independent dual ledger contract', () => {
     expect(segments).toHaveLength(2);
   });
   it('sanitizes transport errors and selects browser memory explicitly', async () => {
-    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.1.0', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
+    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.2.0', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
     expect(safeError({ code: 'STORAGE', message: 'private SQL' }).message).not.toContain('private');
     expect((await createClient(false)) instanceof SyntheticClient).toBe(true);
   });
@@ -89,5 +90,50 @@ describe('synthetic UI integration', () => {
   it('shows no data for planned providers and supports English', () => {
     expect(render(<Overview {...props} provider="claude-code" />)).toContain('当前范围尚无数据');
     expect(render(<Overview {...props} />, 'en')).toContain('Account server ledger');
+  });
+});
+
+describe('observed local ledger interface', () => {
+  const data = parseDashboard(fixtures.local);
+  const props = { data, provider: 'codex', date: '2026-10-11', timezone: 'America/Phoenix' };
+  const render = (element: React.ReactNode) => renderToStaticMarkup(<I18nProvider initialLanguage="zh">{element}</I18nProvider>);
+  it('accepts a real local contract with account and quota unavailable', () => {
+    expect(data.dataMode).toBe('observed'); expect(data.runtime.localCollectionEnabled).toBe(true);
+    expect(data.accountRows).toHaveLength(0); expect(data.quota).toBeNull(); expect(data.comparisons).toHaveLength(0);
+    expect(data.providers[0].capabilities.incrementalCollection).toBe(true);
+  });
+  it('rejects mixed data modes and account values in the local-only stage', () => {
+    const mixed = structuredClone(fixtures.local); mixed.localRows[0].source.dataMode = 'synthetic';
+    expect(() => parseDashboard(mixed)).toThrowError();
+    const account = structuredClone(fixtures.local) as unknown as Record<string, unknown>; account.accountRows = fixtures.ready.accountRows;
+    expect(() => parseDashboard(account)).toThrowError();
+  });
+  it('renders observed portions, unknown account data and no synthetic provenance', () => {
+    const html = render(<Overview {...props} />);
+    expect(html).toContain('Windows 已观测部分'); expect(html).toContain('账号查询未接入'); expect(html).toContain('覆盖未核实');
+    expect(html).not.toContain('合成服务端观测'); expect(html).not.toContain('合成本地日志');
+  });
+  it('keeps account and child products separate while preserving their own statistics', () => {
+    const extended = structuredClone(data); const other = structuredClone(data.localRows[0]);
+    other.scope.accountRef = 'another-account'; other.rowId = 'other-account'; extended.localRows.push(other);
+    const child = structuredClone(data.localRows[0]); child.scope.productId = 'codex-subagent'; child.rowId = 'child'; extended.localRows.push(child);
+    expect(filterLocalScope(extended, 'demo-account-a', 'codex-local').localRows).toHaveLength(7);
+    expect(filterLocalScope(extended, 'demo-account-a', 'codex-subagent').localRows).toHaveLength(1);
+    expect(filterLocalScope(extended, 'another-account', 'codex-local').localRows).toHaveLength(1);
+  });
+  it('allows a known inclusive input and total when cache decomposition is missing', () => {
+    const missing = structuredClone(data); const tokens = missing.localRows[0].tokens;
+    tokens.cachedInput = { value: null, quality: 'unknown', reasonCodes: ['MISSING_COMPONENT'] };
+    tokens.uncachedInput = { value: null, quality: 'unknown', reasonCodes: ['MISSING_COMPONENT'] };
+    expect(parseDashboard(missing).localRows[0].tokens.textTotal.value).not.toBeNull();
+  });
+  it('shows real daily rows, counter diagnostics and source configuration guidance', () => {
+    expect(render(<History {...props} />)).toContain('本机 UTC 日账本');
+    expect(render(<Quality {...props} />)).toContain('完整性检查字节');
+    expect(render(<Sessions {...props} />)).toContain('turn_context');
+    expect(render(<Settings data={data} timezone="UTC" setTimezone={() => {}} />)).toContain('session-cleanup-archive');
+  });
+  it('browser demonstration cannot return the observed-contract fixture', async () => {
+    await expect(new SyntheticClient().getDashboard({ scenario: 'local' })).rejects.toThrow();
   });
 });

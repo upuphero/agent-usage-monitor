@@ -1,6 +1,8 @@
 use chrono::{DateTime, Duration, NaiveDate};
 use monitor_contracts::*;
 
+pub mod local;
+
 pub fn error(code: ErrorCode, message: &str) -> ApiError {
     ApiError {
         api_version: API_VERSION.into(),
@@ -53,14 +55,15 @@ pub fn validate_tokens(tokens: &TokenComponents) -> Result<(), ApiError> {
         ),
         _ => None,
     };
-    let expected_total = match (expected_input, output) {
+    let expected_total = match (input, output) {
         (Some(i), Some(o)) => Some(
             i.checked_add(o)
                 .ok_or_else(|| error(ErrorCode::InvalidData, "Token sum exceeds storage range"))?,
         ),
         _ => None,
     };
-    if input != expected_input
+    if (expected_input.is_some() && input != expected_input)
+        || matches!((cached, input), (Some(c), Some(i)) if c > i)
         || total != expected_total
         || matches!((reasoning, output), (Some(r), Some(o)) if r > o)
         || (reasoning.is_some() && output.is_none())
@@ -255,6 +258,7 @@ pub fn demo(scenario: DemoScenario) -> Result<Dashboard, ApiError> {
         serde_json::from_str(include_str!("../../../tests/fixtures/demo.json"))
             .map_err(|_| error(ErrorCode::Internal, "Synthetic fixture is invalid"))?;
     let key = match scenario {
+        DemoScenario::Local => "local",
         DemoScenario::Ready => "ready",
         DemoScenario::Missing => "missing",
         DemoScenario::Negative => "negative",

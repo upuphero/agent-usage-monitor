@@ -1,44 +1,104 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ApiError, Dashboard, DemoScenario } from '../api/generated/monitor';
-import { safeError } from '../api/client';
+import { safeError, type UsageClient } from '../api/client';
 import { Icon, type IconName } from '../components/Icon';
 import { formatTime } from '../components/format';
 import { Notice } from '../components/ui';
 import { useI18n } from '../i18n/I18nContext';
 import { History, Overview, Quality, Sessions, Settings, type Page } from '../features/DashboardPages';
-import { createClient } from './createClient';
+import { createClient, isDesktopRuntime, isLocalReportPreview } from './createClient';
 
 function preference(key: string, fallback: string): string { try { return localStorage.getItem(`agent-usage-monitor.${key}`) ?? fallback; } catch { return fallback; } }
 function savePreference(key: string, value: string) { try { localStorage.setItem(`agent-usage-monitor.${key}`, value); } catch { /* Preferences remain usable in memory. */ } }
+export function filterLocalScope(data: Dashboard, account: string, product: string): Dashboard {
+  const inScope = (row: { scope: { accountRef: string | null; productId: string } }) => (row.scope.accountRef ?? 'unmarked') === account && row.scope.productId === product;
+  return { ...data, localRows: data.localRows.filter(inScope), models: data.models.filter(inScope), sessions: data.sessions.filter(inScope) };
+}
 export function App() {
   const { t, language, setLanguage, locale } = useI18n();
   const [page, setPage] = useState<Page>('overview');
-  const [scenario, setScenario] = useState<DemoScenario>('ready');
+  const [scenario, setScenario] = useState<DemoScenario>(() => isDesktopRuntime() || isLocalReportPreview() ? 'local' : 'ready');
   const [provider, setProvider] = useState('codex');
+  const [account, setAccount] = useState('');
+  const [product, setProduct] = useState('codex-local');
   const [selectedDate, setSelectedDate] = useState('');
   const [data, setData] = useState<Dashboard | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
+  const [transport, setTransport] = useState<UsageClient | null>(null);
   const [busy, setBusy] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [revision, setRevision] = useState(0);
   const [theme, setTheme] = useState(() => preference('theme', 'dark') === 'light' ? 'light' : 'dark');
   const [timezone, setTimezone] = useState(() => preference('timezone', 'America/Phoenix') === 'UTC' ? 'UTC' : 'America/Phoenix');
   const client = useMemo(() => createClient(), []);
+  const autoStarted = useRef(false);
   useEffect(() => { document.documentElement.dataset.theme = theme; savePreference('theme', theme); }, [theme]);
   useEffect(() => { savePreference('timezone', timezone); }, [timezone]);
   useEffect(() => {
     let disposed = false;
     setBusy(true); setError(null);
-    client.then(transport => transport.getDashboard({ scenario })).then(result => { if (!disposed) { setData(result); setBusy(false); } }).catch(value => { if (!disposed) { setError(safeError(value)); setBusy(false); } });
+    client.then(async value => {
+      if (!disposed) setTransport(value);
+      const loaded = await value.getDashboard({ scenario });
+      if (!disposed) { setData(loaded); setBusy(false); }
+    }).catch(value => { if (!disposed) { setError(safeError(value)); setBusy(false); } });
     return () => { disposed = true; };
   }, [client, scenario, revision]);
-  const dates = [...new Set(data?.localRows.filter(row => row.scope.providerId === provider).map(row => row.day.dateLabel) ?? [])].sort();
+  async function synchronize(value: UsageClient) {
+    setSyncing(true); setError(null);
+    try { await value.syncLocal(); }
+    catch (failure) { setError(safeError(failure)); }
+    finally {
+      try { setData(await value.getDashboard({ scenario: 'local' })); } catch (failure) { setError(safeError(failure)); }
+      setSyncing(false);
+    }
+  }
+  useEffect(() => {
+    if (transport?.supportsLocalSync && data?.dataMode === 'observed' && scenario === 'local' && !autoStarted.current) {
+      autoStarted.current = true; void synchronize(transport);
+    }
+  }, [transport, data?.dataMode, scenario]);
+  useEffect(() => () => { if (transport?.supportsLocalSync) void transport.cancelLocalSync(); }, [transport]);
+  const observed = data?.dataMode === 'observed';
+  const localAccounts = [...new Set(data?.localRows.filter(row => row.scope.providerId === provider).map(row => row.scope.accountRef ?? 'unmarked') ?? [])];
+  const selectedAccount = localAccounts.includes(account) ? account : localAccounts.at(-1) ?? 'unmarked';
+  const localProducts = [...new Set(data?.localRows.filter(row => (row.scope.accountRef ?? 'unmarked') === selectedAccount).map(row => row.scope.productId) ?? [])];
+  const selectedProduct = localProducts.includes(product) ? product : localProducts[0] ?? 'codex-local';
+  const scoped = data ? observed ? filterLocalScope(data, selectedAccount, selectedProduct) : data : null;
+  const dates = [...new Set(scoped?.localRows.filter(row => row.scope.providerId === provider).map(row => row.day.dateLabel) ?? [])].sort();
   const date = dates.includes(selectedDate) ? selectedDate : dates.at(-1) ?? '';
   const nav: { page: Page; icon: IconName; label: string }[] = [
     { page: 'overview', icon: 'overview', label: t('概览', 'Overview') }, { page: 'history', icon: 'chart-line', label: t('使用历史', 'Usage history') },
     { page: 'sessions', icon: 'sessions', label: t('模型与会话', 'Models & sessions') }, { page: 'quality', icon: 'shield', label: t('数据质量', 'Data quality') }, { page: 'settings', icon: 'settings', label: t('设置', 'Settings') }
   ];
   const title = nav.find(item => item.page === page)!.label;
-  const latest = data?.accountRows.filter(row => row.scope.providerId === provider).sort((a, b) => Date.parse(b.source.collectedAt) - Date.parse(a.source.collectedAt))[0];
-  const props = data ? { data, provider, date, timezone } : null;
-  return <><a className="skip-link" href="#main">{t('跳到内容', 'Skip to content')}</a><div className="app-layout"><aside className="sidebar"><div className="brand"><span className="brand-logo"><Icon name="chart-bars" /></span><span>Agent Usage<span className="brand-caption">MONITOR</span></span></div><p className="nav-caption">{t('工作空间', 'WORKSPACE')}</p><nav aria-label={t('主导航', 'Main navigation')}>{nav.map(item => <button key={item.page} aria-label={item.label} title={item.label} className={`nav-item ${page === item.page ? 'active' : ''}`} aria-current={page === item.page ? 'page' : undefined} onClick={() => setPage(item.page)}><Icon name={item.icon} /><span>{item.label}</span>{page === item.page && <i className="nav-active-dot" />}</button>)}</nav><div className="sidebar-bottom"><div className="local-card"><Icon name="shield" /><div>{t('合成数据预览', 'Synthetic preview')}<span className="small muted">{t('按需启动 · 真实采集关闭', 'On demand · Collection disabled')}</span></div></div><div className="sidebar-version"><span>v0.1.0</span><span>P0</span></div></div></aside><div className="main-shell"><header className="topbar"><div className="breadcrumb">Agent Usage Monitor<span>/</span>{title}</div><div className="topbar-right"><span className="platform-label">{data?.runtime.storage === 'browser-memory' ? 'BROWSER PREVIEW' : 'WINDOWS DESKTOP'}</span><div className="topbar-actions"><button className="icon-button" aria-label={t('切换主题', 'Toggle theme')} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}><Icon name="sun" /></button><button className="icon-button language-toggle" aria-label={t('切换语言', 'Toggle language')} onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}><Icon name="language" /><span>{language === 'zh' ? 'EN' : '中文'}</span></button></div></div></header><main id="main" tabIndex={-1} className="main-content"><div className="demo-banner"><span className="demo-label">DEMO</span><div><strong>{t('全部为合成数据，非当前账号用量', 'All values are synthetic, not current account usage')}</strong><p>{t('双账本独立展示 · 真实采集未接入 · 跨设备归因未校准', 'Independent ledgers · Real collection not connected · Device attribution uncalibrated')}</p></div><label className="demo-select-label">{t('演示场景', 'Demo scenario')}<select value={scenario} onChange={event => setScenario(event.target.value as DemoScenario)}><option value="ready">{t('正常双账本', 'Dual ledgers')}</option><option value="missing">{t('缺失分量', 'Missing component')}</option><option value="negative">{t('负差值', 'Negative residual')}</option><option value="empty">{t('空数据', 'Empty data')}</option></select></label></div><div className="page-heading"><div><p className="eyebrow">USAGE INTELLIGENCE</p><h1>{title}</h1><p className="muted">{t('在一个工作空间里看清来源、范围与质量。', 'Understand sources, scope and quality in one workspace.')}</p></div><button className="button" disabled={busy} onClick={() => setRevision(value => value + 1)}><Icon name="refresh" />{t('刷新演示视图', 'Refresh demo view')}</button></div>{page !== 'settings' && <div className="monitor-toolbar"><label>{t('服务商', 'Provider')}<select aria-label={t('服务商', 'Provider')} value={provider} onChange={event => setProvider(event.target.value)}>{(data?.providers ?? [{ providerId: 'codex', displayName: 'Codex' }]).map(item => <option key={item.providerId} value={item.providerId}>{item.displayName}</option>)}</select></label>{(page === 'overview' || page === 'quality') && <label>{t('UTC 统计日期', 'UTC statistical date')}<select aria-label={t('UTC 统计日期', 'UTC statistical date')} value={date} disabled={!dates.length} onChange={event => setSelectedDate(event.target.value)}>{dates.length ? dates.map(day => <option key={day}>{day}</option>) : <option value="">{t('无日期', 'No dates')}</option>}</select></label>}<div className="account-caption"><span>{latest?.scope.accountRef ?? t('账号未知', 'Account unknown')} · {latest?.scope.productId ?? '—'}</span><span>{t('演示采集', 'Demo collection')}: {formatTime(latest?.source.collectedAt ?? null, timezone, locale)} · {timezone}</span></div></div>}{busy && <div className="small muted loading-inline" role="status">{t('正在加载演示账本…', 'Loading demo ledgers…')}</div>}{error && <Notice tone="error" title={t('账本读取失败', 'Unable to load ledgers')} action={<button className="button button-small" onClick={() => setRevision(value => value + 1)}>{t('重新读取', 'Retry read')}</button>}><p>{t('请检查应用版本与独立数据库；已有账本不会被重置。', 'Check the application version and independent database. Existing ledgers are not reset.')}</p><code>{error.code}</code></Notice>}{props && !error && <>{page === 'overview' && <Overview {...props} />}{page === 'history' && <History {...props} />}{page === 'sessions' && <Sessions {...props} />}{page === 'quality' && <Quality {...props} />}{page === 'settings' && <Settings data={props.data} timezone={timezone} setTimezone={setTimezone} />}</>}<footer className="monitor-footer"><span>{t('账号与本机数据存在重叠，不求和。', 'Account and local data overlap and are not summed.')}</span><span>Agent Usage Monitor · 0.1.0 · P0</span></footer></main></div></div></>;
+  const collectionTime = observed ? data?.collector?.lastSyncAt ?? null : data?.accountRows.map(row => row.source.collectedAt).sort().at(-1) ?? null;
+  const props = scoped ? { data: scoped, provider, date, timezone } : null;
+  return <>
+    <a className="skip-link" href="#main">{t('跳到内容', 'Skip to content')}</a>
+    <div className="app-layout">
+      <aside className="sidebar">
+        <div className="brand"><span className="brand-logo"><Icon name="chart-bars" /></span><span>Agent Usage<span className="brand-caption">MONITOR</span></span></div>
+        <p className="nav-caption">{t('工作空间', 'WORKSPACE')}</p>
+        <nav aria-label={t('主导航', 'Main navigation')}>{nav.map(item => <button key={item.page} aria-label={item.label} title={item.label} className={`nav-item ${page === item.page ? 'active' : ''}`} aria-current={page === item.page ? 'page' : undefined} onClick={() => setPage(item.page)}><Icon name={item.icon} /><span>{item.label}</span>{page === item.page && <i className="nav-active-dot" />}</button>)}</nav>
+        <div className="sidebar-bottom"><div className="local-card"><Icon name="shield" /><div>{observed ? t('Windows 本机日志', 'Windows local logs') : t('合成数据预览', 'Synthetic preview')}<span className="small muted">{t('按需启动 · 账号查询关闭', 'On demand · Account queries disabled')}</span></div></div><div className="sidebar-version"><span>v0.2.0</span><span>A</span></div></div>
+      </aside>
+      <div className="main-shell">
+        <header className="topbar"><div className="breadcrumb">Agent Usage Monitor<span>/</span>{title}</div><div className="topbar-right"><span className="platform-label">{isDesktopRuntime() ? 'WINDOWS DESKTOP' : 'BROWSER PREVIEW'}</span><div className="topbar-actions"><button className="icon-button" aria-label={t('切换主题', 'Toggle theme')} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}><Icon name="sun" /></button><button className="icon-button language-toggle" aria-label={t('切换语言', 'Toggle language')} onClick={() => setLanguage(language === 'zh' ? 'en' : 'zh')}><Icon name="language" /><span>{language === 'zh' ? 'EN' : '中文'}</span></button></div></div></header>
+        <main id="main" tabIndex={-1} className="main-content">
+          <div className="demo-banner"><span className="demo-label">{observed ? 'LOCAL' : 'DEMO'}</span><div><strong>{observed ? t('本机日志已接入，显示已观测的 Windows 用量', 'Local logs connected; showing observed Windows usage') : t('全部为合成数据，非当前账号用量', 'All values are synthetic, not current account usage')}</strong><p>{observed ? t('账号账本未接入 · 账号归属与完整覆盖未核实 · 跨设备归因未校准', 'Account ledger not connected · Identity and coverage unverified · Device attribution uncalibrated') : t('双账本合成样本 · 切换“本机账本”查看真实日志', 'Synthetic dual ledgers · Switch to local ledger for real logs')}</p></div><label className="demo-select-label">{t('数据来源', 'Data source')}<select value={scenario} disabled={syncing} onChange={event => setScenario(event.target.value as DemoScenario)}><option value="local" disabled={!transport?.localView}>{t('本机账本', 'Local ledger')}</option><option value="ready">{t('正常双账本演示', 'Dual ledger demo')}</option><option value="missing">{t('缺失分量演示', 'Missing component demo')}</option><option value="negative">{t('负差值演示', 'Negative residual demo')}</option><option value="empty">{t('空数据演示', 'Empty demo')}</option></select></label></div>
+          <div className="page-heading"><div><p className="eyebrow">USAGE INTELLIGENCE</p><h1>{title}</h1><p className="muted">{t('在一个工作空间里看清来源、范围与质量。', 'Understand sources, scope and quality in one workspace.')}</p></div><div className="button-group"><button className="button" disabled={busy || syncing} onClick={() => setRevision(value => value + 1)}><Icon name="refresh" />{t('刷新视图', 'Refresh view')}</button>{observed && transport?.supportsLocalSync && <button className="button" disabled={busy || syncing} onClick={() => void synchronize(transport)}>{t('同步本机日志', 'Sync local logs')}</button>}{syncing && <button className="button" onClick={() => void transport?.cancelLocalSync()}>{t('取消同步', 'Cancel sync')}</button>}</div></div>
+          {page !== 'settings' && <div className="monitor-toolbar"><label>{t('服务商', 'Provider')}<select aria-label={t('服务商', 'Provider')} value={provider} onChange={event => setProvider(event.target.value)}>{(data?.providers ?? [{ providerId: 'codex', displayName: 'Codex' }]).map(item => <option key={item.providerId} value={item.providerId}>{item.displayName}</option>)}</select></label>
+            {observed && <><label>{t('日志账号范围', 'Logged account scope')}<select aria-label={t('日志账号范围', 'Logged account scope')} value={selectedAccount} disabled={!localAccounts.length} onChange={event => setAccount(event.target.value)}>{localAccounts.length ? localAccounts.map(value => <option key={value} value={value}>{value === 'unmarked' ? t('未标记账号', 'Unmarked account') : `${t('日志账号', 'Logged account')} ${value.slice(-12)}`}</option>) : <option value="unmarked">{t('未知', 'Unknown')}</option>}</select></label><label>{t('执行范围', 'Execution scope')}<select aria-label={t('执行范围', 'Execution scope')} value={selectedProduct} disabled={!localProducts.length} onChange={event => setProduct(event.target.value)}>{localProducts.length ? localProducts.map(value => <option value={value} key={value}>{value === 'codex-subagent' ? t('子代理（单独统计）', 'Subagents (separate)') : t('主线程日志', 'Main thread logs')}</option>) : <option value="codex-local">{t('主线程日志', 'Main thread logs')}</option>}</select></label></>}
+            {(page === 'overview' || page === 'quality') && <label>{t('UTC 统计日期', 'UTC statistical date')}<select aria-label={t('UTC 统计日期', 'UTC statistical date')} value={date} disabled={!dates.length} onChange={event => setSelectedDate(event.target.value)}>{dates.length ? dates.map(day => <option key={day}>{day}</option>) : <option value="">{t('无日期', 'No dates')}</option>}</select></label>}
+            <div className="account-caption"><span>{observed ? t('账号归属未核实', 'Account identity unverified') : 'demo-account-a'} · {selectedProduct}</span><span>{observed ? t('上次本地检查', 'Last local check') : t('演示采集', 'Demo collection')}: {formatTime(collectionTime, timezone, locale)} · {timezone}</span></div>
+          </div>}
+          {(busy || syncing) && <div className="small muted loading-inline" role="status">{syncing ? t('正在增量同步；已缓存账本仍可查看…', 'Incremental sync in progress; cached ledgers remain available…') : t('正在读取缓存账本…', 'Reading cached ledgers…')}</div>}
+          {error && <Notice tone={error.code === 'CANCELLED' ? 'warning' : 'error'} title={error.code === 'CANCELLED' ? t('同步已取消', 'Synchronization cancelled') : t('账本操作未完成', 'Ledger operation incomplete')}><p>{t('已提交的本机事件与检查点保留，可再次同步继续处理。', 'Committed events and checkpoints are retained. Synchronize again to resume.')}</p><code>{error.code}</code></Notice>}
+          {props && <>{page === 'overview' && <Overview {...props} />}{page === 'history' && <History {...props} />}{page === 'sessions' && <Sessions {...props} />}{page === 'quality' && <Quality {...props} />}{page === 'settings' && <Settings data={props.data} timezone={timezone} setTimezone={setTimezone} onSetRoots={transport?.supportsLocalSync ? roots => transport.setLocalRoots(roots) : undefined} />}</>}
+          <footer className="monitor-footer"><span>{t('账号与本机数据存在重叠，不求和。', 'Account and local data overlap and are not summed.')}</span><span>Agent Usage Monitor · 0.2.0 · A</span></footer>
+        </main>
+      </div>
+    </div>
+  </>;
 }

@@ -24,7 +24,7 @@ accounts.push(row(dates.at(-1), 'account', [238000, 1180000, 61000], '2'));
 const locals = dates.map((day, i) => row(day, 'windows', [78000 + i * 10000, 590000 + [0, 120000, 60000, 170000, 80000, 190000, 140000][i], 25000 + i * 2100]));
 const total = locals.reduce((sum, item) => sum + BigInt(item.tokens.textTotal.value), 0n);
 const ready = {
-  apiVersion: '0.1.0', dataMode: 'synthetic', displayTimezone: 'America/Phoenix', providers,
+  apiVersion: '0.2.0', dataMode: 'synthetic', displayTimezone: 'America/Phoenix', providers, collector: null,
   accountRows: accounts, localRows: locals, comparisons: [],
   quota: { snapshotId: 'demo-quota-1', scope, source: { sourceId: 'demo-quota', kind: 'server-observation', collectedAt: '2026-10-12T16:00:00Z', dataMode: 'synthetic' }, windows: [
     { kind: 'five-hour', windowSeconds: 18000, usedPercent: null, resetsAt: null, reasonCodes: ['WINDOW_NOT_REPORTED'] },
@@ -35,7 +35,7 @@ const ready = {
     { sessionRef: 'demo-session-01', modelId: 'demo-model-alpha', effort: 'high', speed: null, scope, textTotal: known('128600') },
     { sessionRef: 'demo-session-02', modelId: 'demo-model-beta', effort: null, speed: null, scope, textTotal: known('97600') }
   ],
-  runtime: { appVersion: '0.1.0', schemaVersion: 1, storage: 'browser-memory', installationRef: 'synthetic-browser', networkEnabled: false, localCollectionEnabled: false }
+  runtime: { appVersion: '0.2.0', schemaVersion: 2, storage: 'browser-memory', installationRef: 'synthetic-browser', networkEnabled: false, localCollectionEnabled: false }
 };
 function comparisons(data) {
   return data.localRows.map(local => {
@@ -69,6 +69,16 @@ for (const data of Object.values(fixtures)) {
     })));
   }
 }
+const local = structuredClone(ready);
+local.dataMode = 'observed'; local.accountRows = []; local.comparisons = []; local.quota = null;
+local.runtime.storage = 'monitor.sqlite3'; local.runtime.installationRef = 'fixture-installation'; local.runtime.localCollectionEnabled = true;
+local.localRows.forEach(row => { row.source.dataMode = 'observed'; row.scope.productId = 'codex-local'; row.scope.identityEvidence = 'unknown'; row.quality.status = 'partial'; row.quality.coverage = 'partial'; row.quality.freshness = 'unknown'; row.quality.reasonCodes = ['IDENTITY_UNKNOWN', 'COVERAGE_INCOMPLETE']; });
+for (const row of [...local.models,...local.sessions]) { row.scope.productId = 'codex-local'; row.scope.identityEvidence = 'unknown'; }
+local.providers[0].state = 'local-partial'; local.providers[0].capabilities.localLedger = true; local.providers[0].capabilities.incrementalCollection = true;
+local.collector = { state: 'idle', lastSyncAt: '2026-10-12T16:00:00Z', filesIndexed: 13, retainedSources: 0, snapshots: 30, acceptedEvents: 25, ambiguousEvents: 5, sessionsTotal: 13,
+  reasonCodes: ['IDENTITY_UNKNOWN','COVERAGE_INCOMPLETE','ACCOUNT_LEDGER_UNAVAILABLE','CALIBRATION_NOT_RUN'],
+  lastRun: { filesFound: 13, filesParsed: 1, filesUnchanged: 12, filesRebuilt: 0, newSnapshots: 2, duplicateSnapshots: 0, bytesParsed: '2048', bytesVerified: '8192', partialTails: 0, reasonCodes: [] } };
+fixtures.local = local; // Native-contract example for tests only; SyntheticClient never returns it.
 await mkdir(new URL('../tests/fixtures/', import.meta.url), { recursive: true });
 await writeFile(new URL('../tests/fixtures/demo.json', import.meta.url), `${JSON.stringify(fixtures, null, 2)}\n`);
 console.log('Wrote synthetic demo fixtures.');

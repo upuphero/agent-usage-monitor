@@ -1,6 +1,6 @@
-# P0 数据契约与存储
+# 数据契约与存储
 
-API `0.1.0`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
+API `0.2.0`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
 
 ## 范围与单位
 
@@ -8,7 +8,7 @@ API `0.1.0`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:ge
 
 Token 使用规范十进制字符串，范围 `0..9223372036854775807`，持久化为 SQLite INTEGER；诊断差值为相同绝对范围内的有符号字符串。客户端格式化与比例计算使用 BigInt，不把 Token 转成浮点数做算术。
 
-`inclusiveInput = uncachedInput + cachedInput`；`textTotal = inclusiveInput + output`；reasoning 是 output 子集。缺分量时派生总量也为 null，质量必须为 unknown 并附原因；零是字符串 `"0"`。额度百分比放在独立 `QuotaWindow.usedPercent`，不参与 Token 算术。
+`inclusiveInput = uncachedInput + cachedInput`；`textTotal = inclusiveInput + output`；reasoning 是 output 子集。已知 inclusive input 与 output 时可保留真实总量；cached 缺失则 cached/uncached 均为 null，不能推造分解。无独立已知 input/output 时总量为 null。零是字符串 `"0"`，未知必须附原因。额度百分比放在独立 `QuotaWindow.usedPercent`，不参与 Token 算术。
 
 ## 两套账本与诊断
 
@@ -24,6 +24,20 @@ Schema 1 在事务中创建账号、来源检查点、最小事件、本地日�
 
 最小 IPC 为 `get_dashboard({ query: { scenario } })`。每项诊断保留服务商/产品/账号范围和两条来源 row ID，前端按选中记录绑定，避免仅按日期串用其他范围的结果。桌面正常场景读取 SQLite 缓存；异常场景使用确定性合成 fixture。存储失败显示明确错误，不退回浏览器演示数据。错误只传安全代码和固定文案，不包含 SQL、路径或异常正文。
 
+## A 阶段增量账本
+
+Schema 2 事务升级保留 P0 合成数据与安装 ID，新增文件游标、统计原始快照、来源关联与有效事件投影。normal/local 查询只读 observed 日账本，P0 合成数据显式分开。
+
+读取边界限定在三类会话目录下的普通 `.jsonl`；不跟随 symlink/reparse 跳出来源。持久化只有时间、统计、模型配置与不可逆身份标记，原始正文、工具输入、cwd 和完整响应不保存。配置的附加目录仅保存在本机偏好，不进入账本 DTO。
+
+检查点同时保存已处理字节位置、完整前缀 SHA-256、头尾小摘要、文件大小/mtime 与解析状态。未变化文件不重解析；变化文件先验证旧前缀，再仅解析新增完整行。完整性检查可能读取旧字节，`bytesVerified` 与 `bytesParsed` 分别报告。重写会废弃该来源旧版本关联并重建有效投影；删除的来源保留已验证缓存，明确显示缺口。游标、快照关联、事件和日账本在同一事务提交，失败或退出后不会留下已前移但未入账的游标。
+
+事件身份采用线程标记及统计观察指纹；文件副本/归档不重复计数，共享 session ID 不用于合并不同线程。累计和 per-response last 必须对齐；初始余额仅为基线、reset epoch 及矛盾区间仅诊断。明确的 UTC 下界与计数时刻同日才归日，跨午夜不平均分摊。父子计数范围未核实，`codex-local` 与 `codex-subagent` 独立展示；账号未核实的记录不进入校准集合。
+
+新增 IPC 为 `sync_local`、`cancel_local_sync`、`set_local_roots({ request: { roots } })`；`get_dashboard` 的 `local` 场景只返回真实本机缓存、CollectorSummary、无账号/额度/残差。同步可取消且按需执行，没有定时轮询。窗口退出设置取消标记，SQLite 保证已提交状态可恢复。
+
+本阶段依旧不声称完整 Windows 消耗或 MacBook 归因，模型字段只代表 turn_context 配置。公开仓库与 CI 使用合成输入，真实本机报告和数据库保留在 `.local-data` 或独立应用数据目录。
+
 ## 来源与边界
 
-Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/develop/calling-rust/) 与 [配置参考](https://v2.tauri.app/reference/config/)。当前 P0 没有账号网络适配器、凭据文件读取或本地日志扫描入口。后续 A/B 阶段需要分别实现并独立验收。
+Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/develop/calling-rust/) 与 [配置参考](https://v2.tauri.app/reference/config/)。A 阶段有本地日志读取，账号网络适配器与凭据读取仍不存在。真实账号账本及设备校准属于后续独立验收。

@@ -1,7 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "0.1.0";
-pub const COMMANDS: &[(&str, &str)] = &[("getDashboard", "get_dashboard")];
+pub const API_VERSION: &str = "0.2.0";
+pub const COMMANDS: &[(&str, &str)] = &[
+    ("getDashboard", "get_dashboard"),
+    ("syncLocal", "sync_local"),
+    ("cancelLocalSync", "cancel_local_sync"),
+    ("setLocalRoots", "set_local_roots"),
+];
 
 macro_rules! dto {
     ($name:ident { $($field:ident : $ty:ty),* $(,)? }) => {
@@ -53,8 +58,33 @@ enumeration!(
     Blocked,
     Inconsistent
 );
-enumeration!(ProviderState, "kebab-case", SyntheticPreview, Planned);
-enumeration!(DemoScenario, "kebab-case", Ready, Missing, Negative, Empty);
+enumeration!(
+    ProviderState,
+    "kebab-case",
+    SyntheticPreview,
+    Planned,
+    LocalReady,
+    LocalPartial,
+    NotDetected
+);
+enumeration!(
+    DemoScenario,
+    "kebab-case",
+    Local,
+    Ready,
+    Missing,
+    Negative,
+    Empty
+);
+enumeration!(
+    SyncState,
+    "kebab-case",
+    NeverSynced,
+    Idle,
+    Syncing,
+    Cancelled,
+    Failed
+);
 enumeration!(QuotaKind, "kebab-case", FiveHour, Weekly);
 enumeration!(
     ErrorCode,
@@ -64,7 +94,11 @@ enumeration!(
     Storage,
     StorageSchemaNewer,
     ApiVersionUnsupported,
-    Internal
+    Internal,
+    Cancelled,
+    SyncBusy,
+    SourceUnreadable,
+    InvalidDirectory
 );
 enumeration!(
     ReasonCode,
@@ -87,7 +121,28 @@ enumeration!(
     InconsistentComponents,
     NoData,
     WindowNotReported,
-    NetworkDisabled
+    NetworkDisabled,
+    AccountLedgerUnavailable,
+    ThreadIdentityMissing,
+    InitialCounterBaseline,
+    CounterReset,
+    CounterGap,
+    RepeatedCounterConflict,
+    InheritedHistory,
+    ChildScopeUnverified,
+    CrossDayInterval,
+    EventOwnershipAmbiguous,
+    MetadataConflict,
+    InvalidRecord,
+    RecordTooLarge,
+    SourceRewritten,
+    SourceMissing,
+    SourceChangedDuringRead,
+    DiscoveryIncomplete,
+    ImportedSource,
+    ProductScopeUnverified,
+    ModelUnknown,
+    SessionListLimited
 );
 
 /// Token metrics only. Canonical decimal strings, 0..=i64::MAX. Null requires a reason.
@@ -148,7 +203,10 @@ dto!(RuntimeInfo {
     network_enabled: bool,
     local_collection_enabled: bool
 });
-dto!(Dashboard { api_version: String, data_mode: DataMode, display_timezone: String, providers: Vec<Provider>, account_rows: Vec<LedgerRow>, local_rows: Vec<LedgerRow>, comparisons: Vec<ComparisonResult>, quota: Option<QuotaSnapshot>, models: Vec<LocalModel>, sessions: Vec<LocalSession>, runtime: RuntimeInfo });
+dto!(SyncReport { files_found: u32, files_parsed: u32, files_unchanged: u32, files_rebuilt: u32, new_snapshots: u32, duplicate_snapshots: u32, bytes_parsed: String, bytes_verified: String, partial_tails: u32, reason_codes: Vec<ReasonCode> });
+dto!(CollectorSummary { state: SyncState, last_sync_at: Option<String>, files_indexed: u32, retained_sources: u32, snapshots: u32, accepted_events: u32, ambiguous_events: u32, sessions_total: u32, reason_codes: Vec<ReasonCode>, last_run: Option<SyncReport> });
+dto!(LocalRootsRequest { roots: Vec<String> });
+dto!(Dashboard { api_version: String, data_mode: DataMode, display_timezone: String, providers: Vec<Provider>, account_rows: Vec<LedgerRow>, local_rows: Vec<LedgerRow>, comparisons: Vec<ComparisonResult>, quota: Option<QuotaSnapshot>, models: Vec<LocalModel>, sessions: Vec<LocalSession>, runtime: RuntimeInfo, collector: Option<CollectorSummary> });
 dto!(DashboardQuery {
     scenario: DemoScenario
 });

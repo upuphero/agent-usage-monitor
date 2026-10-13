@@ -4,14 +4,15 @@ default-members = ["crates/monitor-contracts", "crates/monitor-core", "crates/mo
 resolver = "2"
 
 [workspace.package]
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.91"
 license = "MIT"
 
 [workspace.dependencies]
 serde = { version = "1.0.228", features = ["derive"] }
-serde_json = "1.0.145"
+serde_json = { version = "1.0.145", features = ["raw_value"] }
+sha2 = "0.10.9"
 chrono = "0.4.42"
 uuid = { version = "1.18", features = ["v4"] }
 rusqlite = { version = "0.37", features = ["bundled"] }

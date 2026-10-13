@@ -2,9 +2,12 @@ use monitor_contracts::*;
 use monitor_core::{demo, error, parse_count, rebuild_comparisons, validate_row};
 use rusqlite::{params, Connection, OptionalExtension, Transaction};
 use std::path::Path;
+pub mod collector;
+mod local_store;
 
-pub const SCHEMA_VERSION: u32 = 1;
+pub const SCHEMA_VERSION: u32 = 2;
 const MIGRATION: &str = include_str!("../migrations/001_dual_ledger.sql");
+const MIGRATION_LOCAL: &str = include_str!("../migrations/002_incremental_local.sql");
 pub struct Store {
     connection: Connection,
 }
@@ -28,9 +31,16 @@ fn migrate(connection: &mut Connection, migration: &str) -> Result<(), ApiError>
         return Ok(());
     }
     let transaction = connection.transaction().map_err(storage_error)?;
-    transaction
-        .execute_batch(migration)
-        .map_err(storage_error)?;
+    if version == 0 {
+        transaction
+            .execute_batch(migration)
+            .map_err(storage_error)?;
+    }
+    if version < 2 {
+        transaction
+            .execute_batch(MIGRATION_LOCAL)
+            .map_err(storage_error)?;
+    }
     transaction
         .pragma_update(None, "user_version", SCHEMA_VERSION)
         .map_err(storage_error)?;
@@ -102,6 +112,19 @@ impl Store {
             .busy_timeout(std::time::Duration::from_secs(3))
             .map_err(storage_error)?;
         migrate(&mut connection, MIGRATION)?;
+        connection
+            .execute(
+                "INSERT OR IGNORE INTO app_meta VALUES ('installation-ref',?1)",
+                [uuid::Uuid::new_v4().to_string()],
+            )
+            .map_err(storage_error)?;
+        connection
+            .execute(
+                "INSERT OR IGNORE INTO app_settings VALUES ('account-query-enabled','false')",
+                [],
+            )
+            .map_err(storage_error)?;
+        connection.execute("UPDATE app_meta SET value='\"cancelled\"' WHERE key='local-sync-state' AND value='\"syncing\"'",[]).map_err(storage_error)?;
         Ok(Self { connection })
     }
     pub fn seed_synthetic(&mut self) -> Result<(), ApiError> {
@@ -142,13 +165,13 @@ impl Store {
             .map_err(storage_error)?;
         transaction
             .execute(
-                "INSERT INTO app_meta VALUES ('installation-ref',?1)",
+                "INSERT OR IGNORE INTO app_meta VALUES ('installation-ref',?1)",
                 [uuid::Uuid::new_v4().to_string()],
             )
             .map_err(storage_error)?;
         transaction
             .execute(
-                "INSERT INTO app_settings VALUES ('account-query-enabled','false')",
+                "INSERT OR IGNORE INTO app_settings VALUES ('account-query-enabled','false')",
                 [],
             )
             .map_err(storage_error)?;
@@ -188,6 +211,9 @@ impl Store {
         .collect()
     }
     pub fn dashboard(&self, scenario: DemoScenario) -> Result<Dashboard, ApiError> {
+        if scenario == DemoScenario::Local {
+            return self.local_dashboard();
+        }
         let mut dashboard = demo(scenario)?;
         if scenario == DemoScenario::Ready {
             dashboard.account_rows = self.rows(
@@ -218,6 +244,7 @@ impl Store {
             )
             .map_err(storage_error)?;
         dashboard.runtime.schema_version = SCHEMA_VERSION;
+        dashboard.runtime.app_version = env!("CARGO_PKG_VERSION").into();
         Ok(dashboard)
     }
 }
@@ -251,7 +278,7 @@ mod tests {
             .connection
             .pragma_query_value(None, "user_version", |row| row.get(0))
             .unwrap();
-        assert_eq!(version, 1);
+        assert_eq!(version, SCHEMA_VERSION);
         assert_eq!(
             store
                 .connection
@@ -279,7 +306,9 @@ mod tests {
                 .unwrap(),
             0
         );
-        connection.pragma_update(None, "user_version", 2).unwrap();
+        connection
+            .pragma_update(None, "user_version", SCHEMA_VERSION + 1)
+            .unwrap();
         assert_eq!(
             migrate(&mut connection, MIGRATION).unwrap_err().code,
             ErrorCode::StorageSchemaNewer
@@ -288,7 +317,7 @@ mod tests {
             connection
                 .pragma_query_value(None, "user_version", |row| row.get::<_, i32>(0))
                 .unwrap(),
-            2
+            SCHEMA_VERSION as i32 + 1
         );
     }
     #[test]

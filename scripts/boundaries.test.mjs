@@ -14,8 +14,8 @@ test('Rust contract is the sole DTO source and unsupported schema fails closed',
   assert.equal(generate(source), await read('apps/dashboard/src/api/generated/monitor.ts'));
   assert.throws(() => generate(source.replace('scenario: DemoScenario', 'scenario: f64')));
 });
-test('P0 backend has no credential reader, network client, scheduler or sidecar', async () => {
-  const sourceFiles = [...await files(resolve(root, 'crates')), ...await files(resolve(root, 'apps/desktop/src-tauri/src'))].filter(path => path.endsWith('.rs') || path.endsWith('Cargo.toml'));
+test('offline backend has no credential reader, network client, scheduler or sidecar', async () => {
+  const sourceFiles = [...await files(resolve(root, 'crates')), ...await files(resolve(root, 'apps/desktop/src-tauri/src'))].filter(path => (path.endsWith('.rs') && !path.replaceAll('\\', '/').includes('/tests/')) || path.endsWith('Cargo.toml'));
   for (const path of sourceFiles) assert.doesNotMatch((await readFile(path, 'utf8')).split('#[cfg(test)]')[0], /reqwest|ureq|auth\.json|refresh_token|Authorization|std::process::Command|tokio::time::interval/i, relative(root, path));
   const config = JSON.parse(await read('apps/desktop/src-tauri/tauri.conf.json'));
   assert.equal(config.identifier, 'dev.agentusage.monitor');

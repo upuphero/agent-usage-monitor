@@ -2075,18 +2075,21 @@ dependencies = [
 
 [[package]]
 name = "monitor-adapters"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
+ "chrono",
  "monitor-contracts",
  "monitor-core",
  "rusqlite",
+ "serde",
  "serde_json",
+ "sha2",
  "uuid",
 ]
 
 [[package]]
 name = "monitor-contracts"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2094,20 +2097,23 @@ dependencies = [
 
 [[package]]
 name = "monitor-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "monitor-contracts",
+ "serde",
  "serde_json",
+ "sha2",
 ]
 
 [[package]]
 name = "monitor-desktop"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "monitor-adapters",
  "monitor-contracts",
  "monitor-core",
+ "serde_json",
  "tauri",
  "tauri-build",
  "tauri-plugin-single-instance",

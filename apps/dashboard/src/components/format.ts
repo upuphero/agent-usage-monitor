@@ -34,7 +34,17 @@ const reasons: Record<ReasonCode, [string, string]> = {
   SOURCE_MISMATCH: ['来源不匹配', 'Source mismatch'], PENDING_BACKFILL: ['等待服务端回填', 'Pending server backfill'],
   FRESHNESS_UNKNOWN: ['回填水位未知', 'Freshness unknown'], NEGATIVE_RESIDUAL: ['存在负差值', 'Negative residual'],
   INVALID_TOKEN: ['Token 数值无效', 'Invalid Token value'], INCONSISTENT_COMPONENTS: ['分量口径矛盾', 'Inconsistent components'],
-  NO_DATA: ['尚无数据', 'No data'], WINDOW_NOT_REPORTED: ['窗口未报告', 'Window not reported'], NETWORK_DISABLED: ['账号查询关闭', 'Account queries disabled']
+  NO_DATA: ['尚无数据', 'No data'], WINDOW_NOT_REPORTED: ['窗口未报告', 'Window not reported'], NETWORK_DISABLED: ['账号查询关闭', 'Account queries disabled'],
+  ACCOUNT_LEDGER_UNAVAILABLE: ['账号账本未接入', 'Account ledger not connected'], THREAD_IDENTITY_MISSING: ['线程身份缺失', 'Missing thread identity'],
+  INITIAL_COUNTER_BASELINE: ['初始余额仅作为基线', 'Initial balance is baseline only'], COUNTER_RESET: ['计数回退；后续 epoch 未计入', 'Counter reset; later epoch excluded'],
+  COUNTER_GAP: ['累计增量与响应不符', 'Counter delta and response disagree'], REPEATED_COUNTER_CONFLICT: ['重复累计状态存在矛盾', 'Conflicting repeated counter'],
+  INHERITED_HISTORY: ['继承历史边界未核实', 'Inherited history boundary unverified'], CHILD_SCOPE_UNVERIFIED: ['子代理单独统计', 'Subagents reported separately'],
+  CROSS_DAY_INTERVAL: ['跨 UTC 日区间未分摊', 'Cross-day interval not allocated'], EVENT_OWNERSHIP_AMBIGUOUS: ['执行归属有歧义', 'Execution ownership ambiguous'],
+  METADATA_CONFLICT: ['线程元数据矛盾', 'Conflicting thread metadata'], INVALID_RECORD: ['存在无效日志记录', 'Invalid log records'], RECORD_TOO_LARGE: ['超大记录已跳过', 'Oversized record skipped'],
+  SOURCE_REWRITTEN: ['来源重写后已重建', 'Rewritten source rebuilt'], SOURCE_MISSING: ['保留已消失来源的历史', 'History retained from missing source'],
+  SOURCE_CHANGED_DURING_READ: ['来源读取期间变化或不可读', 'Source changed or unavailable'], DISCOVERY_INCOMPLETE: ['文件发现不完整', 'Incomplete file discovery'],
+  IMPORTED_SOURCE: ['非 Windows 来源已排除', 'Imported non-Windows source excluded'], PRODUCT_SCOPE_UNVERIFIED: ['本地产品范围未核实', 'Local product scope unverified'],
+  MODEL_UNKNOWN: ['模型配置未知', 'Model configuration unknown'], SESSION_LIST_LIMITED: ['会话列表已分页', 'Session list paginated']
 };
 export const reasonLabel = (reason: ReasonCode, language: Language) => reasons[reason]?.[language === 'zh' ? 0 : 1] ?? reason;
 export function formatTime(value: string | null, timezone: string, locale: string): string {
