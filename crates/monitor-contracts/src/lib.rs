@@ -121,7 +121,7 @@ dto!(LedgerRow {
     tokens: TokenComponents,
     quality: Quality
 });
-/// Signed diagnostic differences, never a calibrated device estimate in API v0.1.
+// Signed diagnostic differences, never a calibrated device estimate in API v0.1.
 dto!(ComparisonResult { scope: Scope, account_row_id: String, local_row_id: String, date_label: String, status: ComparisonStatus, uncached_input: Option<String>, cached_input: Option<String>, output: Option<String>, text_total: Option<String>, reason_codes: Vec<ReasonCode> });
 dto!(ProviderCapabilities {
     local_ledger: bool,
@@ -135,7 +135,7 @@ dto!(Provider {
     state: ProviderState,
     capabilities: ProviderCapabilities
 });
-/// Percent has its own fields and cannot enter TokenComponents.
+// Percent has its own fields and cannot enter TokenComponents.
 dto!(QuotaWindow { kind: QuotaKind, window_seconds: u32, used_percent: Option<String>, resets_at: Option<String>, reason_codes: Vec<ReasonCode> });
 dto!(QuotaSnapshot { snapshot_id: String, scope: Scope, source: Source, windows: Vec<QuotaWindow> });
 dto!(LocalModel { model_id: String, scope: Scope, text_total: Metric<String>, sessions: u32 });
