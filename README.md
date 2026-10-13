@@ -10,7 +10,7 @@
 
 后端只允许对 `https://chatgpt.com` 的历史、额度两条固定路由发送 GET，验证 TLS，禁用重定向，限制超时和响应大小。仅显式同步短暂读取官方 Codex 已有登录；不自行刷新登录、不向前端或数据库传递凭据。账号切换隔离历史和额度；401/403/404/429、断网和不兼容响应均保留已有账本。
 
-B 的本地验证记录见 [b-validation.md](docs/b-validation.md)。Rust 测试及 Windows 构建受本机 MSVC 工具缺失阻断，尚未完成原生验收；没有读取真实凭据或执行真实账号请求。
+B 的 [CI 与本机验证](docs/b-validation.md) 已通过：27 项前端测试、Linux 48 项/Windows 47 项 Rust 测试、严格 clippy、Windows 安装与便携包打包。下载后哈希核对和本机便携合成 smoke 通过；没有读取真实凭据或执行真实账号请求。
 
 ## A 阶段本机账本
 
@@ -66,7 +66,7 @@ GitHub Actions 在 Linux 执行前端与核心验证，在 Windows 编译、测�
 
 数据协议见 [api-contracts.md](docs/api-contracts.md)，验证记录见 [p0-validation.md](docs/p0-validation.md)。复用来源与许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 和 [LICENSE](LICENSE)。
 
-A 阶段 [CI 与本机验证](docs/api-contracts.md#a-阶段验证2026-10-12-americaphoenix) 已通过，Windows `0.2.0` 安装包与便携包已产出。开发者可用 `--verify-local-collector` 检查合成日志的增量、半行、重启与归档行为，必须显式设置 `AGENT_USAGE_MONITOR_DATA_DIR`。`--sync-local` 按需读取本机日志并在该独立目录保存 `local-dashboard.json`；不会查询账号。该报告留在本机，禁止加入 public 提交。
+Windows `0.3.0` [安装包与便携包](https://github.com/upuphero/agent-usage-monitor/actions/runs/38479825578/artifacts/11857415660) 已产出，哈希见 [B 验证记录](docs/b-validation.md)。A 的历史 [CI 与本机验证](docs/api-contracts.md#a-阶段验证2026-10-12-americaphoenix) 单独保留。开发者可用 `--verify-local-collector` 检查合成日志的增量、半行、重启与归档行为，必须显式设置 `AGENT_USAGE_MONITOR_DATA_DIR`。`--sync-local` 按需读取本机日志并在该独立目录保存 `local-dashboard.json`；只读取账号缓存，不查询账号。该报告留在本机，禁止加入 public 提交。
 
 开发期可把本机白名单报告放在项目 `.local-data/preview-dashboard.json`，用 `http://127.0.0.1:1430/?local-report=1` 检查只读界面。该专用预览只读固定报告文件，不提供任意文件路径读取或同步功能。
 
