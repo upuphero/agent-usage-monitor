@@ -24,7 +24,7 @@ accounts.push(row(dates.at(-1), 'account', [238000, 1180000, 61000], '2'));
 const locals = dates.map((day, i) => row(day, 'windows', [78000 + i * 10000, 590000 + [0, 120000, 60000, 170000, 80000, 190000, 140000][i], 25000 + i * 2100]));
 const total = locals.reduce((sum, item) => sum + BigInt(item.tokens.textTotal.value), 0n);
 const ready = {
-  apiVersion: '0.2.0', dataMode: 'synthetic', displayTimezone: 'America/Phoenix', providers, collector: null,
+  apiVersion: '0.3.0', dataMode: 'synthetic', displayTimezone: 'America/Phoenix', providers, collector: null, account: null,
   accountRows: accounts, localRows: locals, comparisons: [],
   quota: { snapshotId: 'demo-quota-1', scope, source: { sourceId: 'demo-quota', kind: 'server-observation', collectedAt: '2026-10-12T16:00:00Z', dataMode: 'synthetic' }, windows: [
     { kind: 'five-hour', windowSeconds: 18000, usedPercent: null, resetsAt: null, reasonCodes: ['WINDOW_NOT_REPORTED'] },
@@ -35,7 +35,7 @@ const ready = {
     { sessionRef: 'demo-session-01', modelId: 'demo-model-alpha', effort: 'high', speed: null, scope, textTotal: known('128600') },
     { sessionRef: 'demo-session-02', modelId: 'demo-model-beta', effort: null, speed: null, scope, textTotal: known('97600') }
   ],
-  runtime: { appVersion: '0.2.0', schemaVersion: 2, storage: 'browser-memory', installationRef: 'synthetic-browser', networkEnabled: false, localCollectionEnabled: false }
+  runtime: { appVersion: '0.3.0', schemaVersion: 3, storage: 'browser-memory', installationRef: 'synthetic-browser', networkEnabled: false, localCollectionEnabled: false }
 };
 function comparisons(data) {
   return data.localRows.map(local => {

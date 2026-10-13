@@ -629,6 +629,7 @@ impl Store {
                 local_collection_enabled: true,
             },
             collector: Some(collector),
+            account: None,
         })
     }
 }

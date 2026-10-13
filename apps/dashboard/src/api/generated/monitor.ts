@@ -1,10 +1,12 @@
 // GENERATED from crates/monitor-contracts/src/lib.rs. Do not edit.
-export const API_VERSION = "0.2.0" as const;
+export const API_VERSION = "0.3.0" as const;
 export const COMMANDS = {
   getDashboard: "get_dashboard",
   syncLocal: "sync_local",
   cancelLocalSync: "cancel_local_sync",
   setLocalRoots: "set_local_roots",
+  setAccountQueries: "set_account_queries",
+  syncAccount: "sync_account",
 } as const;
 export type DataMode = "synthetic" | "observed";
 export type LedgerKind = "account" | "windows";
@@ -19,13 +21,35 @@ export type ProviderState = "synthetic-preview" | "planned" | "local-ready" | "l
 export type DemoScenario = "local" | "ready" | "missing" | "negative" | "empty";
 export type SyncState = "never-synced" | "idle" | "syncing" | "cancelled" | "failed";
 export type QuotaKind = "five-hour" | "weekly";
-export type ErrorCode = "INVALID_DATA" | "INVALID_QUERY" | "STORAGE" | "STORAGE_SCHEMA_NEWER" | "API_VERSION_UNSUPPORTED" | "INTERNAL" | "CANCELLED" | "SYNC_BUSY" | "SOURCE_UNREADABLE" | "INVALID_DIRECTORY";
-export const ERROR_CODES = ["INVALID_DATA", "INVALID_QUERY", "STORAGE", "STORAGE_SCHEMA_NEWER", "API_VERSION_UNSUPPORTED", "INTERNAL", "CANCELLED", "SYNC_BUSY", "SOURCE_UNREADABLE", "INVALID_DIRECTORY"] as const;
-export type ReasonCode = "SYNTHETIC_DATA" | "CALIBRATION_NOT_RUN" | "MISSING_COMPONENT" | "IDENTITY_UNKNOWN" | "ACCOUNT_MISMATCH" | "PROVIDER_MISMATCH" | "PRODUCT_MISMATCH" | "TIME_BASIS_UNKNOWN" | "DATE_MISMATCH" | "COVERAGE_INCOMPLETE" | "SOURCE_MISMATCH" | "PENDING_BACKFILL" | "FRESHNESS_UNKNOWN" | "NEGATIVE_RESIDUAL" | "INVALID_TOKEN" | "INCONSISTENT_COMPONENTS" | "NO_DATA" | "WINDOW_NOT_REPORTED" | "NETWORK_DISABLED" | "ACCOUNT_LEDGER_UNAVAILABLE" | "THREAD_IDENTITY_MISSING" | "INITIAL_COUNTER_BASELINE" | "COUNTER_RESET" | "COUNTER_GAP" | "REPEATED_COUNTER_CONFLICT" | "INHERITED_HISTORY" | "CHILD_SCOPE_UNVERIFIED" | "CROSS_DAY_INTERVAL" | "EVENT_OWNERSHIP_AMBIGUOUS" | "METADATA_CONFLICT" | "INVALID_RECORD" | "RECORD_TOO_LARGE" | "SOURCE_REWRITTEN" | "SOURCE_MISSING" | "SOURCE_CHANGED_DURING_READ" | "DISCOVERY_INCOMPLETE" | "IMPORTED_SOURCE" | "PRODUCT_SCOPE_UNVERIFIED" | "MODEL_UNKNOWN" | "SESSION_LIST_LIMITED";
+export type ErrorCode = "INVALID_DATA" | "INVALID_QUERY" | "STORAGE" | "STORAGE_SCHEMA_NEWER" | "API_VERSION_UNSUPPORTED" | "INTERNAL" | "CANCELLED" | "SYNC_BUSY" | "SOURCE_UNREADABLE" | "INVALID_DIRECTORY" | "NETWORK_DISABLED" | "AUTH_REQUIRED" | "ACCESS_DENIED" | "ENDPOINT_UNAVAILABLE" | "RATE_LIMITED" | "OFFLINE" | "RESPONSE_INCOMPATIBLE";
+export const ERROR_CODES = ["INVALID_DATA", "INVALID_QUERY", "STORAGE", "STORAGE_SCHEMA_NEWER", "API_VERSION_UNSUPPORTED", "INTERNAL", "CANCELLED", "SYNC_BUSY", "SOURCE_UNREADABLE", "INVALID_DIRECTORY", "NETWORK_DISABLED", "AUTH_REQUIRED", "ACCESS_DENIED", "ENDPOINT_UNAVAILABLE", "RATE_LIMITED", "OFFLINE", "RESPONSE_INCOMPATIBLE"] as const;
+export type ReasonCode = "SYNTHETIC_DATA" | "CALIBRATION_NOT_RUN" | "MISSING_COMPONENT" | "IDENTITY_UNKNOWN" | "ACCOUNT_MISMATCH" | "PROVIDER_MISMATCH" | "PRODUCT_MISMATCH" | "TIME_BASIS_UNKNOWN" | "DATE_MISMATCH" | "COVERAGE_INCOMPLETE" | "SOURCE_MISMATCH" | "PENDING_BACKFILL" | "FRESHNESS_UNKNOWN" | "NEGATIVE_RESIDUAL" | "INVALID_TOKEN" | "INCONSISTENT_COMPONENTS" | "NO_DATA" | "WINDOW_NOT_REPORTED" | "NETWORK_DISABLED" | "ACCOUNT_LEDGER_UNAVAILABLE" | "THREAD_IDENTITY_MISSING" | "INITIAL_COUNTER_BASELINE" | "COUNTER_RESET" | "COUNTER_GAP" | "REPEATED_COUNTER_CONFLICT" | "INHERITED_HISTORY" | "CHILD_SCOPE_UNVERIFIED" | "CROSS_DAY_INTERVAL" | "EVENT_OWNERSHIP_AMBIGUOUS" | "METADATA_CONFLICT" | "INVALID_RECORD" | "RECORD_TOO_LARGE" | "SOURCE_REWRITTEN" | "SOURCE_MISSING" | "SOURCE_CHANGED_DURING_READ" | "DISCOVERY_INCOMPLETE" | "IMPORTED_SOURCE" | "PRODUCT_SCOPE_UNVERIFIED" | "MODEL_UNKNOWN" | "SESSION_LIST_LIMITED" | "HISTORY_DAY_MISSING" | "QUOTA_STALE" | "RESPONSE_INCOMPATIBLE";
+export type AccountState = "disabled" | "never-synced" | "cached" | "ready" | "partial" | "auth-required" | "access-denied" | "endpoint-unavailable" | "rate-limited" | "offline" | "incompatible";
 export interface Metric<T> {
   value: T | null;
   quality: QualityStatus;
   reasonCodes: Array<ReasonCode>;
+}
+export interface AccountQueriesRequest {
+  enabled: boolean;
+}
+export interface AccountSyncRequest {
+  startDate: string;
+  endDate: string;
+}
+export interface AccountSummary {
+  enabled: boolean;
+  accountRef: string | null;
+  state: AccountState;
+  lastAttemptAt: string | null;
+  historyFetchedAt: string | null;
+  quotaFetchedAt: string | null;
+  historyError: ErrorCode | null;
+  quotaError: ErrorCode | null;
+  nextAllowedAt: string | null;
+  requestedStart: string | null;
+  requestedEnd: string | null;
+  missingDates: Array<string>;
 }
 export interface TokenComponents {
   uncachedInput: Metric<string>;
@@ -168,6 +192,7 @@ export interface Dashboard {
   sessions: Array<LocalSession>;
   runtime: RuntimeInfo;
   collector: CollectorSummary | null;
+  account: AccountSummary | null;
 }
 export interface DashboardQuery {
   scenario: DemoScenario;

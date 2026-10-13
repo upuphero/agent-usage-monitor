@@ -1,6 +1,6 @@
 {
   "ready": {
-    "apiVersion": "0.2.0",
+    "apiVersion": "0.3.0",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -39,6 +39,7 @@
       }
     ],
     "collector": null,
+    "account": null,
     "accountRows": [
       {
         "rowId": "demo-account-2026-10-05-1",
@@ -1458,8 +1459,8 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.2.0",
-      "schemaVersion": 2,
+      "appVersion": "0.3.0",
+      "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
@@ -1467,7 +1468,7 @@
     }
   },
   "missing": {
-    "apiVersion": "0.2.0",
+    "apiVersion": "0.3.0",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -1506,6 +1507,7 @@
       }
     ],
     "collector": null,
+    "account": null,
     "accountRows": [
       {
         "rowId": "demo-account-2026-10-05-1",
@@ -2937,8 +2939,8 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.2.0",
-      "schemaVersion": 2,
+      "appVersion": "0.3.0",
+      "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
@@ -2946,7 +2948,7 @@
     }
   },
   "negative": {
-    "apiVersion": "0.2.0",
+    "apiVersion": "0.3.0",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -2985,6 +2987,7 @@
       }
     ],
     "collector": null,
+    "account": null,
     "accountRows": [
       {
         "rowId": "demo-account-2026-10-05-1",
@@ -4405,8 +4408,8 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.2.0",
-      "schemaVersion": 2,
+      "appVersion": "0.3.0",
+      "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
@@ -4414,7 +4417,7 @@
     }
   },
   "empty": {
-    "apiVersion": "0.2.0",
+    "apiVersion": "0.3.0",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -4453,6 +4456,7 @@
       }
     ],
     "collector": null,
+    "account": null,
     "accountRows": [],
     "localRows": [],
     "comparisons": [],
@@ -4460,8 +4464,8 @@
     "models": [],
     "sessions": [],
     "runtime": {
-      "appVersion": "0.2.0",
-      "schemaVersion": 2,
+      "appVersion": "0.3.0",
+      "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
@@ -4469,7 +4473,7 @@
     }
   },
   "local": {
-    "apiVersion": "0.2.0",
+    "apiVersion": "0.3.0",
     "dataMode": "observed",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -4535,6 +4539,7 @@
         "reasonCodes": []
       }
     },
+    "account": null,
     "accountRows": [],
     "localRows": [
       {
@@ -5258,8 +5263,8 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.2.0",
-      "schemaVersion": 2,
+      "appVersion": "0.3.0",
+      "schemaVersion": 3,
       "storage": "monitor.sqlite3",
       "installationRef": "fixture-installation",
       "networkEnabled": false,

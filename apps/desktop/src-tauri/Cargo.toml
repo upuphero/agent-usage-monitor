@@ -23,3 +23,4 @@ monitor-contracts.workspace = true
 monitor-core.workspace = true
 monitor-adapters.workspace = true
 serde_json.workspace = true
+chrono.workspace = true

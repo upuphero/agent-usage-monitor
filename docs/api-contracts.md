@@ -1,6 +1,6 @@
 # 数据契约与存储
 
-API `0.2.0`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
+API `0.3.0`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
 
 ## 范围与单位
 
@@ -38,9 +38,29 @@ Schema 2 事务升级保留 P0 合成数据与安装 ID，新增文件游标、�
 
 本阶段依旧不声称完整 Windows 消耗或 MacBook 归因，模型字段只代表 turn_context 配置。公开仓库与 CI 使用合成输入，真实本机报告和数据库保留在 `.local-data` 或独立应用数据目录。
 
+## B 阶段账号历史与额度
+
+Schema 3 事务升级保留两个账本、全部快照、游标与安装标记，新增按账号隔离的 `account_reader_state`。历史与额度只追加，状态和开关保存在独立偏好/状态表。
+
+新增 IPC：`set_account_queries({ request: { enabled } })` 只保存开关；`sync_account({ request: { startDate, endDate } })` 显式读取官方 Codex 现有登录并同步。日期为包含两端的标签范围，最多 31 天；请求前先检查开关、范围和持久化节流。最少间隔 60 秒，429 支持秒数或 HTTP 日期的 Retry-After；不循环重试或探测替代路由。默认关闭，启动与刷新视图都不查询账号。
+
+联网只在 `server.rs`：两个固定 chatgpt.com HTTPS GET、系统 TLS 校验、禁止重定向、10 秒连接/20 秒每请求超时、4 MiB 响应上限。仅解析 access token 和 account ID，原始登录字节与内存凭据使用 zeroize；Header 标记敏感，原始异常/错误响应不进入 DTO、SQL 或日志。账号标记为带命名空间的 SHA-256，不用轮换 Token 作为主键。
+
+历史标准化契约以 `observed-2026-10` 命名：明确的文本 Token 分量精确解析为 i64 十进制字符串，credit/percent 不进入 Token 算术。`codex-account` 为服务端 totals，`codex-desktop`/`codex-cli` 等为独立客户端桶；未知客户端名称只保留哈希。请求外日期过滤，缺日期明确记录，缺分量保持 null，分量矛盾/溢出/重复日或客户端拒绝整批历史响应。reasoning 未报告保持未知。
+
+账号日桶固定 `server-date-label`，无 UTC 上下界，coverage/freshness 均为 unknown；不因日期已结束设置 final。同日同范围多个快照保留，趋势仅选择最新版本，多范围未筛选时不任意选一条或相加。选中产品在最近成功请求中未出现的日期单独说明，旧缓存保留。
+
+额度按实际 `limit_window_seconds` 识别 18000/604800 秒窗口，不能把 primary 默认解释为 5 小时。未提供窗口或重置时刻保留 null 与原因，百分比独立于 Token。`quota` 永远是采集快照；超过 5 分钟、关闭账号查询、认证或请求失败时查询投影附 `QUOTA_STALE`，不修改持久化原始快照。
+
+`Dashboard.account` 包含匿名绑定、开关、状态、两个端点的采集/错误状态、最近请求日期、缺日期和下次允许请求时间。缓存查询不读取登录；最近绑定的登录变化只在手动同步时发现。切换账号后旧快照保留于旧账号，新账号不能取得旧账号额度。失败返回固定错误代码/文案；历史成功而额度失败仍可事务保存历史。导入失败回滚整批数据与同步元数据；同步中关掉开关则拒绝提交。
+
+B 的 observed 输出 `comparisons` 仍为空，账号与日志身份/产品/日界线未对齐，B2/C/D 未验收。不自动给本机历史补账号，也不提供设备估算。合成演示继续完全独立，浏览器开发报告按新白名单契约检查。
+
+接口路径与日期参数核对 [Codex analytics 源码](https://github.com/openai/codex/blob/main/codex-rs/backend-client/src/client/analytics.rs)，额度字段核对 [Codex backend client](https://github.com/openai/codex/blob/main/codex-rs/backend-client/src/client.rs)；真实兼容性仍需单独授权验证。验证记录见 [b-validation.md](b-validation.md)。
+
 ## 来源与边界
 
-Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/develop/calling-rust/) 与 [配置参考](https://v2.tauri.app/reference/config/)。A 阶段有本地日志读取，账号网络适配器与凭据读取仍不存在。真实账号账本及设备校准属于后续独立验收。
+Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/develop/calling-rust/) 与 [配置参考](https://v2.tauri.app/reference/config/)。B 已实现默认关闭的账号网络与内存登录读取代码；本次开发没有执行真实账号读取或请求。真实账号兼容性及设备校准属于后续独立验收。
 
 ## A 阶段验证（2026-10-12 America/Phoenix）
 

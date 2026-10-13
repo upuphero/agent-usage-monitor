@@ -2,15 +2,25 @@
 
 一个容纳多家 Agent 服务的独立 Windows 用量分析应用。沿用 Agent Usage Dashboard 的深灰、薄荷绿 UI，首先建立 Codex 账号与 Windows 本机双账本；后续服务商通过独立适配器接入。
 
-## A 阶段状态
+## B 阶段状态
 
-当前版本 `0.2.0` 接入 Windows Codex 本机日志：默认先显示独立 SQLite 缓存，再增量同步；概览、历史、模型与会话、质量、设置五个页面支持真实本机账本。四种 P0 合成场景保留为显式演示，不混入本机数据。
+当前版本 `0.3.0` 已实现账号历史与额度的后端只读适配、手动查询开关、账号绑定、追加快照和离线缓存。设置中启用账号查询后，可选择最多 31 个日期手动同步；刷新视图仍只读缓存。启动不会自动查询账号，也不定时采样。
+
+账号总范围 `codex-account` 与 Desktop/CLI 等客户端范围分开筛选，快照版本不相加。服务端日期标签、覆盖和回填水位保持未验证；本机日志身份不自动绑定到登录账号，真实差分及设备归因仍未开放。额度按实际窗口时长识别，缺失 5 小时窗口不构造数值；过期、关闭查询或请求失败的缓存明确标记并显示采集时间。
+
+后端只允许对 `https://chatgpt.com` 的历史、额度两条固定路由发送 GET，验证 TLS，禁用重定向，限制超时和响应大小。仅显式同步短暂读取官方 Codex 已有登录；不自行刷新登录、不向前端或数据库传递凭据。账号切换隔离历史和额度；401/403/404/429、断网和不兼容响应均保留已有账本。
+
+B 的本地验证记录见 [b-validation.md](docs/b-validation.md)。Rust 测试及 Windows 构建受本机 MSVC 工具缺失阻断，尚未完成原生验收；没有读取真实凭据或执行真实账号请求。
+
+## A 阶段本机账本
+
+A 阶段 `0.2.0` 接入 Windows Codex 本机日志：默认先显示独立 SQLite 缓存，再增量同步；概览、历史、模型与会话、质量、设置五个页面支持真实本机账本。四种 P0 合成场景保留为显式演示，不混入本机数据。
 
 自动发现 `CODEX_HOME` 或用户 `.codex` 下的 `sessions`、`archived_sessions`、`session-cleanup-archive`，支持设置附加 Codex 根目录。新增完整 JSONL 行按事务持久化统计投影与检查点；半行等待后续追加；副本和归档按稳定事件身份去重；重写重新核对；退出后继续处理。来源删除后保留已验证历史并标记缺口。
 
 累计回退、初始继承余额、增量/last 矛盾和跨日不明区间不计入有效增量，保留解释。主线程与子代理分开查询；日志账号使用不可逆标记且保持未核实。显示的是**已观测部分**，文件发现不等于完整设备消费。模型与 effort 是日志配置，speed 缺失保持未知。
 
-账号 API、额度和跨设备校准仍未接入；本机模式账号账本与残差为未知。没有网络客户端、凭据读取、后台采样、自启动或旧应用 sidecar。Token 使用十进制字符串，缓存只计一次；缺失不补零，账号与本机量不相加。Claude Code 与 Antigravity 保持后续接入状态。
+Token 使用十进制字符串，缓存只计一次；缺失不补零，账号与本机量不相加。Claude Code 与 Antigravity 保持后续接入状态。
 
 ## 本地运行
 
@@ -51,7 +61,7 @@ GitHub Actions 在 Linux 执行前端与核心验证，在 Windows 编译、测�
 | `apps/desktop/src-tauri` | 独立窗口、SQLite 组装与最小 IPC |
 | `crates/monitor-contracts` | Rust DTO，生成前端类型 |
 | `crates/monitor-core` | Token 校验、双账本比较、阻断理由 |
-| `crates/monitor-adapters` | 事务迁移、合成缓存与追加快照 |
+| `crates/monitor-adapters` | 增量日志、账号只读适配、事务迁移与追加快照 |
 | `tests/fixtures` | 可复现合成数据，无真实账号或日志 |
 
 数据协议见 [api-contracts.md](docs/api-contracts.md)，验证记录见 [p0-validation.md](docs/p0-validation.md)。复用来源与许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 和 [LICENSE](LICENSE)。

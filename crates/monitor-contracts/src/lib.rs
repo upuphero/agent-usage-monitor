@@ -1,11 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "0.2.0";
+pub const API_VERSION: &str = "0.3.0";
 pub const COMMANDS: &[(&str, &str)] = &[
     ("getDashboard", "get_dashboard"),
     ("syncLocal", "sync_local"),
     ("cancelLocalSync", "cancel_local_sync"),
     ("setLocalRoots", "set_local_roots"),
+    ("setAccountQueries", "set_account_queries"),
+    ("syncAccount", "sync_account"),
 ];
 
 macro_rules! dto {
@@ -98,7 +100,14 @@ enumeration!(
     Cancelled,
     SyncBusy,
     SourceUnreadable,
-    InvalidDirectory
+    InvalidDirectory,
+    NetworkDisabled,
+    AuthRequired,
+    AccessDenied,
+    EndpointUnavailable,
+    RateLimited,
+    Offline,
+    ResponseIncompatible
 );
 enumeration!(
     ReasonCode,
@@ -142,8 +151,38 @@ enumeration!(
     ImportedSource,
     ProductScopeUnverified,
     ModelUnknown,
-    SessionListLimited
+    SessionListLimited,
+    HistoryDayMissing,
+    QuotaStale,
+    ResponseIncompatible
 );
+
+enumeration!(
+    AccountState,
+    "kebab-case",
+    Disabled,
+    NeverSynced,
+    Cached,
+    Ready,
+    Partial,
+    AuthRequired,
+    AccessDenied,
+    EndpointUnavailable,
+    RateLimited,
+    Offline,
+    Incompatible
+);
+dto!(AccountQueriesRequest { enabled: bool });
+dto!(AccountSyncRequest {
+    start_date: String,
+    end_date: String
+});
+dto!(AccountSummary {
+    enabled: bool, account_ref: Option<String>, state: AccountState,
+    last_attempt_at: Option<String>, history_fetched_at: Option<String>, quota_fetched_at: Option<String>,
+    history_error: Option<ErrorCode>, quota_error: Option<ErrorCode>, next_allowed_at: Option<String>,
+    requested_start: Option<String>, requested_end: Option<String>, missing_dates: Vec<String>
+});
 
 /// Token metrics only. Canonical decimal strings, 0..=i64::MAX. Null requires a reason.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -206,7 +245,7 @@ dto!(RuntimeInfo {
 dto!(SyncReport { files_found: u32, files_parsed: u32, files_unchanged: u32, files_rebuilt: u32, new_snapshots: u32, duplicate_snapshots: u32, bytes_parsed: String, bytes_verified: String, partial_tails: u32, reason_codes: Vec<ReasonCode> });
 dto!(CollectorSummary { state: SyncState, last_sync_at: Option<String>, files_indexed: u32, retained_sources: u32, snapshots: u32, accepted_events: u32, ambiguous_events: u32, sessions_total: u32, reason_codes: Vec<ReasonCode>, last_run: Option<SyncReport> });
 dto!(LocalRootsRequest { roots: Vec<String> });
-dto!(Dashboard { api_version: String, data_mode: DataMode, display_timezone: String, providers: Vec<Provider>, account_rows: Vec<LedgerRow>, local_rows: Vec<LedgerRow>, comparisons: Vec<ComparisonResult>, quota: Option<QuotaSnapshot>, models: Vec<LocalModel>, sessions: Vec<LocalSession>, runtime: RuntimeInfo, collector: Option<CollectorSummary> });
+dto!(Dashboard { api_version: String, data_mode: DataMode, display_timezone: String, providers: Vec<Provider>, account_rows: Vec<LedgerRow>, local_rows: Vec<LedgerRow>, comparisons: Vec<ComparisonResult>, quota: Option<QuotaSnapshot>, models: Vec<LocalModel>, sessions: Vec<LocalSession>, runtime: RuntimeInfo, collector: Option<CollectorSummary>, account: Option<AccountSummary> });
 dto!(DashboardQuery {
     scenario: DemoScenario
 });

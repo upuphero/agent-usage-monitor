@@ -1,0 +1,10 @@
+{
+  "group_by": "day",
+  "balance_unit": "credit",
+  "data": [
+    {"date": "2026-10-08", "totals": {"uncached_text_input_tokens": 20, "cached_text_input_tokens": 80, "text_output_tokens": 10, "text_total_tokens": 110, "credits": 0}, "clients": [{"client_id": "CODEX_DESKTOP_APP", "uncached_text_input_tokens": 20, "cached_text_input_tokens": 80, "text_output_tokens": 10, "text_total_tokens": 110}]},
+    {"date": "2026-10-09", "totals": {"uncached_text_input_tokens": 30, "cached_text_input_tokens": 90, "text_output_tokens": 12, "text_total_tokens": 132}, "clients": [{"client_id": "CODEX_DESKTOP_APP", "uncached_text_input_tokens": 25, "cached_text_input_tokens": 80, "text_output_tokens": 10, "text_total_tokens": 115}, {"client_id": "CODEX_CLI", "uncached_text_input_tokens": 5, "cached_text_input_tokens": 10, "text_output_tokens": 2, "text_total_tokens": 17}]},
+    {"date": "2026-10-10", "totals": {"uncached_text_input_tokens": 0, "cached_text_input_tokens": 0, "text_output_tokens": 0, "text_total_tokens": 0}, "clients": [{"client_id": "CODEX_DESKTOP_APP", "uncached_text_input_tokens": 0, "cached_text_input_tokens": 0, "text_output_tokens": 0, "text_total_tokens": 0}]},
+    {"date": "2026-10-11", "totals": {"text_total_tokens": "ignored-outside-request"}}
+  ]
+}

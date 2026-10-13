@@ -21,7 +21,7 @@ export function latestRows(rows: LedgerRow[]): LedgerRow[] {
   for (const row of rows) {
     const key = JSON.stringify([row.scope.providerId, row.scope.productId, row.scope.accountRef, row.day.dateLabel]);
     const previous = latest.get(key);
-    if (!previous || Date.parse(row.source.collectedAt) > Date.parse(previous.source.collectedAt)) latest.set(key, row);
+    if (!previous || Date.parse(row.source.collectedAt) >= Date.parse(previous.source.collectedAt)) latest.set(key, row);
   }
   return [...latest.values()].sort((a, b) => a.day.dateLabel.localeCompare(b.day.dateLabel));
 }
@@ -43,8 +43,9 @@ const reasons: Record<ReasonCode, [string, string]> = {
   METADATA_CONFLICT: ['线程元数据矛盾', 'Conflicting thread metadata'], INVALID_RECORD: ['存在无效日志记录', 'Invalid log records'], RECORD_TOO_LARGE: ['超大记录已跳过', 'Oversized record skipped'],
   SOURCE_REWRITTEN: ['来源重写后已重建', 'Rewritten source rebuilt'], SOURCE_MISSING: ['保留已消失来源的历史', 'History retained from missing source'],
   SOURCE_CHANGED_DURING_READ: ['来源读取期间变化或不可读', 'Source changed or unavailable'], DISCOVERY_INCOMPLETE: ['文件发现不完整', 'Incomplete file discovery'],
-  IMPORTED_SOURCE: ['非 Windows 来源已排除', 'Imported non-Windows source excluded'], PRODUCT_SCOPE_UNVERIFIED: ['本地产品范围未核实', 'Local product scope unverified'],
-  MODEL_UNKNOWN: ['模型配置未知', 'Model configuration unknown'], SESSION_LIST_LIMITED: ['会话列表已分页', 'Session list paginated']
+  IMPORTED_SOURCE: ['非 Windows 来源已排除', 'Imported non-Windows source excluded'], PRODUCT_SCOPE_UNVERIFIED: ['产品范围未核实', 'Product scope unverified'],
+  MODEL_UNKNOWN: ['模型配置未知', 'Model configuration unknown'], SESSION_LIST_LIMITED: ['会话列表已分页', 'Session list paginated'],
+  HISTORY_DAY_MISSING: ['请求日期未返回', 'Requested date absent'], QUOTA_STALE: ['额度为过期缓存', 'Quota is stale cache'], RESPONSE_INCOMPATIBLE: ['响应格式不兼容', 'Response incompatible']
 };
 export const reasonLabel = (reason: ReasonCode, language: Language) => reasons[reason]?.[language === 'zh' ? 0 : 1] ?? reason;
 export function formatTime(value: string | null, timezone: string, locale: string): string {

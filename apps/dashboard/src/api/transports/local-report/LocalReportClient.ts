@@ -5,6 +5,7 @@ import { SyntheticClient } from '../mock/SyntheticClient';
 export class LocalReportClient implements UsageClient {
   readonly localView = true;
   readonly supportsLocalSync = false;
+  readonly supportsAccountSync = false;
   async getDashboard(query: DashboardQuery) {
     if (query.scenario !== 'local') return new SyntheticClient().getDashboard(query);
     const response = await fetch('/api/local-report', { cache: 'no-store' });
@@ -16,4 +17,6 @@ export class LocalReportClient implements UsageClient {
   async syncLocal(): Promise<never> { throw new Error('Read-only preview; use the desktop client to synchronize'); }
   async cancelLocalSync() { }
   async setLocalRoots(): Promise<never> { throw new Error('Use the desktop client to configure roots'); }
+  async setAccountQueries(): Promise<never> { throw new Error('Read-only preview'); }
+  async syncAccount(): Promise<never> { throw new Error('Read-only preview'); }
 }

@@ -59,7 +59,7 @@ describe('independent dual ledger contract', () => {
     expect(segments).toHaveLength(2);
   });
   it('sanitizes transport errors and selects browser memory explicitly', async () => {
-    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.2.0', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
+    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.3.0', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
     expect(safeError({ code: 'STORAGE', message: 'private SQL' }).message).not.toContain('private');
     expect((await createClient(false)) instanceof SyntheticClient).toBe(true);
   });
@@ -110,7 +110,7 @@ describe('observed local ledger interface', () => {
   });
   it('renders observed portions, unknown account data and no synthetic provenance', () => {
     const html = render(<Overview {...props} />);
-    expect(html).toContain('Windows 已观测部分'); expect(html).toContain('账号查询未接入'); expect(html).toContain('覆盖未核实');
+    expect(html).toContain('Windows 已观测部分'); expect(html).toContain('账号额度尚无快照'); expect(html).toContain('覆盖未核实');
     expect(html).not.toContain('合成服务端观测'); expect(html).not.toContain('合成本地日志');
   });
   it('keeps account and child products separate while preserving their own statistics', () => {

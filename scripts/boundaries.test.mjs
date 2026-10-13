@@ -14,9 +14,20 @@ test('Rust contract is the sole DTO source and unsupported schema fails closed',
   assert.equal(generate(source), await read('apps/dashboard/src/api/generated/monitor.ts'));
   assert.throws(() => generate(source.replace('scenario: DemoScenario', 'scenario: f64')));
 });
-test('offline backend has no credential reader, network client, scheduler or sidecar', async () => {
+test('account networking and credentials are isolated; no scheduler, sidecar or frontend HTTP permission', async () => {
   const sourceFiles = [...await files(resolve(root, 'crates')), ...await files(resolve(root, 'apps/desktop/src-tauri/src'))].filter(path => (path.endsWith('.rs') && !path.replaceAll('\\', '/').includes('/tests/')) || path.endsWith('Cargo.toml'));
-  for (const path of sourceFiles) assert.doesNotMatch((await readFile(path, 'utf8')).split('#[cfg(test)]')[0], /reqwest|ureq|auth\.json|refresh_token|Authorization|std::process::Command|tokio::time::interval/i, relative(root, path));
+  for (const path of sourceFiles) {
+    const source = (await readFile(path, 'utf8')).split('#[cfg(test)]')[0];
+    assert.doesNotMatch(source, /refresh_token|std::process::Command|tokio::time::interval/i, relative(root, path));
+    if (!path.replaceAll('\\','/').endsWith('/server.rs') && !path.replaceAll('\\','/').endsWith('/monitor-adapters/Cargo.toml')) assert.doesNotMatch(source, /reqwest|ureq|auth\.json|Authorization/i, relative(root, path));
+  }
+  const server = await read('crates/monitor-adapters/src/server.rs');
+  assert.match(server, /https_only\(true\)/); assert.match(server, /Policy::none\(\)/);
+  assert.doesNotMatch(server, /danger_accept_invalid|\.post\(|\.put\(|\.delete\(|\.patch\(/);
+  const urls = [...server.matchAll(/https:\/\/[^"\s]+/g)].map(match => match[0]);
+  assert.deepEqual(urls, ['https://chatgpt.com/backend-api/wham/analytics/daily-workspace-usage-counts', 'https://chatgpt.com/backend-api/wham/usage']);
+  const host = await read('apps/desktop/src-tauri/src/lib.rs');
+  assert.ok(host.indexOf('reserve_account_sync(&request, now)') < host.indexOf('Credentials::read(&home)'));
   const config = JSON.parse(await read('apps/desktop/src-tauri/tauri.conf.json'));
   assert.equal(config.identifier, 'dev.agentusage.monitor');
   assert.equal(config.bundle.externalBin, undefined);

@@ -1,3 +1,4 @@
+use monitor_adapters::server::{Credentials, HttpsTransport};
 use monitor_adapters::{collector::default_homes, Store};
 use monitor_contracts::*;
 use monitor_core::error;
@@ -14,6 +15,7 @@ struct AppState {
     store: Mutex<Result<Store, ApiError>>,
     syncing: AtomicBool,
     cancel: AtomicBool,
+    account_syncing: AtomicBool,
 }
 
 #[tauri::command]
@@ -88,6 +90,121 @@ fn set_local_roots(
         .as_ref()
         .map_err(|error| error.clone())?
         .set_additional_roots(request.roots)
+}
+
+#[tauri::command]
+fn set_account_queries(
+    request: AccountQueriesRequest,
+    state: tauri::State<'_, Arc<AppState>>,
+) -> Result<(), ApiError> {
+    let guard = state
+        .store
+        .lock()
+        .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+    guard
+        .as_ref()
+        .map_err(|error| error.clone())?
+        .set_account_queries(request.enabled)
+}
+
+#[tauri::command]
+async fn sync_account(
+    request: AccountSyncRequest,
+    state: tauri::State<'_, Arc<AppState>>,
+) -> Result<AccountSummary, ApiError> {
+    if state
+        .account_syncing
+        .compare_exchange(false, true, Ordering::AcqRel, Ordering::Acquire)
+        .is_err()
+    {
+        return Err(error(
+            ErrorCode::SyncBusy,
+            "Account synchronization already running",
+        ));
+    }
+    let worker = state.inner().clone();
+    let result = tauri::async_runtime::spawn_blocking(move || {
+        let now = chrono::Utc::now();
+        {
+            let guard = worker
+                .store
+                .lock()
+                .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+            guard
+                .as_ref()
+                .map_err(|error| error.clone())?
+                .reserve_account_sync(&request, now)?;
+        }
+        let home = default_homes()
+            .into_iter()
+            .next()
+            .ok_or_else(|| error(ErrorCode::AuthRequired, "Official Codex login unavailable"))?;
+        let credentials = match Credentials::read(&home) {
+            Ok(credentials) => credentials,
+            Err(failure) => {
+                let guard = worker
+                    .store
+                    .lock()
+                    .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+                guard
+                    .as_ref()
+                    .map_err(|error| error.clone())?
+                    .account_login_failed()?;
+                return Err(failure);
+            }
+        };
+        let summary = {
+            let mut guard = worker
+                .store
+                .lock()
+                .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+            guard
+                .as_mut()
+                .map_err(|error| error.clone())?
+                .bind_account(&credentials.account_ref())?
+        };
+        let transport = HttpsTransport::new();
+        // Construction failures take the same safe persistence path as offline requests.
+        struct OfflineTransport;
+        impl monitor_adapters::server::Transport for OfflineTransport {
+            fn get(
+                &self,
+                _: monitor_adapters::server::Endpoint,
+                _: &AccountSyncRequest,
+                _: &Credentials,
+            ) -> Result<monitor_adapters::server::HttpReply, ApiError> {
+                Err(error(ErrorCode::Offline, "Account connection unavailable"))
+            }
+        }
+        let fetched = match transport {
+            Ok(transport) => {
+                monitor_adapters::server::fetch(&transport, &credentials, &request, summary, now)
+            }
+            Err(_) => monitor_adapters::server::fetch(
+                &OfflineTransport,
+                &credentials,
+                &request,
+                summary,
+                now,
+            ),
+        };
+        let mut guard = worker
+            .store
+            .lock()
+            .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+        let store = guard.as_mut().map_err(|error| error.clone())?;
+        store.commit_account_fetch(&fetched)?;
+        store.account_summary()
+    })
+    .await
+    .map_err(|_| {
+        error(
+            ErrorCode::Internal,
+            "Account synchronization could not finish",
+        )
+    });
+    state.account_syncing.store(false, Ordering::Release);
+    result?
 }
 
 fn initialize_store(directory: PathBuf) -> Result<Store, ApiError> {
@@ -227,6 +344,7 @@ pub fn run() {
                 store: Mutex::new(store),
                 syncing: AtomicBool::new(false),
                 cancel: AtomicBool::new(false),
+                account_syncing: AtomicBool::new(false),
             }));
             Ok(())
         })
@@ -234,7 +352,9 @@ pub fn run() {
             get_dashboard,
             sync_local,
             cancel_local_sync,
-            set_local_roots
+            set_local_roots,
+            set_account_queries,
+            sync_account
         ])
         .build(tauri::generate_context!())
         .expect("Agent Usage Monitor could not start")

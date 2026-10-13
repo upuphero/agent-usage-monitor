@@ -2,12 +2,15 @@ use monitor_contracts::*;
 use monitor_core::{demo, error, parse_count, rebuild_comparisons, validate_row};
 use rusqlite::{params, Connection, OptionalExtension, Transaction};
 use std::path::Path;
+mod account_store;
 pub mod collector;
 mod local_store;
+pub mod server;
 
-pub const SCHEMA_VERSION: u32 = 2;
+pub const SCHEMA_VERSION: u32 = 3;
 const MIGRATION: &str = include_str!("../migrations/001_dual_ledger.sql");
 const MIGRATION_LOCAL: &str = include_str!("../migrations/002_incremental_local.sql");
+const MIGRATION_ACCOUNT: &str = include_str!("../migrations/003_account_reader.sql");
 pub struct Store {
     connection: Connection,
 }
@@ -39,6 +42,11 @@ fn migrate(connection: &mut Connection, migration: &str) -> Result<(), ApiError>
     if version < 2 {
         transaction
             .execute_batch(MIGRATION_LOCAL)
+            .map_err(storage_error)?;
+    }
+    if version < 3 {
+        transaction
+            .execute_batch(MIGRATION_ACCOUNT)
             .map_err(storage_error)?;
     }
     transaction
@@ -212,7 +220,9 @@ impl Store {
     }
     pub fn dashboard(&self, scenario: DemoScenario) -> Result<Dashboard, ApiError> {
         if scenario == DemoScenario::Local {
-            return self.local_dashboard();
+            let mut dashboard = self.local_dashboard()?;
+            self.populate_account(&mut dashboard)?;
+            return Ok(dashboard);
         }
         let mut dashboard = demo(scenario)?;
         if scenario == DemoScenario::Ready {
