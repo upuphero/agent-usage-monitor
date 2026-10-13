@@ -305,7 +305,7 @@ mod tests {
         let mut new = original[0].clone();
         new.row_id = "new-snapshot".into();
         new.source.collected_at = "2026-10-13T00:00:00Z".into();
-        store.append_rows(&[new.clone()]).unwrap();
+        store.append_rows(std::slice::from_ref(&new)).unwrap();
         assert_eq!(
             store
                 .rows(
@@ -347,13 +347,13 @@ mod tests {
         let mut row = demo(DemoScenario::Ready).unwrap().account_rows[0].clone();
         row.row_id = "other-account".into();
         row.scope.account_ref = Some("demo-account-b".into());
-        store.append_rows(&[row.clone()]).unwrap();
+        store.append_rows(std::slice::from_ref(&row)).unwrap();
         row.row_id = "other-provider".into();
         row.scope.provider_id = "future-provider".into();
-        store.append_rows(&[row.clone()]).unwrap();
+        store.append_rows(std::slice::from_ref(&row)).unwrap();
         row.row_id = "other-product".into();
         row.scope.product_id = "all-products".into();
-        store.append_rows(&[row.clone()]).unwrap();
+        store.append_rows(std::slice::from_ref(&row)).unwrap();
         row.row_id = "observed-separate".into();
         row.source.data_mode = DataMode::Observed;
         store.append_rows(&[row]).unwrap();
