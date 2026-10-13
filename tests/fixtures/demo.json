@@ -1,0 +1,4299 @@
+{
+  "ready": {
+    "apiVersion": "0.1.0",
+    "dataMode": "synthetic",
+    "displayTimezone": "America/Phoenix",
+    "providers": [
+      {
+        "providerId": "codex",
+        "displayName": "Codex",
+        "state": "synthetic-preview",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "claude-code",
+        "displayName": "Claude Code",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "antigravity",
+        "displayName": "Antigravity",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      }
+    ],
+    "accountRows": [
+      {
+        "rowId": "demo-account-2026-10-05-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-05",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-05T00:00:00Z",
+          "endUtc": "2026-10-06T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "120000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "820000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "940000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "36000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "976000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-06-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-06",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-06T00:00:00Z",
+          "endUtc": "2026-10-07T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "138000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "960000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1098000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "39500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1137500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-07-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-07",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-07T00:00:00Z",
+          "endUtc": "2026-10-08T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "156000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "910000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1066000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "43000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1109000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-08-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-08",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-08T00:00:00Z",
+          "endUtc": "2026-10-09T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "174000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1130000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1304000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "46500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1350500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-09-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-09",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-09T00:00:00Z",
+          "endUtc": "2026-10-10T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "192000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1000000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1192000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "50000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1242000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-10-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-10",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-10T00:00:00Z",
+          "endUtc": "2026-10-11T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "210000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1260000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1470000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "53500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1523500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-11-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "228000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1110000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1338000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "57000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1395000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-11-2",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-12T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "238000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1180000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1418000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "61000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1479000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      }
+    ],
+    "localRows": [
+      {
+        "rowId": "demo-windows-2026-10-05-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-05",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-05T00:00:00Z",
+          "endUtc": "2026-10-06T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "78000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "590000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "668000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "25000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "693000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-06-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-06",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-06T00:00:00Z",
+          "endUtc": "2026-10-07T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "88000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "710000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "798000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "27100",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "825100",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-07-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-07",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-07T00:00:00Z",
+          "endUtc": "2026-10-08T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "98000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "650000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "748000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "29200",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "777200",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-08-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-08",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-08T00:00:00Z",
+          "endUtc": "2026-10-09T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "108000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "760000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "868000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "31300",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "899300",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-09-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-09",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-09T00:00:00Z",
+          "endUtc": "2026-10-10T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "118000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "670000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "788000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "33400",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "821400",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-10-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-10",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-10T00:00:00Z",
+          "endUtc": "2026-10-11T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "128000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "780000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "908000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "35500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "943500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-11-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "138000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "730000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "868000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "37600",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "905600",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      }
+    ],
+    "comparisons": [
+      {
+        "dateLabel": "2026-10-05",
+        "status": "unattributed",
+        "uncachedInput": "42000",
+        "cachedInput": "230000",
+        "output": "11000",
+        "textTotal": "283000",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-06",
+        "status": "unattributed",
+        "uncachedInput": "50000",
+        "cachedInput": "250000",
+        "output": "12400",
+        "textTotal": "312400",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-07",
+        "status": "unattributed",
+        "uncachedInput": "58000",
+        "cachedInput": "260000",
+        "output": "13800",
+        "textTotal": "331800",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-08",
+        "status": "unattributed",
+        "uncachedInput": "66000",
+        "cachedInput": "370000",
+        "output": "15200",
+        "textTotal": "451200",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-09",
+        "status": "unattributed",
+        "uncachedInput": "74000",
+        "cachedInput": "330000",
+        "output": "16600",
+        "textTotal": "420600",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-10",
+        "status": "unattributed",
+        "uncachedInput": "82000",
+        "cachedInput": "480000",
+        "output": "18000",
+        "textTotal": "580000",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-11",
+        "status": "unattributed",
+        "uncachedInput": "100000",
+        "cachedInput": "450000",
+        "output": "23400",
+        "textTotal": "573400",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      }
+    ],
+    "quota": {
+      "snapshotId": "demo-quota-1",
+      "scope": {
+        "providerId": "codex",
+        "productId": "codex-desktop",
+        "accountRef": "demo-account-a",
+        "identityEvidence": "verified"
+      },
+      "source": {
+        "sourceId": "demo-quota",
+        "kind": "server-observation",
+        "collectedAt": "2026-10-12T16:00:00Z",
+        "dataMode": "synthetic"
+      },
+      "windows": [
+        {
+          "kind": "five-hour",
+          "windowSeconds": 18000,
+          "usedPercent": null,
+          "resetsAt": null,
+          "reasonCodes": [
+            "WINDOW_NOT_REPORTED"
+          ]
+        },
+        {
+          "kind": "weekly",
+          "windowSeconds": 604800,
+          "usedPercent": "36.5",
+          "resetsAt": "2026-10-16T00:00:00Z",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      ]
+    },
+    "models": [
+      {
+        "modelId": "demo-model-alpha",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "3519060",
+          "quality": "known",
+          "reasonCodes": []
+        },
+        "sessions": 8
+      },
+      {
+        "modelId": "demo-model-beta",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "2346040",
+          "quality": "known",
+          "reasonCodes": []
+        },
+        "sessions": 5
+      }
+    ],
+    "sessions": [
+      {
+        "sessionRef": "demo-session-0-01",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-02",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-03",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-04",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-05",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-06",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-07",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-08",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439886",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-01",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-02",
+        "modelId": "demo-model-beta",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-03",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-04",
+        "modelId": "demo-model-beta",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-05",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      }
+    ],
+    "runtime": {
+      "appVersion": "0.1.0",
+      "schemaVersion": 1,
+      "storage": "browser-memory",
+      "installationRef": "synthetic-browser",
+      "networkEnabled": false,
+      "localCollectionEnabled": false
+    }
+  },
+  "missing": {
+    "apiVersion": "0.1.0",
+    "dataMode": "synthetic",
+    "displayTimezone": "America/Phoenix",
+    "providers": [
+      {
+        "providerId": "codex",
+        "displayName": "Codex",
+        "state": "synthetic-preview",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "claude-code",
+        "displayName": "Claude Code",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "antigravity",
+        "displayName": "Antigravity",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      }
+    ],
+    "accountRows": [
+      {
+        "rowId": "demo-account-2026-10-05-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-05",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-05T00:00:00Z",
+          "endUtc": "2026-10-06T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "120000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "820000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "940000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "36000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "976000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-06-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-06",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-06T00:00:00Z",
+          "endUtc": "2026-10-07T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "138000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "960000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1098000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "39500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1137500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-07-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-07",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-07T00:00:00Z",
+          "endUtc": "2026-10-08T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "156000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "910000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1066000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "43000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1109000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-08-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-08",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-08T00:00:00Z",
+          "endUtc": "2026-10-09T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "174000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1130000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1304000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "46500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1350500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-09-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-09",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-09T00:00:00Z",
+          "endUtc": "2026-10-10T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "192000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1000000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1192000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "50000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1242000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-10-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-10",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-10T00:00:00Z",
+          "endUtc": "2026-10-11T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "210000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1260000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1470000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "53500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1523500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-11-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "228000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "inclusiveInput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "output": {
+            "value": "57000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          }
+        },
+        "quality": {
+          "status": "unknown",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA",
+            "MISSING_COMPONENT"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-11-2",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-12T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "238000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "inclusiveInput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "output": {
+            "value": "61000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          }
+        },
+        "quality": {
+          "status": "unknown",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA",
+            "MISSING_COMPONENT"
+          ]
+        }
+      }
+    ],
+    "localRows": [
+      {
+        "rowId": "demo-windows-2026-10-05-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-05",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-05T00:00:00Z",
+          "endUtc": "2026-10-06T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "78000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "590000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "668000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "25000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "693000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-06-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-06",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-06T00:00:00Z",
+          "endUtc": "2026-10-07T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "88000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "710000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "798000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "27100",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "825100",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-07-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-07",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-07T00:00:00Z",
+          "endUtc": "2026-10-08T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "98000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "650000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "748000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "29200",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "777200",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-08-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-08",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-08T00:00:00Z",
+          "endUtc": "2026-10-09T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "108000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "760000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "868000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "31300",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "899300",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-09-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-09",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-09T00:00:00Z",
+          "endUtc": "2026-10-10T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "118000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "670000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "788000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "33400",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "821400",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-10-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-10",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-10T00:00:00Z",
+          "endUtc": "2026-10-11T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "128000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "780000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "908000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "35500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "943500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-11-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "138000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "730000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "868000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "37600",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "905600",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      }
+    ],
+    "comparisons": [
+      {
+        "dateLabel": "2026-10-05",
+        "status": "unattributed",
+        "uncachedInput": "42000",
+        "cachedInput": "230000",
+        "output": "11000",
+        "textTotal": "283000",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-06",
+        "status": "unattributed",
+        "uncachedInput": "50000",
+        "cachedInput": "250000",
+        "output": "12400",
+        "textTotal": "312400",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-07",
+        "status": "unattributed",
+        "uncachedInput": "58000",
+        "cachedInput": "260000",
+        "output": "13800",
+        "textTotal": "331800",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-08",
+        "status": "unattributed",
+        "uncachedInput": "66000",
+        "cachedInput": "370000",
+        "output": "15200",
+        "textTotal": "451200",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-09",
+        "status": "unattributed",
+        "uncachedInput": "74000",
+        "cachedInput": "330000",
+        "output": "16600",
+        "textTotal": "420600",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-10",
+        "status": "unattributed",
+        "uncachedInput": "82000",
+        "cachedInput": "480000",
+        "output": "18000",
+        "textTotal": "580000",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-11",
+        "status": "blocked",
+        "uncachedInput": null,
+        "cachedInput": null,
+        "output": null,
+        "textTotal": null,
+        "reasonCodes": [
+          "MISSING_COMPONENT"
+        ]
+      }
+    ],
+    "quota": {
+      "snapshotId": "demo-quota-1",
+      "scope": {
+        "providerId": "codex",
+        "productId": "codex-desktop",
+        "accountRef": "demo-account-a",
+        "identityEvidence": "verified"
+      },
+      "source": {
+        "sourceId": "demo-quota",
+        "kind": "server-observation",
+        "collectedAt": "2026-10-12T16:00:00Z",
+        "dataMode": "synthetic"
+      },
+      "windows": [
+        {
+          "kind": "five-hour",
+          "windowSeconds": 18000,
+          "usedPercent": null,
+          "resetsAt": null,
+          "reasonCodes": [
+            "WINDOW_NOT_REPORTED"
+          ]
+        },
+        {
+          "kind": "weekly",
+          "windowSeconds": 604800,
+          "usedPercent": "36.5",
+          "resetsAt": "2026-10-16T00:00:00Z",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      ]
+    },
+    "models": [
+      {
+        "modelId": "demo-model-alpha",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "3519060",
+          "quality": "known",
+          "reasonCodes": []
+        },
+        "sessions": 8
+      },
+      {
+        "modelId": "demo-model-beta",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "2346040",
+          "quality": "known",
+          "reasonCodes": []
+        },
+        "sessions": 5
+      }
+    ],
+    "sessions": [
+      {
+        "sessionRef": "demo-session-0-01",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-02",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-03",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-04",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-05",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-06",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-07",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439882",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-08",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "439886",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-01",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-02",
+        "modelId": "demo-model-beta",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-03",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-04",
+        "modelId": "demo-model-beta",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-05",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "469208",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      }
+    ],
+    "runtime": {
+      "appVersion": "0.1.0",
+      "schemaVersion": 1,
+      "storage": "browser-memory",
+      "installationRef": "synthetic-browser",
+      "networkEnabled": false,
+      "localCollectionEnabled": false
+    }
+  },
+  "negative": {
+    "apiVersion": "0.1.0",
+    "dataMode": "synthetic",
+    "displayTimezone": "America/Phoenix",
+    "providers": [
+      {
+        "providerId": "codex",
+        "displayName": "Codex",
+        "state": "synthetic-preview",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "claude-code",
+        "displayName": "Claude Code",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "antigravity",
+        "displayName": "Antigravity",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      }
+    ],
+    "accountRows": [
+      {
+        "rowId": "demo-account-2026-10-05-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-05",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-05T00:00:00Z",
+          "endUtc": "2026-10-06T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "120000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "820000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "940000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "36000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "976000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-06-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-06",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-06T00:00:00Z",
+          "endUtc": "2026-10-07T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "138000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "960000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1098000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "39500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1137500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-07-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-07",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-07T00:00:00Z",
+          "endUtc": "2026-10-08T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "156000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "910000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1066000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "43000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1109000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-08-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-08",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-08T00:00:00Z",
+          "endUtc": "2026-10-09T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "174000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1130000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1304000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "46500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1350500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-09-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-09",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-09T00:00:00Z",
+          "endUtc": "2026-10-10T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "192000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1000000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1192000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "50000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1242000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-10-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-10",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-10T00:00:00Z",
+          "endUtc": "2026-10-11T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "210000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1260000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1470000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "53500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1523500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-11-1",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "228000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1110000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1338000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "57000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1395000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-account-2026-10-11-2",
+        "ledger": "account",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-account",
+          "kind": "server-observation",
+          "collectedAt": "2026-10-12T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "238000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1180000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1418000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "61000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "1479000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "pending-backfill",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      }
+    ],
+    "localRows": [
+      {
+        "rowId": "demo-windows-2026-10-05-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-05",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-05T00:00:00Z",
+          "endUtc": "2026-10-06T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "78000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "590000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "668000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "25000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "693000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-06-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-06",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-06T00:00:00Z",
+          "endUtc": "2026-10-07T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "88000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "710000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "798000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "27100",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "825100",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-07-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-07",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-07T00:00:00Z",
+          "endUtc": "2026-10-08T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "98000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "650000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "748000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "29200",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "777200",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-08-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-08",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-08T00:00:00Z",
+          "endUtc": "2026-10-09T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "108000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "760000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "868000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "31300",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "899300",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-09-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-09",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-09T00:00:00Z",
+          "endUtc": "2026-10-10T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "118000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "670000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "788000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "33400",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "821400",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-10-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-10",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-10T00:00:00Z",
+          "endUtc": "2026-10-11T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "128000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "780000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "908000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "35500",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "943500",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      },
+      {
+        "rowId": "demo-windows-2026-10-11-1",
+        "ledger": "windows",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "day": {
+          "dateLabel": "2026-10-11",
+          "basis": "verified-utc-day",
+          "timezone": "UTC",
+          "startUtc": "2026-10-11T00:00:00Z",
+          "endUtc": "2026-10-12T00:00:00Z"
+        },
+        "source": {
+          "sourceId": "demo-windows",
+          "kind": "local-log",
+          "collectedAt": "2026-10-11T16:00:00Z",
+          "dataMode": "synthetic"
+        },
+        "tokens": {
+          "uncachedInput": {
+            "value": "338000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "cachedInput": {
+            "value": "1580000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "inclusiveInput": {
+            "value": "1918000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "output": {
+            "value": "91000",
+            "quality": "known",
+            "reasonCodes": []
+          },
+          "reasoningOutput": {
+            "value": null,
+            "quality": "unknown",
+            "reasonCodes": [
+              "MISSING_COMPONENT"
+            ]
+          },
+          "textTotal": {
+            "value": "2009000",
+            "quality": "known",
+            "reasonCodes": []
+          }
+        },
+        "quality": {
+          "status": "known",
+          "coverage": "complete",
+          "freshness": "final",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      }
+    ],
+    "comparisons": [
+      {
+        "dateLabel": "2026-10-05",
+        "status": "unattributed",
+        "uncachedInput": "42000",
+        "cachedInput": "230000",
+        "output": "11000",
+        "textTotal": "283000",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-06",
+        "status": "unattributed",
+        "uncachedInput": "50000",
+        "cachedInput": "250000",
+        "output": "12400",
+        "textTotal": "312400",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-07",
+        "status": "unattributed",
+        "uncachedInput": "58000",
+        "cachedInput": "260000",
+        "output": "13800",
+        "textTotal": "331800",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-08",
+        "status": "unattributed",
+        "uncachedInput": "66000",
+        "cachedInput": "370000",
+        "output": "15200",
+        "textTotal": "451200",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-09",
+        "status": "unattributed",
+        "uncachedInput": "74000",
+        "cachedInput": "330000",
+        "output": "16600",
+        "textTotal": "420600",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-10",
+        "status": "unattributed",
+        "uncachedInput": "82000",
+        "cachedInput": "480000",
+        "output": "18000",
+        "textTotal": "580000",
+        "reasonCodes": [
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      },
+      {
+        "dateLabel": "2026-10-11",
+        "status": "inconsistent",
+        "uncachedInput": "-100000",
+        "cachedInput": "-400000",
+        "output": "-30000",
+        "textTotal": "-530000",
+        "reasonCodes": [
+          "NEGATIVE_RESIDUAL",
+          "SYNTHETIC_DATA",
+          "PENDING_BACKFILL",
+          "CALIBRATION_NOT_RUN"
+        ]
+      }
+    ],
+    "quota": {
+      "snapshotId": "demo-quota-1",
+      "scope": {
+        "providerId": "codex",
+        "productId": "codex-desktop",
+        "accountRef": "demo-account-a",
+        "identityEvidence": "verified"
+      },
+      "source": {
+        "sourceId": "demo-quota",
+        "kind": "server-observation",
+        "collectedAt": "2026-10-12T16:00:00Z",
+        "dataMode": "synthetic"
+      },
+      "windows": [
+        {
+          "kind": "five-hour",
+          "windowSeconds": 18000,
+          "usedPercent": null,
+          "resetsAt": null,
+          "reasonCodes": [
+            "WINDOW_NOT_REPORTED"
+          ]
+        },
+        {
+          "kind": "weekly",
+          "windowSeconds": 604800,
+          "usedPercent": "36.5",
+          "resetsAt": "2026-10-16T00:00:00Z",
+          "reasonCodes": [
+            "SYNTHETIC_DATA"
+          ]
+        }
+      ]
+    },
+    "models": [
+      {
+        "modelId": "demo-model-alpha",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "4181100",
+          "quality": "known",
+          "reasonCodes": []
+        },
+        "sessions": 8
+      },
+      {
+        "modelId": "demo-model-beta",
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "2787400",
+          "quality": "known",
+          "reasonCodes": []
+        },
+        "sessions": 5
+      }
+    ],
+    "sessions": [
+      {
+        "sessionRef": "demo-session-0-01",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522637",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-02",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522637",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-03",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522637",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-04",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522637",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-05",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522637",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-06",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522637",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-07",
+        "modelId": "demo-model-alpha",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522637",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-0-08",
+        "modelId": "demo-model-alpha",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "522641",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-01",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "557480",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-02",
+        "modelId": "demo-model-beta",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "557480",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-03",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "557480",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-04",
+        "modelId": "demo-model-beta",
+        "effort": null,
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "557480",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      },
+      {
+        "sessionRef": "demo-session-1-05",
+        "modelId": "demo-model-beta",
+        "effort": "high",
+        "speed": null,
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "textTotal": {
+          "value": "557480",
+          "quality": "known",
+          "reasonCodes": []
+        }
+      }
+    ],
+    "runtime": {
+      "appVersion": "0.1.0",
+      "schemaVersion": 1,
+      "storage": "browser-memory",
+      "installationRef": "synthetic-browser",
+      "networkEnabled": false,
+      "localCollectionEnabled": false
+    }
+  },
+  "empty": {
+    "apiVersion": "0.1.0",
+    "dataMode": "synthetic",
+    "displayTimezone": "America/Phoenix",
+    "providers": [
+      {
+        "providerId": "codex",
+        "displayName": "Codex",
+        "state": "synthetic-preview",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "claude-code",
+        "displayName": "Claude Code",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      },
+      {
+        "providerId": "antigravity",
+        "displayName": "Antigravity",
+        "state": "planned",
+        "capabilities": {
+          "localLedger": false,
+          "accountLedger": false,
+          "incrementalCollection": false,
+          "calibratedEstimate": false
+        }
+      }
+    ],
+    "accountRows": [],
+    "localRows": [],
+    "comparisons": [],
+    "quota": null,
+    "models": [],
+    "sessions": [],
+    "runtime": {
+      "appVersion": "0.1.0",
+      "schemaVersion": 1,
+      "storage": "browser-memory",
+      "installationRef": "synthetic-browser",
+      "networkEnabled": false,
+      "localCollectionEnabled": false
+    }
+  }
+}

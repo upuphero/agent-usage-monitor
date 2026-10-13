@@ -1,0 +1,4 @@
+{
+  "identifier": "monitor-main", "description": "P0 synthetic dashboard; no filesystem, shell or HTTP plugin.",
+  "windows": ["main"], "permissions": ["core:default"]
+}

@@ -1,0 +1,35 @@
+/* New dual-ledger layouts; base visual system is reused from styles.css. */
+.nav-item { text-align: left; background: transparent; width: 100%; }
+.monitor-toolbar { display: flex; align-items: center; gap: 20px; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 22px; background: var(--surface); }
+.monitor-toolbar label { display: grid; gap: 8px; color: var(--muted); font-size: 11px; min-width: 150px; }
+.account-caption { margin-left: auto; display: grid; gap: 8px; color: var(--muted); font-size: 11px; text-align: right; overflow-wrap: anywhere; }
+.monitor-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.monitor-metrics .metric-number { font-size: clamp(21px, 2.1vw, 32px); letter-spacing: -.7px; }
+.metric-warning { border-color: var(--warning); }
+.metric-warning .metric-number { color: var(--error); }
+.monitor-overview-grid { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(280px, 1fr); gap: 20px; }
+.quota-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.quota-item { display: grid; gap: 7px; border: 1px solid var(--border); background: var(--surface); border-radius: 10px; padding: 16px 20px; }
+.quota-item strong { font-size: 18px; font-weight: 550; }
+.chart-legend { display: flex; gap: 22px; font-size: 11px; color: var(--muted); }
+.chart-legend span { display: inline-flex; align-items: center; gap: 8px; }
+.series-local { stroke: var(--blue); }
+.chart-column.series-local { fill: var(--blue); stroke: none; }
+.chart-column.series-account { stroke: none; }
+.chart-tooltip strong { font-size: 13px; }
+.composition-track { display: flex; height: 14px; gap: 3px; border-radius: 5px; overflow: hidden; background: var(--surface-raised); margin: 20px 0 30px; }
+.composition-part { background: var(--accent); }
+.composition-part.color-1 { background: var(--purple); }
+.composition-part.color-2 { background: var(--blue); }
+.monitor-quality { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.reason-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+.quality-checks { display: grid; gap: 18px; }
+.quality-check { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+.quality-check:last-child { border: none; padding: 0; }
+.quality-check code { font-size: 10px; color: var(--warning); text-align: right; overflow-wrap: anywhere; }
+.storage-details { display: grid; grid-template-columns: 140px 1fr; gap: 15px; font-size: 12px; }
+.monitor-footer { display: flex; justify-content: space-between; gap: 20px; color: var(--muted); font-size: 10px; padding: 28px 0 22px; }
+.loading-inline { margin-bottom: 14px; }
+@media (max-width: 1150px) { .monitor-overview-grid { grid-template-columns: 1fr; } .monitor-metrics .metric-number { font-size: 25px; } }
+@media (max-width: 850px) { .monitor-toolbar { flex-wrap: wrap; } .account-caption { text-align: left; margin: 0; width: 100%; } .monitor-metrics { grid-template-columns: 1fr; } .monitor-quality { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .sidebar .brand { display: none; } .sidebar nav { margin: 0; width: 100%; justify-content: space-between; } .sidebar .nav-item { width: auto; } .quota-strip { grid-template-columns: 1fr; } .monitor-footer { flex-direction: column; gap: 8px; } .monitor-toolbar { padding: 14px; gap: 12px; } .quality-check { align-items: flex-start; } .storage-details { grid-template-columns: 110px 1fr; } }

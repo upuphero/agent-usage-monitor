@@ -1,0 +1,18 @@
+node_modules/
+target/
+dist/
+.local-data/
+.pnpm-store/
+apps/desktop/src-tauri/gen/
+*.log
+# Original local evidence remains byte-identical and is not part of the public source.
+docs/reference/
+docs/development-spec.md
+docs/source-manifest.json
+docs/evidence-index.md
+docs/handoff.md
+docs/development-plan.md
+docs/architecture.md
+docs/ui-reuse.md
+docs/acceptance.md
+artifacts/

@@ -1,0 +1,24 @@
+[package]
+name = "monitor-desktop"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+name = "monitor_desktop"
+crate-type = ["lib", "staticlib", "cdylib"]
+
+[features]
+default = []
+custom-protocol = ["tauri/custom-protocol"]
+
+[build-dependencies]
+tauri-build = { version = "2.4.1", features = [] }
+
+[dependencies]
+tauri = { version = "2.8.5", features = [] }
+tauri-plugin-single-instance = "=2.3.0"
+monitor-contracts.workspace = true
+monitor-core.workspace = true
+monitor-adapters.workspace = true

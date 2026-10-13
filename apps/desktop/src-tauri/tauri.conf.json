@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Agent Usage Monitor", "version": "0.1.0", "identifier": "dev.agentusage.monitor",
+  "build": {
+    "beforeDevCommand": "pnpm --filter @monitor/dashboard dev",
+    "beforeBuildCommand": "pnpm --filter @monitor/dashboard build",
+    "devUrl": "http://127.0.0.1:1430", "frontendDist": "../../dashboard/dist"
+  },
+  "app": {
+    "windows": [{ "label": "main", "title": "Agent Usage Monitor", "width": 1280, "height": 860, "minWidth": 800, "minHeight": 560 }],
+    "security": {
+      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true, "targets": ["nsis"], "icon": ["icons/icon.ico", "icons/icon.png"],
+    "resources": { "../../../THIRD_PARTY_NOTICES.md": "THIRD_PARTY_NOTICES.md", "../../../LICENSE": "LICENSE" }
+  }
+}
