@@ -35,6 +35,32 @@ fn initialize_store(directory: PathBuf) -> Result<Store, ApiError> {
     Ok(store)
 }
 
+/// Developer smoke entry point: uses an explicitly provided synthetic data directory only.
+pub fn verify_synthetic_store() -> Result<(), ApiError> {
+    let directory = std::env::var_os("AGENT_USAGE_MONITOR_DATA_DIR")
+        .map(PathBuf::from)
+        .ok_or_else(|| {
+            error(
+                ErrorCode::InvalidQuery,
+                "A synthetic validation directory is required",
+            )
+        })?;
+    let store = initialize_store(directory)?;
+    let dashboard = store.dashboard(DemoScenario::Ready)?;
+    if dashboard.data_mode != DataMode::Synthetic
+        || dashboard.account_rows.len() < 8
+        || dashboard.local_rows.len() < 7
+        || dashboard.runtime.network_enabled
+        || dashboard.runtime.local_collection_enabled
+    {
+        return Err(error(
+            ErrorCode::InvalidData,
+            "Synthetic application smoke validation failed",
+        ));
+    }
+    Ok(())
+}
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {

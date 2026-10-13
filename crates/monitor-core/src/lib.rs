@@ -183,6 +183,9 @@ pub fn compare(account: &LedgerRow, local: &LedgerRow) -> ComparisonResult {
         blocked(ReasonCode::MissingComponent);
     }
     let mut result = ComparisonResult {
+        scope: account.scope.clone(),
+        account_row_id: account.row_id.clone(),
+        local_row_id: local.row_id.clone(),
         date_label: account.day.date_label.clone(),
         status: ComparisonStatus::Blocked,
         uncached_input: None,

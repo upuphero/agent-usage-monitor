@@ -44,7 +44,7 @@ function comparisons(data) {
     const missing = keys.some(key => account.tokens[key].value === null || local.tokens[key].value === null);
     const values = missing ? keys.map(() => null) : keys.map(key => (BigInt(account.tokens[key].value) - BigInt(local.tokens[key].value)).toString());
     const negative = values.some(value => value !== null && BigInt(value) < 0n);
-    return { dateLabel: local.day.dateLabel, status: missing ? 'blocked' : negative ? 'inconsistent' : 'unattributed', ...Object.fromEntries(keys.map((key, i) => [key, values[i]])), reasonCodes: missing ? ['MISSING_COMPONENT'] : [...(negative ? ['NEGATIVE_RESIDUAL'] : []), 'SYNTHETIC_DATA', 'PENDING_BACKFILL', 'CALIBRATION_NOT_RUN'] };
+    return { scope: structuredClone(account.scope), accountRowId: account.rowId, localRowId: local.rowId, dateLabel: local.day.dateLabel, status: missing ? 'blocked' : negative ? 'inconsistent' : 'unattributed', ...Object.fromEntries(keys.map((key, i) => [key, values[i]])), reasonCodes: missing ? ['MISSING_COMPONENT'] : [...(negative ? ['NEGATIVE_RESIDUAL'] : []), 'SYNTHETIC_DATA', 'PENDING_BACKFILL', 'CALIBRATION_NOT_RUN'] };
   });
 }
 const missing = structuredClone(ready);

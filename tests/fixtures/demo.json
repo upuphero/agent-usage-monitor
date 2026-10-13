@@ -1019,6 +1019,14 @@
     ],
     "comparisons": [
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-05-1",
+        "localRowId": "demo-windows-2026-10-05-1",
         "dateLabel": "2026-10-05",
         "status": "unattributed",
         "uncachedInput": "42000",
@@ -1032,6 +1040,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-06-1",
+        "localRowId": "demo-windows-2026-10-06-1",
         "dateLabel": "2026-10-06",
         "status": "unattributed",
         "uncachedInput": "50000",
@@ -1045,6 +1061,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-07-1",
+        "localRowId": "demo-windows-2026-10-07-1",
         "dateLabel": "2026-10-07",
         "status": "unattributed",
         "uncachedInput": "58000",
@@ -1058,6 +1082,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-08-1",
+        "localRowId": "demo-windows-2026-10-08-1",
         "dateLabel": "2026-10-08",
         "status": "unattributed",
         "uncachedInput": "66000",
@@ -1071,6 +1103,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-09-1",
+        "localRowId": "demo-windows-2026-10-09-1",
         "dateLabel": "2026-10-09",
         "status": "unattributed",
         "uncachedInput": "74000",
@@ -1084,6 +1124,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-10-1",
+        "localRowId": "demo-windows-2026-10-10-1",
         "dateLabel": "2026-10-10",
         "status": "unattributed",
         "uncachedInput": "82000",
@@ -1097,6 +1145,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-11-2",
+        "localRowId": "demo-windows-2026-10-11-1",
         "dateLabel": "2026-10-11",
         "status": "unattributed",
         "uncachedInput": "100000",
@@ -2443,6 +2499,14 @@
     ],
     "comparisons": [
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-05-1",
+        "localRowId": "demo-windows-2026-10-05-1",
         "dateLabel": "2026-10-05",
         "status": "unattributed",
         "uncachedInput": "42000",
@@ -2456,6 +2520,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-06-1",
+        "localRowId": "demo-windows-2026-10-06-1",
         "dateLabel": "2026-10-06",
         "status": "unattributed",
         "uncachedInput": "50000",
@@ -2469,6 +2541,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-07-1",
+        "localRowId": "demo-windows-2026-10-07-1",
         "dateLabel": "2026-10-07",
         "status": "unattributed",
         "uncachedInput": "58000",
@@ -2482,6 +2562,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-08-1",
+        "localRowId": "demo-windows-2026-10-08-1",
         "dateLabel": "2026-10-08",
         "status": "unattributed",
         "uncachedInput": "66000",
@@ -2495,6 +2583,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-09-1",
+        "localRowId": "demo-windows-2026-10-09-1",
         "dateLabel": "2026-10-09",
         "status": "unattributed",
         "uncachedInput": "74000",
@@ -2508,6 +2604,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-10-1",
+        "localRowId": "demo-windows-2026-10-10-1",
         "dateLabel": "2026-10-10",
         "status": "unattributed",
         "uncachedInput": "82000",
@@ -2521,6 +2625,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-11-2",
+        "localRowId": "demo-windows-2026-10-11-1",
         "dateLabel": "2026-10-11",
         "status": "blocked",
         "uncachedInput": null,
@@ -3851,6 +3963,14 @@
     ],
     "comparisons": [
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-05-1",
+        "localRowId": "demo-windows-2026-10-05-1",
         "dateLabel": "2026-10-05",
         "status": "unattributed",
         "uncachedInput": "42000",
@@ -3864,6 +3984,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-06-1",
+        "localRowId": "demo-windows-2026-10-06-1",
         "dateLabel": "2026-10-06",
         "status": "unattributed",
         "uncachedInput": "50000",
@@ -3877,6 +4005,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-07-1",
+        "localRowId": "demo-windows-2026-10-07-1",
         "dateLabel": "2026-10-07",
         "status": "unattributed",
         "uncachedInput": "58000",
@@ -3890,6 +4026,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-08-1",
+        "localRowId": "demo-windows-2026-10-08-1",
         "dateLabel": "2026-10-08",
         "status": "unattributed",
         "uncachedInput": "66000",
@@ -3903,6 +4047,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-09-1",
+        "localRowId": "demo-windows-2026-10-09-1",
         "dateLabel": "2026-10-09",
         "status": "unattributed",
         "uncachedInput": "74000",
@@ -3916,6 +4068,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-10-1",
+        "localRowId": "demo-windows-2026-10-10-1",
         "dateLabel": "2026-10-10",
         "status": "unattributed",
         "uncachedInput": "82000",
@@ -3929,6 +4089,14 @@
         ]
       },
       {
+        "scope": {
+          "providerId": "codex",
+          "productId": "codex-desktop",
+          "accountRef": "demo-account-a",
+          "identityEvidence": "verified"
+        },
+        "accountRowId": "demo-account-2026-10-11-2",
+        "localRowId": "demo-windows-2026-10-11-1",
         "dateLabel": "2026-10-11",
         "status": "inconsistent",
         "uncachedInput": "-100000",

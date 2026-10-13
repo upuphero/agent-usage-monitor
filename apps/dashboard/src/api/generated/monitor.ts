@@ -66,6 +66,9 @@ export interface LedgerRow {
   quality: Quality;
 }
 export interface ComparisonResult {
+  scope: Scope;
+  accountRowId: string;
+  localRowId: string;
   dateLabel: string;
   status: ComparisonStatus;
   uncachedInput: string | null;

@@ -10,7 +10,7 @@ const scopeRows = (rows: LedgerRow[], provider: string) => rows.filter(row => ro
 export function selectDay(data: Dashboard, provider: string, date: string) {
   const account = latestRows(scopeRows(data.accountRows, provider)).find(row => row.day.dateLabel === date);
   const local = scopeRows(data.localRows, provider).find(row => row.day.dateLabel === date);
-  const comparison = local && account ? data.comparisons.find(item => item.dateLabel === date) : undefined;
+  const comparison = local && account ? data.comparisons.find(item => item.dateLabel === date && item.scope.providerId === provider && item.accountRowId === account.rowId && item.localRowId === local.rowId) : undefined;
   return { account, local, comparison };
 }
 function Quota({ data, provider, timezone }: PageProps) {

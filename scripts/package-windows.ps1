@@ -7,6 +7,9 @@ $installerDirectory = Join-Path $projectRoot 'target\release\bundle\nsis'
 if (-not (Test-Path -LiteralPath $binary)) { throw 'Desktop executable missing' }
 $installers = @(Get-ChildItem -LiteralPath $installerDirectory -Filter '*.exe' -File)
 if ($installers.Count -ne 1) { throw 'Expected one NSIS installer' }
+$env:AGENT_USAGE_MONITOR_DATA_DIR = Join-Path $projectRoot '.local-data\package-smoke'
+$smoke = Start-Process -FilePath $binary -ArgumentList '--verify-synthetic-store' -Wait -PassThru -WindowStyle Hidden
+if ($smoke.ExitCode -ne 0) { throw 'Packaged application synthetic storage smoke failed' }
 New-Item -ItemType Directory -Path $artifactDirectory, $portableDirectory -Force | Out-Null
 Copy-Item -LiteralPath $installers[0].FullName -Destination $artifactDirectory
 Copy-Item -LiteralPath $binary -Destination $portableDirectory

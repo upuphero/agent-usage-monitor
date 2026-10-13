@@ -410,4 +410,30 @@ mod tests {
         assert_eq!(dashboard.runtime.storage, "monitor.sqlite3");
         assert!(!dashboard.runtime.network_enabled && !dashboard.runtime.local_collection_enabled);
     }
+
+    #[test]
+    fn disk_reopen_preserves_installation_and_old_snapshots() {
+        let directory = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../.local-data/tests");
+        std::fs::create_dir_all(&directory).unwrap();
+        let path = directory.join(format!("{}.sqlite3", uuid::Uuid::new_v4()));
+        let installation;
+        {
+            let mut store = Store::open(&path).unwrap();
+            store.seed_synthetic().unwrap();
+            installation = store
+                .dashboard(DemoScenario::Ready)
+                .unwrap()
+                .runtime
+                .installation_ref;
+        }
+        {
+            let mut store = Store::open(&path).unwrap();
+            store.seed_synthetic().unwrap();
+            let data = store.dashboard(DemoScenario::Ready).unwrap();
+            assert_eq!(data.runtime.installation_ref, installation);
+            assert_eq!(data.account_rows.len(), 8);
+            assert_eq!(data.local_rows.len(), 7);
+        }
+        std::fs::remove_file(path).unwrap();
+    }
 }
