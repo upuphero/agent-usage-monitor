@@ -181,7 +181,7 @@ pub fn verify_local_collector() -> Result<(), ApiError> {
         .append(true)
         .open(&source)
         .map_err(|_| error(ErrorCode::Storage, "Fixture append failed"))?;
-    file.write_all(second[second.len() / 2..].as_bytes())
+    file.write_all(&second.as_bytes()[second.len() / 2..])
         .map_err(|_| error(ErrorCode::Storage, "Fixture append failed"))?;
     drop(file);
     let mut store = initialize_store(directory.join("database"))?;
