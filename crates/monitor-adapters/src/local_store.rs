@@ -318,6 +318,8 @@ impl Store {
         }
         transaction.execute("INSERT INTO source_checkpoints VALUES ('codex',?1,?2,?3,?4,?5,?6) ON CONFLICT(provider_id,source_id) DO UPDATE SET account_ref=excluded.account_ref,file_identity=excluded.file_identity,byte_offset=excluded.byte_offset,parser_version=excluded.parser_version,updated_at=excluded.updated_at",params![cp.source_id,cp.state.metadata.as_ref().and_then(|metadata|metadata.account_ref.as_ref()),cp.digest,i64::try_from(cp.offset).map_err(storage_error)?,cp.parser_version,now()]).map_err(storage_error)?;
         rebuild_threads(&transaction, &threads)?;
+        // A cancelled first sync can already have committed complete files. Retain their capture time.
+        transaction.execute("INSERT INTO app_meta VALUES ('local-last-observed-at',?1) ON CONFLICT(key) DO UPDATE SET value=excluded.value", [now()]).map_err(storage_error)?;
         transaction.commit().map_err(storage_error)?;
         Ok((new, duplicate))
     }

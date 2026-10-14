@@ -71,7 +71,10 @@ impl Store {
                 platform: native_platform(),
             },
             generated_at: chrono::Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Nanos, true),
-            last_sync_at: meta("local-last-sync")?,
+            last_sync_at: [meta("local-last-sync")?, meta("local-last-observed-at")?]
+                .into_iter()
+                .flatten()
+                .max(),
             files_indexed: count("SELECT count(*) FROM local_streams WHERE present=1")?,
             excluded_events: count("SELECT count(*) FROM local_usage_events WHERE allocated=0")?,
             reason_codes,

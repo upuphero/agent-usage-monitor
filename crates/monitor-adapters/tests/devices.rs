@@ -116,4 +116,21 @@ fn real_collector_projection_exports_private_whitelist_and_copy_merge_once() {
         .unwrap()
         .comparisons
         .is_empty());
+    // Emulate cancellation after a committed file, before finish_sync published a successful run.
+    let connection = rusqlite::Connection::open(root.join("a.sqlite3")).unwrap();
+    connection
+        .execute("DELETE FROM app_meta WHERE key='local-last-sync'", [])
+        .unwrap();
+    connection
+        .execute(
+            "UPDATE app_meta SET value='\"cancelled\"' WHERE key='local-sync-state'",
+            [],
+        )
+        .unwrap();
+    assert!(a.export_device_report().unwrap().last_sync_at.is_some());
+    assert!(a
+        .dashboard(DemoScenario::Local)
+        .unwrap()
+        .device_usage
+        .is_some());
 }
