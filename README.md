@@ -10,7 +10,7 @@
 
 后端只允许对 `https://chatgpt.com` 的历史、额度两条固定路由发送 GET，验证 TLS，禁用重定向，限制超时和响应大小。首次说明处理前不读取登录；同步时短暂读取官方 Codex 已有登录，不自行刷新登录、不向前端或数据库传递凭据。关闭后阻止后续请求并拒绝提交未完成同步。账号切换隔离历史和额度；401/403/404/429、断网和不兼容响应均保留已有账本。
 
-`0.3.0` 的 [B 验证记录](docs/b-validation.md) 单独保留；`0.3.2` 的默认开启、首次说明、开关及发布验证见 [release-validation.md](docs/release-validation.md)。
+[`v0.3.2` Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.3.2) 已公开，安装版、便携版和校验文件分别下载；完整 CI、发布及本机便携合成检查通过。验证见 [release-validation.md](docs/release-validation.md)，`0.3.0` 的 [B 记录](docs/b-validation.md) 单独保留。
 
 ## A 阶段本机账本
 
