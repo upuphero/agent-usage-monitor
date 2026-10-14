@@ -73,6 +73,54 @@ fn cancel_local_sync(state: tauri::State<'_, Arc<AppState>>) {
     state.cancel.store(true, Ordering::Release);
 }
 #[tauri::command]
+fn export_device_report(state: tauri::State<'_, Arc<AppState>>) -> Result<String, ApiError> {
+    let guard = state
+        .store
+        .lock()
+        .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+    let report = guard
+        .as_ref()
+        .map_err(|e| e.clone())?
+        .export_device_report()?;
+    let encoded = serde_json::to_string_pretty(&report)
+        .map_err(|_| error(ErrorCode::Internal, "Report encoding failed"))?;
+    if encoded.len() > monitor_core::devices::MAX_REPORT_BYTES {
+        return Err(error(
+            ErrorCode::InvalidData,
+            "Device report exceeds size limit",
+        ));
+    }
+    Ok(encoded)
+}
+#[tauri::command]
+fn import_device_report(
+    request: DeviceImportRequest,
+    state: tauri::State<'_, Arc<AppState>>,
+) -> Result<(), ApiError> {
+    let mut guard = state
+        .store
+        .lock()
+        .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+    guard
+        .as_mut()
+        .map_err(|e| e.clone())?
+        .import_device_report(request.report_json.as_bytes())
+}
+#[tauri::command]
+fn remove_device_report(
+    request: DeviceRemoveRequest,
+    state: tauri::State<'_, Arc<AppState>>,
+) -> Result<(), ApiError> {
+    let guard = state
+        .store
+        .lock()
+        .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
+    guard
+        .as_ref()
+        .map_err(|e| e.clone())?
+        .remove_device_report(&request.device_ref)
+}
+#[tauri::command]
 fn set_local_roots(
     request: LocalRootsRequest,
     state: tauri::State<'_, Arc<AppState>>,
@@ -365,7 +413,10 @@ pub fn run() {
             cancel_local_sync,
             set_local_roots,
             set_account_queries,
-            sync_account
+            sync_account,
+            export_device_report,
+            import_device_report,
+            remove_device_report
         ])
         .build(tauri::generate_context!())
         .expect("Agent Usage Monitor could not start")

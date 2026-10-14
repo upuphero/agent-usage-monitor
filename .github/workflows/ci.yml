@@ -55,6 +55,8 @@ jobs:
         run: pnpm --filter @monitor/desktop exec tauri build --bundles nsis -- --locked
       - name: Test native host and storage
         run: cargo test --workspace --release --features monitor-desktop/custom-protocol --locked
+      - name: Build Windows log collector
+        run: cargo build -p monitor-collector --release --locked
       - name: Lint native host
         run: cargo clippy -p monitor-desktop --release --features custom-protocol --all-targets --locked -- -D warnings
       - name: Stage installer, portable executable and hashes
@@ -67,8 +69,52 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
+  macos:
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            architecture: arm64
+          - runner: macos-15-intel
+            architecture: x64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Test native Mac collector and log merge
+        run: cargo test -p monitor-contracts -p monitor-core -p monitor-adapters -p monitor-collector --release --locked
+      - name: Lint Mac collector
+        run: cargo clippy -p monitor-collector -p monitor-adapters -p monitor-core --release --all-targets --locked -- -D warnings
+      - name: Package Mac collector
+        shell: bash
+        env:
+          COLLECTOR_ARCH: ${{ matrix.architecture }}
+        run: |
+          set -euo pipefail
+          cargo build -p monitor-collector --release --locked
+          version=$(sed -n 's/^version = "\([0-9.]*\)"/\1/p' Cargo.toml | head -1)
+          mkdir -p artifacts/macos/stage
+          codesign --force --sign - target/release/monitor-collector
+          target/release/monitor-collector --version
+          cp target/release/monitor-collector LICENSE docs/device-collection.md artifacts/macos/stage/
+          name="Agent-Usage-Monitor_${version}_macos-${COLLECTOR_ARCH}-collector.tar.gz"
+          tar -czf "artifacts/macos/$name" -C artifacts/macos/stage .
+          (cd artifacts/macos && shasum -a 256 "$name" > "SHA256SUMS-macos-${COLLECTOR_ARCH}.txt")
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: agent-usage-monitor-macos-${{ matrix.architecture }}-${{ github.sha }}
+          path: |
+            artifacts/macos/*.tar.gz
+            artifacts/macos/SHA256SUMS-*.txt
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
   release:
-    needs: [validate, windows]
+    needs: [validate, windows, macos]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -81,9 +127,14 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
-      - name: Publish version tag and separate Windows release assets
+      - name: Publish version tag, Windows packages and Mac collectors
         shell: pwsh
         run: |
           gh run download $env:GITHUB_RUN_ID --repo $env:GITHUB_REPOSITORY --name "agent-usage-monitor-windows-$env:GITHUB_SHA" --dir artifacts/windows
           if ($LASTEXITCODE -ne 0) { throw 'Could not download validated Windows packages' }
+          foreach ($architecture in @('arm64','x64')) {
+            gh run download $env:GITHUB_RUN_ID --repo $env:GITHUB_REPOSITORY --name "agent-usage-monitor-macos-$architecture-$env:GITHUB_SHA" --dir artifacts/windows
+            if ($LASTEXITCODE -ne 0) { throw 'Could not download validated Mac collector' }
+            Get-Content -LiteralPath "artifacts/windows/SHA256SUMS-macos-$architecture.txt" | Add-Content -LiteralPath artifacts/windows/SHA256SUMS.txt
+          }
           ./scripts/publish-release.ps1 -ArtifactDirectory artifacts/windows -Commit $env:GITHUB_SHA -Repository $env:GITHUB_REPOSITORY

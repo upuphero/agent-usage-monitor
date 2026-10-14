@@ -50,3 +50,7 @@
 .account-notice-dialog p { font-size: 13px; line-height: 1.8; margin-bottom: 16px; }
 .account-notice-dialog .button-group { justify-content: flex-end; flex-wrap: wrap; margin-top: 22px; }
 .account-continue { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
+/* Account quota and device logs are distinct panels; portable commands stay readable. */
+.collector-command { overflow-x: auto; padding: 16px; border-radius: 8px; background: var(--bg-secondary, #151b24); max-width: 100%; }
+.account-history-details > summary, .notice details > summary { cursor: pointer; padding: 8px 0; }
+.account-history-details > .panel { margin-top: 12px; }

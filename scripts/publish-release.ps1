@@ -13,7 +13,9 @@ if ($Commit -notmatch '^[0-9a-f]{40}$' -or $Repository -notmatch '^[A-Za-z0-9_.-
 $tag = "v$version"
 $installerName = "Agent-Usage-Monitor_${version}_x64-setup.exe"
 $portableName = "Agent-Usage-Monitor_${version}_x64-portable.zip"
-$packageNames = @($installerName, $portableName)
+$macArmName = "Agent-Usage-Monitor_${version}_macos-arm64-collector.tar.gz"
+$macIntelName = "Agent-Usage-Monitor_${version}_macos-x64-collector.tar.gz"
+$packageNames = @($installerName, $portableName, $macArmName, $macIntelName)
 $manifestPath = Join-Path $artifactRoot 'SHA256SUMS.txt'
 $expectedHashes = @{}
 foreach ($line in Get-Content -LiteralPath $manifestPath) {
@@ -22,7 +24,7 @@ foreach ($line in Get-Content -LiteralPath $manifestPath) {
     if ($name -notin $packageNames -or $expectedHashes.ContainsKey($name)) { throw 'Unexpected or duplicate package in manifest' }
     $expectedHashes[$name] = $hash
 }
-if ($expectedHashes.Count -ne 2) { throw 'Installer and portable packages are both required' }
+if ($expectedHashes.Count -ne 4) { throw 'Windows installer, portable and both Mac collectors are required' }
 foreach ($name in $packageNames) {
     $path = Join-Path $artifactRoot $name
     if ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expectedHashes[$name]) { throw "Package SHA-256 mismatch: $name" }
@@ -70,20 +72,26 @@ if ($releaseExists) {
 
 $notesPath = Join-Path $artifactRoot 'release-notes.md'
 @"
-Agent Usage Monitor $version — Windows x64
+Agent Usage Monitor $version — Windows desktop + Mac log collectors
 
 - **安装版：** $installerName
 - **便携版：** $portableName，解压后运行 monitor-desktop.exe。
+- **Mac Apple Silicon 采集器：** $macArmName
+- **Mac Intel 采集器：** $macIntelName
 - **校验：** 下载后可用 SHA256SUMS.txt 核对文件。
 
-首次启动会说明账号查询的用途，默认开启。设置里的“账号查询”提供可点击的开关；开启时启动自动同步用量和额度，关闭选择会保留。
+账号额度与设备 Token 分开显示。Windows 同步本机日志；Mac 解压采集器，在终端运行 ./monitor-collector collect --output mac-usage.json，再在 Windows 设置中导入该报告。报告更新按设备替换，相同日志记录去重，冲突不计入汇总。没有 Mac 报告时显示未接入；不使用账号减 Windows 推算 Mac。
+
+报告只含匿名统计，不含对话正文或登录信息；汇总代表日志所覆盖部分。便携版同时包含 Windows 采集器。Mac 包为独立命令行采集器，附操作说明。账号查询默认开启，首次提示可以关闭，关闭选择会保留。
 
 构建提交：$Commit
-发布前已通过前端、Rust、Windows 原生与打包检查。
+发布前已通过前端、Rust、Windows 原生、Mac ARM64/Intel 采集器及打包检查；CI 使用合成日志，没有查询真实账号。
 "@ | Set-Content -LiteralPath $notesPath -Encoding utf8
 $assets = @(
     "$(Join-Path $artifactRoot $installerName)#Windows installer",
     "$(Join-Path $artifactRoot $portableName)#Windows portable",
+    "$(Join-Path $artifactRoot $macArmName)#Mac Apple Silicon log collector",
+    "$(Join-Path $artifactRoot $macIntelName)#Mac Intel log collector",
     "$manifestPath#SHA-256 checksums"
 )
 if (-not $releaseExists) {

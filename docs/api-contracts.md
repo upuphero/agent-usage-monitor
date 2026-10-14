@@ -1,6 +1,6 @@
 # 数据契约与存储
 
-API `0.3.2`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
+API `0.4.0`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
 
 ## 范围与单位
 
@@ -80,3 +80,17 @@ Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/devel
 | `Agent-Usage-Monitor_0.2.0_x64-portable.zip` | `399eec1b0cd6da8623dd5eae244b94343b349d7d24eb49adee904f3a830058bf` |
 
 真实日志仍存在继承、累计回退、计数间隙与跨日歧义，所以当前显示已观测部分，完整 Windows 真值和设备归因误差仍未知。
+
+## 0.4.0 设备日志报告
+
+参考 CodexBar 的账号额度与本机日志分开展示：/wham/usage 的账号额度不参与 Token 算术。账号历史旧快照保留且单独查看，生产界面不再呈现差值或账号/本机叠加曲线。
+
+Schema 4 在原事务迁移末尾新增 device_reports，主键为稳定设备匿名标记。每台设备只保留最近导入的全量统计快照；导入前验证白名单、版本、大小、身份、时间、计数、重复和跨设备汇总溢出。已有相同内容幂等；较旧、同时间不同内容或平台变化拒绝覆盖；错误回滚。移除导入报告可逆，不修改原日志。
+
+独立 monitor-collector 在 Windows/Mac/Linux 使用同一增量解析器，默认根目录从 CODEX_HOME 或对应系统用户目录发现。仅扫描会话日志，不读取登录或访问账号网络。CLI 缓存与桌面端各自独立，保留缓存确保设备 ID 不变。
+
+新增 IPC export_device_report 返回白名单报告 JSON；import_device_report({request:{reportJson}}) 验证后事务更新；remove_device_report({request:{deviceRef}}) 仅移除导入副本。文件选择、下载在前端完成，不开放任意原始日志读写路径。
+
+Dashboard.deviceUsage 包含设备摘要和 UTC 日投影，deviceRef=null 表示去重汇总。只有原增量解析中 allocated=1 的已计入事件导出，其匿名 event_ref 不含设备路径，副本在各设备间可识别。相同标记但范围、时间或计数冲突的记录从汇总排除；此标记代表日志观察，不承诺全请求身份或物理执行归属。平台日投影仍分别展示该设备报告的记录，因此与去重汇总可不相加。账号、主线程/子代理、UTC 日期保持独立范围。模型/会话视图仍为 Windows 本机，不导入远端正文或模型细节。
+
+报告格式版本 1 独立于 app/API 版本；规范见 device-collection.md。静态历史 LedgerKind.Windows 是旧本机账本 wire 分类，Mac 采集器导出使用新的 DevicePlatform.Macos，不通过旧分类声称设备。API 版本更新后浏览器旧开发报告需重新生成。

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "0.3.2";
+pub const API_VERSION: &str = "0.4.0";
 pub const COMMANDS: &[(&str, &str)] = &[
     ("getDashboard", "get_dashboard"),
     ("syncLocal", "sync_local"),
@@ -8,6 +8,9 @@ pub const COMMANDS: &[(&str, &str)] = &[
     ("setLocalRoots", "set_local_roots"),
     ("setAccountQueries", "set_account_queries"),
     ("syncAccount", "sync_account"),
+    ("exportDeviceReport", "export_device_report"),
+    ("importDeviceReport", "import_device_report"),
+    ("removeDeviceReport", "remove_device_report"),
 ];
 
 macro_rules! dto {
@@ -246,7 +249,31 @@ dto!(RuntimeInfo {
 dto!(SyncReport { files_found: u32, files_parsed: u32, files_unchanged: u32, files_rebuilt: u32, new_snapshots: u32, duplicate_snapshots: u32, bytes_parsed: String, bytes_verified: String, partial_tails: u32, reason_codes: Vec<ReasonCode> });
 dto!(CollectorSummary { state: SyncState, last_sync_at: Option<String>, files_indexed: u32, retained_sources: u32, snapshots: u32, accepted_events: u32, ambiguous_events: u32, sessions_total: u32, reason_codes: Vec<ReasonCode>, last_run: Option<SyncReport> });
 dto!(LocalRootsRequest { roots: Vec<String> });
-dto!(Dashboard { api_version: String, data_mode: DataMode, display_timezone: String, providers: Vec<Provider>, account_rows: Vec<LedgerRow>, local_rows: Vec<LedgerRow>, comparisons: Vec<ComparisonResult>, quota: Option<QuotaSnapshot>, models: Vec<LocalModel>, sessions: Vec<LocalSession>, runtime: RuntimeInfo, collector: Option<CollectorSummary>, account: Option<AccountSummary> });
+enumeration!(DevicePlatform, "kebab-case", Windows, Macos, Linux, Unknown);
+dto!(DeviceIdentity {
+    device_ref: String,
+    platform: DevicePlatform
+});
+// Portable whitelist: no credentials, messages, paths, tool inputs or model metadata.
+dto!(DeviceEvent {
+    event_ref: String,
+    at: String,
+    scope: Scope,
+    tokens: TokenComponents
+});
+dto!(DeviceReport {
+    format: String, schema_version: u32, device: DeviceIdentity,
+    generated_at: String, last_sync_at: Option<String>, files_indexed: u32,
+    excluded_events: u32, reason_codes: Vec<ReasonCode>, events: Vec<DeviceEvent>
+});
+dto!(DeviceSummary { device: DeviceIdentity, generated_at: String, last_sync_at: Option<String>, files_indexed: u32, records: u32, excluded_events: u32, reason_codes: Vec<ReasonCode> });
+dto!(DeviceDay { device_ref: Option<String>, scope: Scope, date_label: String, tokens: TokenComponents, events: u32 });
+dto!(DeviceUsage { devices: Vec<DeviceSummary>, daily: Vec<DeviceDay>, duplicate_events: u32, conflict_events: u32 });
+dto!(DeviceImportRequest {
+    report_json: String
+});
+dto!(DeviceRemoveRequest { device_ref: String });
+dto!(Dashboard { api_version: String, data_mode: DataMode, display_timezone: String, providers: Vec<Provider>, account_rows: Vec<LedgerRow>, local_rows: Vec<LedgerRow>, comparisons: Vec<ComparisonResult>, quota: Option<QuotaSnapshot>, models: Vec<LocalModel>, sessions: Vec<LocalSession>, runtime: RuntimeInfo, collector: Option<CollectorSummary>, account: Option<AccountSummary>, device_usage: Option<DeviceUsage> });
 dto!(DashboardQuery {
     scenario: DemoScenario
 });

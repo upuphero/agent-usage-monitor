@@ -6,12 +6,13 @@ import assert from 'node:assert/strict';
 const migration = readFileSync(new URL('../crates/monitor-adapters/migrations/001_dual_ledger.sql', import.meta.url), 'utf8');
 const localMigration = readFileSync(new URL('../crates/monitor-adapters/migrations/002_incremental_local.sql', import.meta.url), 'utf8');
 const accountMigration = readFileSync(new URL('../crates/monitor-adapters/migrations/003_account_reader.sql', import.meta.url), 'utf8');
+const deviceMigration = readFileSync(new URL('../crates/monitor-adapters/migrations/004_device_reports.sql', import.meta.url), 'utf8');
 test('SQLite migration creates the isolated dual-ledger schema transactionally', () => {
   const db = new DatabaseSync(':memory:');
   try {
-    db.exec('PRAGMA foreign_keys=ON; BEGIN;'); db.exec(migration); db.exec(localMigration); db.exec(accountMigration); db.exec('PRAGMA user_version=3; COMMIT;');
-    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 3);
-    for (const table of ['accounts', 'source_checkpoints', 'local_usage_events', 'local_daily', 'server_daily_snapshots', 'quota_snapshots', 'calibration_runs', 'attribution_results', 'app_settings', 'app_audit', 'local_streams', 'local_raw_snapshots', 'local_source_snapshots', 'account_reader_state']) {
+    db.exec('PRAGMA foreign_keys=ON; BEGIN;'); db.exec(migration); db.exec(localMigration); db.exec(accountMigration); db.exec(deviceMigration); db.exec('PRAGMA user_version=4; COMMIT;');
+    assert.equal(db.prepare('PRAGMA user_version').get().user_version, 4);
+    for (const table of ['accounts', 'source_checkpoints', 'local_usage_events', 'local_daily', 'server_daily_snapshots', 'quota_snapshots', 'calibration_runs', 'attribution_results', 'app_settings', 'app_audit', 'local_streams', 'local_raw_snapshots', 'local_source_snapshots', 'account_reader_state', 'device_reports']) {
       assert.equal(db.prepare('SELECT count(*) AS count FROM sqlite_master WHERE type=? AND name=?').get('table', table).count, 1);
     }
     db.exec("INSERT INTO accounts VALUES ('codex','demo','verified');");
@@ -64,5 +65,19 @@ test('Schema 1 upgrade preserves cached data and admits known total with missing
     db.prepare('INSERT INTO local_daily VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)').run('partial','codex','codex-local',null,'2026-10-01','2026-10-02T00:00:00Z','observed',null,null,7,2,null,9,'{}');
     assert.equal(db.prepare("SELECT text_total FROM local_daily WHERE row_id='partial'").get().text_total, 9);
     assert.equal(db.prepare('SELECT count(*) AS count FROM schema_migrations').get().count, 2);
+  } finally { db.close(); }
+});
+
+test('Schema 3 device migration preserves login preferences, cached histories and installation identity', () => {
+  const db = new DatabaseSync(':memory:');
+  try {
+    db.exec(migration); db.exec(localMigration); db.exec(accountMigration);
+    db.exec("INSERT INTO app_meta VALUES ('installation-ref','preserved-device'); INSERT INTO app_settings VALUES ('account-query-enabled','false'); PRAGMA user_version=3;");
+    db.exec('BEGIN;'); db.exec(deviceMigration); db.exec('PRAGMA user_version=4; COMMIT;');
+    assert.equal(db.prepare("SELECT value FROM app_meta WHERE key='installation-ref'").get().value,'preserved-device');
+    assert.equal(db.prepare("SELECT value FROM app_settings WHERE key='account-query-enabled'").get().value,'false');
+    assert.equal(db.prepare('SELECT count(*) AS count FROM schema_migrations').get().count,4);
+    db.prepare('INSERT INTO device_reports VALUES (?,?,?)').run('device','2026-10-01T00:00:00Z','{}');
+    assert.throws(() => db.prepare('INSERT INTO device_reports VALUES (?,?,?)').run('bad','date','invalid-json'));
   } finally { db.close(); }
 });

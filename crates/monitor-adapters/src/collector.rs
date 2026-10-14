@@ -77,7 +77,8 @@ pub fn default_homes() -> Vec<PathBuf> {
     std::env::var_os("CODEX_HOME")
         .map(PathBuf::from)
         .or_else(|| {
-            std::env::var_os("USERPROFILE").map(|profile| PathBuf::from(profile).join(".codex"))
+            std::env::var_os(if cfg!(windows) { "USERPROFILE" } else { "HOME" })
+                .map(|profile| PathBuf::from(profile).join(".codex"))
         })
         .into_iter()
         .collect()

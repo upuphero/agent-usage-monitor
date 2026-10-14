@@ -59,7 +59,7 @@ describe('independent dual ledger contract', () => {
     expect(segments).toHaveLength(2);
   });
   it('sanitizes transport errors and selects browser memory explicitly', async () => {
-    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.3.2', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
+    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.4.0', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
     expect(safeError({ code: 'STORAGE', message: 'private SQL' }).message).not.toContain('private');
     expect((await createClient(false)) instanceof SyntheticClient).toBe(true);
   });
@@ -69,17 +69,17 @@ describe('synthetic UI integration', () => {
   const data = parseDashboard(fixtures.ready);
   const props = { data, provider: 'codex', date: '2026-10-11', timezone: 'America/Phoenix' };
   const render = (element: React.ReactNode, language: 'zh' | 'en' = 'zh') => renderToStaticMarkup(<I18nProvider initialLanguage={language}>{element}</I18nProvider>);
-  it('renders two ledgers, unavailable quota and explicit uncalibrated status', () => {
+  it('separates quota from local Tokens and removes account comparison cards', () => {
     const html = render(<Overview {...props} />);
-    expect(html).toContain('账号服务端账本'); expect(html).toContain('Windows 本机账本');
-    expect(html).toContain('未报告'); expect(html).toContain('真实校准未执行');
+    expect(html).toContain('账号额度'); expect(html).toContain('Windows 已观测部分');
+    expect(html).toContain('未报告'); expect(html).not.toContain('未归因诊断差值'); expect(html).not.toContain('series-account');
     expect(html).not.toContain('总用量');
   });
   it('renders missing and inconsistent scenarios without inventing values', () => {
     const missing = render(<Overview {...props} data={parseDashboard(fixtures.missing)} />);
-    expect(missing).toContain('减法已阻断'); expect(missing).toContain('未知');
+    expect(missing).toContain('本机 Token 组成'); expect(missing).not.toContain('减法已阻断');
     const negative = render(<Overview {...props} data={parseDashboard(fixtures.negative)} />);
-    expect(negative).toContain('负差值'); expect(negative).toContain('-');
+    expect(negative).not.toContain('负差值'); expect(negative).not.toContain('未归因诊断差值');
   });
   it('renders history revisions, local-only sessions, quality and independent settings', () => {
     expect(render(<History {...props} />)).toContain('同日旧版本保留');
@@ -89,7 +89,7 @@ describe('synthetic UI integration', () => {
   });
   it('shows no data for planned providers and supports English', () => {
     expect(render(<Overview {...props} provider="claude-code" />)).toContain('当前范围尚无数据');
-    expect(render(<Overview {...props} />, 'en')).toContain('Account server ledger');
+    expect(render(<Overview {...props} />, 'en')).toContain('Account quota');
   });
 });
 

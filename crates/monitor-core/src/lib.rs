@@ -1,6 +1,7 @@
 use chrono::{DateTime, Duration, NaiveDate};
 use monitor_contracts::*;
 
+pub mod devices;
 pub mod local;
 
 pub fn error(code: ErrorCode, message: &str) -> ApiError {

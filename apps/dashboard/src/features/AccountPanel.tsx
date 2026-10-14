@@ -21,12 +21,12 @@ export function AccountStatus({ data, timezone }: { data: Dashboard; timezone: s
   const successfulRange = account.historyError === null && account.historyFetchedAt !== null && Number.isFinite(rangeStart) && Number.isFinite(rangeEnd) && rangeEnd >= rangeStart && rangeEnd - rangeStart < 31 * 86400000;
   const returnedDates = new Set(data.accountRows.filter(row => Date.parse(row.source.collectedAt) === Date.parse(account.historyFetchedAt!)).map(row => row.day.dateLabel));
   const scopeMissing = successfulRange ? Array.from({ length: (rangeEnd - rangeStart) / 86400000 + 1 }, (_, index) => new Date(rangeStart + index * 86400000).toISOString().slice(0, 10)).filter(date => !returnedDates.has(date)) : account.missingDates;
-  return <Notice title={t(...label)}><p>{t('服务端日期标签、产品覆盖和回填水位尚未验证；客户端应用类型不能区分 Windows 与 Mac。', 'Server date labels, product coverage and backfill finality are unverified. Client application types cannot distinguish Windows from Mac.')}</p>
+  return <Notice title={t(...label)}><p>{t('账号额度由登录账号共享。Windows / Mac 的 Token 请看设备日志统计。', 'Account quota is shared by the signed-in account. See device logs for Windows / Mac Tokens.')}</p><details><summary>{t('账号查询详情', 'Account query details')}</summary><p>{t('账号历史按服务器返回的日期保存，在使用历史中单独查看。服务器的客户端分类不能确定执行设备。', 'Account history retains server date labels and appears separately in usage history. Server client categories do not identify execution devices.')}</p>
     <p className="small">{t('匿名账号', 'Anonymous account')}: {account.accountRef?.slice(-12) ?? '—'} · {t('历史采集', 'History captured')}: {formatTime(account.historyFetchedAt, timezone, locale)} · {t('额度采集', 'Quota captured')}: {formatTime(account.quotaFetchedAt, timezone, locale)} · {timezone}</p>
     {scopeMissing.length > 0 && <p>{t('最近请求中当前产品范围未返回的日期', 'Dates absent for this product scope in the latest request')}: {scopeMissing.join(', ')} · {t('缺失不补零；旧快照保留', 'Missing is not zero; prior snapshots retained')}</p>}
     {(account.historyError || account.quotaError) && <p className="small">{t('历史状态', 'History status')}: {account.historyError ?? 'OK'} · {t('额度状态', 'Quota status')}: {account.quotaError ?? '—'}</p>}
     {account.nextAllowedAt && <p className="small">{t('下次允许请求', 'Next request allowed')}: {formatTime(account.nextAllowedAt, timezone, locale)}</p>}
-  </Notice>;
+  </details></Notice>;
 }
 
 export interface AccountActions { onSetAccountQueries?: (enabled: boolean) => Promise<void>; onSyncAccount?: (request: AccountSyncRequest) => Promise<void>; accountBusy?: boolean }

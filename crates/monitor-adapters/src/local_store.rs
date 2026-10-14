@@ -504,8 +504,6 @@ impl Store {
             ReasonCode::IdentityUnknown,
             ReasonCode::CoverageIncomplete,
             ReasonCode::ProductScopeUnverified,
-            ReasonCode::AccountLedgerUnavailable,
-            ReasonCode::CalibrationNotRun,
         ];
         let mut issues = self
             .connection
@@ -631,6 +629,7 @@ impl Store {
             },
             collector: Some(collector),
             account: None,
+            device_usage: None,
         })
     }
 }

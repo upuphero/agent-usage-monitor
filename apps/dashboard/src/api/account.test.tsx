@@ -63,12 +63,12 @@ describe('observed account cache and UI', () => {
     const data = parseDashboard(dashboard()); const props = { data, provider: 'codex', date: '2026-10-11', timezone: 'America/Phoenix' };
     const overview = render(<Overview {...props} />);
     expect(overview).toContain('36.5%'); expect(overview).toContain('过期缓存'); expect(overview).toContain('未报告');
-    expect(overview).toContain('OFFLINE'); expect(overview).toContain('缺失不补零'); expect(overview).toContain('口径未对齐');
+    expect(overview).toContain('OFFLINE'); expect(overview).toContain('缺失不补零'); expect(overview).not.toContain('口径未对齐'); expect(overview).not.toContain('series-account');
     expect(overview).not.toContain('合成服务端观测'); expect(overview).not.toContain('账号额度尚无快照');
     const history = render(<History {...props} />);
     expect(history).toContain('账号追加快照'); expect(history).toContain('同日旧版本保留'); expect(history).toContain('server-date-label');
     expect(history).toContain('本机 UTC 日账本');
-    expect(render(<Quality {...props} />)).toContain('日界线未验证');
+    expect(render(<Quality {...props} />)).toContain('有效增量事件');
   });
   it('has explicit desktop consent and date bounds; browser cannot query accounts', async () => {
     const data = dashboard(); data.account!.enabled = false;

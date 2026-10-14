@@ -2107,7 +2107,7 @@ dependencies = [
 
 [[package]]
 name = "monitor-adapters"
-version = "0.3.2"
+version = "0.4.0"
 dependencies = [
  "chrono",
  "monitor-contracts",
@@ -2122,8 +2122,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "monitor-collector"
+version = "0.4.0"
+dependencies = [
+ "monitor-adapters",
+ "monitor-contracts",
+ "monitor-core",
+ "serde_json",
+]
+
+[[package]]
 name = "monitor-contracts"
-version = "0.3.2"
+version = "0.4.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -2131,7 +2141,7 @@ dependencies = [
 
 [[package]]
 name = "monitor-core"
-version = "0.3.2"
+version = "0.4.0"
 dependencies = [
  "chrono",
  "monitor-contracts",
@@ -2142,7 +2152,7 @@ dependencies = [
 
 [[package]]
 name = "monitor-desktop"
-version = "0.3.2"
+version = "0.4.0"
 dependencies = [
  "chrono",
  "monitor-adapters",

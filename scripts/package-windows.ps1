@@ -16,6 +16,8 @@ if ($localSmoke.ExitCode -ne 0) { throw 'Packaged application incremental collec
 New-Item -ItemType Directory -Path $artifactDirectory, $portableDirectory -Force | Out-Null
 Copy-Item -LiteralPath $installers[0].FullName -Destination (Join-Path $artifactDirectory "Agent-Usage-Monitor_${version}_x64-setup.exe")
 Copy-Item -LiteralPath $binary -Destination $portableDirectory
+Copy-Item -LiteralPath (Join-Path $projectRoot 'target\release\monitor-collector.exe') -Destination $portableDirectory
+Copy-Item -LiteralPath (Join-Path $projectRoot 'docs\device-collection.md') -Destination $portableDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE') -Destination $portableDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'THIRD_PARTY_NOTICES.md') -Destination $portableDirectory
 $portableZip = Join-Path $artifactDirectory "Agent-Usage-Monitor_${version}_x64-portable.zip"

@@ -4,13 +4,15 @@ use rusqlite::{params, Connection, OptionalExtension, Transaction};
 use std::path::Path;
 mod account_store;
 pub mod collector;
+mod device_store;
 mod local_store;
 pub mod server;
 
-pub const SCHEMA_VERSION: u32 = 3;
+pub const SCHEMA_VERSION: u32 = 4;
 const MIGRATION: &str = include_str!("../migrations/001_dual_ledger.sql");
 const MIGRATION_LOCAL: &str = include_str!("../migrations/002_incremental_local.sql");
 const MIGRATION_ACCOUNT: &str = include_str!("../migrations/003_account_reader.sql");
+const MIGRATION_DEVICES: &str = include_str!("../migrations/004_device_reports.sql");
 pub struct Store {
     connection: Connection,
 }
@@ -47,6 +49,11 @@ fn migrate(connection: &mut Connection, migration: &str) -> Result<(), ApiError>
     if version < 3 {
         transaction
             .execute_batch(MIGRATION_ACCOUNT)
+            .map_err(storage_error)?;
+    }
+    if version < 4 {
+        transaction
+            .execute_batch(MIGRATION_DEVICES)
             .map_err(storage_error)?;
     }
     transaction
@@ -224,6 +231,7 @@ impl Store {
         if scenario == DemoScenario::Local {
             let mut dashboard = self.local_dashboard()?;
             self.populate_account(&mut dashboard)?;
+            dashboard.device_usage = Some(self.device_usage()?);
             return Ok(dashboard);
         }
         let mut dashboard = demo(scenario)?;

@@ -1,10 +1,10 @@
 [workspace]
-members = ["crates/monitor-contracts", "crates/monitor-core", "crates/monitor-adapters", "apps/desktop/src-tauri"]
-default-members = ["crates/monitor-contracts", "crates/monitor-core", "crates/monitor-adapters"]
+members = ["crates/monitor-contracts", "crates/monitor-core", "crates/monitor-adapters", "crates/monitor-collector", "apps/desktop/src-tauri"]
+default-members = ["crates/monitor-contracts", "crates/monitor-core", "crates/monitor-adapters", "crates/monitor-collector"]
 resolver = "2"
 
 [workspace.package]
-version = "0.3.2"
+version = "0.4.0"
 edition = "2021"
 rust-version = "1.91"
 license = "MIT"

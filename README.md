@@ -2,15 +2,17 @@
 
 一个容纳多家 Agent 服务的独立 Windows 用量分析应用。沿用 Agent Usage Dashboard 的深灰、薄荷绿 UI，首先建立 Codex 账号与 Windows 本机双账本；后续服务商通过独立适配器接入。
 
-## B 阶段状态
+## 0.4.0：账号额度和设备日志分开
 
-当前版本 `0.3.2` 的账号查询默认开启，首次启动会显示用途说明并提供立即关闭选项。设置页“账号查询”这一行有真正可点击的开关；开启后启动自动同步最近七天，关闭选择在重启后保留。可以选择最多 31 个日期手动同步；刷新视图只读缓存，没有定时采样。
+概览分别显示账号的 5 小时/每周额度、Windows 日志 Token、Mac 日志 Token、设备日志去重汇总。账号历史在使用历史页单独展开，曲线只画本机日志。不通过账号减 Windows 推算 Mac；未导入 Mac 日志时显示“未接入”。日志日期选择只来自设备记录，右侧组成使用所选 UTC 日期。
 
-账号总范围 `codex-account` 与 Desktop/CLI 等客户端范围分开筛选，快照版本不相加。服务端日期标签、覆盖和回填水位保持未验证；本机日志身份不自动绑定到登录账号，真实差分及设备归因仍未开放。额度按实际窗口时长识别，缺失 5 小时窗口不构造数值；过期、关闭查询或请求失败的缓存明确标记并显示采集时间。
+Windows 桌面端同步本机日志，设置中支持导出、导入和移除设备报告。Mac 的独立命令行采集器读取本机 Codex 日志并生成 JSON，复制到 Windows 后导入；Apple Silicon / Intel 二进制随同版本 Release 发布，不需要 Rust。便携版同时附 Windows 采集器。详细步骤和汇总边界见 [device-collection.md](docs/device-collection.md)。
 
-后端只允许对 `https://chatgpt.com` 的历史、额度两条固定路由发送 GET，验证 TLS，禁用重定向，限制超时和响应大小。首次说明处理前不读取登录；同步时短暂读取官方 Codex 已有登录，不自行刷新登录、不向前端或数据库传递凭据。关闭后阻止后续请求并拒绝提交未完成同步。账号切换隔离历史和额度；401/403/404/429、断网和不兼容响应均保留已有账本。
+报告只包含匿名事件标记、UTC 时间、Token 和采集状态，不含对话正文、路径、工具输入、模型或登录信息。相同报告幂等，新报告按设备替换，旧报告拒绝覆盖；相同观察去重，冲突排除。统计代表日志所覆盖部分，复制日志的采集设备不等于执行设备，不能保证全部请求都被识别或完整设备消费。主线程和子代理独立选择。
 
-[`v0.3.2` Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.3.2) 已公开，安装版、便携版和校验文件分别下载；完整 CI、发布及本机便携合成检查通过。验证见 [release-validation.md](docs/release-validation.md)，`0.3.0` 的 [B 记录](docs/b-validation.md) 单独保留。
+账号查询保持 0.3.2 的首次说明、默认开启及可关闭选择；额度使用现有账号查询接口，独立于日志 Token。首次说明处理前不读取登录；关闭后停止后续请求并保留缓存。后端固定 GET、TLS 校验、无重定向，凭据只在内存短暂使用。账号历史、额度与设备日志互不相加。
+
+Schema 4 保留两个历史账本、账号快照、增量检查点、安装标记和关闭选择；仅新增设备报告表。CI 在 Linux、Windows 和两种 Mac 架构测试，再发布不可变版本 tag 的 Release。当前开发验证和构建使用合成日志；没有读取你的 Mac 或查询真实账号。
 
 ## A 阶段本机账本
 
@@ -51,7 +53,7 @@ cargo clippy --all-targets --locked -- -D warnings
 pnpm desktop:build
 ```
 
-GitHub Actions 在 Linux 执行前端与核心验证，在 Windows 编译、测试并打包 NSIS 安装包和便携 ZIP，附 SHA-256 校验值。main 的验证全部通过后，自动按 `package.json` 版本创建 `v版本号` tag 和 GitHub Release，安装版 `.exe`、便携版 `.zip`、`SHA256SUMS.txt` 分别提供下载。PR 不发布；已有版本 tag 不移动，修改代码再次发布必须增加版本号。
+GitHub Actions 在 Linux 执行前端与核心验证，在 Windows 编译、测试并打包 NSIS 安装包和便携 ZIP，在 Mac ARM64/Intel 原生测试并打包采集器，附 SHA-256 校验值。main 的验证全部通过后，自动按 `package.json` 版本创建 `v版本号` tag 和 GitHub Release，安装版 `.exe`、便携版 `.zip`、两种 Mac 采集器 `.tar.gz`、`SHA256SUMS.txt` 分别提供下载。PR 不发布；已有版本 tag 不移动，修改代码再次发布必须增加版本号。
 
 ## 工程入口
 
@@ -61,6 +63,7 @@ GitHub Actions 在 Linux 执行前端与核心验证，在 Windows 编译、测�
 | `apps/desktop/src-tauri` | 独立窗口、SQLite 组装与最小 IPC |
 | `crates/monitor-contracts` | Rust DTO，生成前端类型 |
 | `crates/monitor-core` | Token 校验、双账本比较、阻断理由 |
+| `crates/monitor-collector` | Windows/Mac/Linux 独立日志采集器 |
 | `crates/monitor-adapters` | 增量日志、账号只读适配、事务迁移与追加快照 |
 | `tests/fixtures` | 可复现合成数据，无真实账号或日志 |
 

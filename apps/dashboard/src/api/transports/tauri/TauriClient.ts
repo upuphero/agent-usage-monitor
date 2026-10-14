@@ -12,4 +12,7 @@ export class TauriClient implements UsageClient {
   async setLocalRoots(roots: string[]) { await invoke(COMMANDS.setLocalRoots, { request: { roots } }); }
   async setAccountQueries(enabled: boolean) { await invoke(COMMANDS.setAccountQueries, { request: { enabled } }); }
   async syncAccount(request: AccountSyncRequest) { return invoke<AccountSummary>(COMMANDS.syncAccount, { request }); }
+  async exportDeviceReport() { return invoke<string>(COMMANDS.exportDeviceReport); }
+  async importDeviceReport(reportJson: string) { await invoke(COMMANDS.importDeviceReport, { request: { reportJson } }); }
+  async removeDeviceReport(deviceRef: string) { await invoke(COMMANDS.removeDeviceReport, { request: { deviceRef } }); }
 }
