@@ -1,3 +1,35 @@
+# 0.4.0 设备日志与独立账号额度验证
+
+日期：2026-10-13（America/Phoenix）。用户明确要求参考 CodexBar，将账号额度和本机 Token 分开；Windows/Mac 各自采集日志再汇总，不通过差值猜 Mac，并分别发布安装版、便携版及版本 tag。
+
+构建提交：`43404104513b286d9c3159c38904587cab745824`。当前 [CI 38507237929](https://github.com/upuphero/agent-usage-monitor/actions/runs/38507237929) 的公共验证、Windows、两种 Mac 原生构建和 Release 发布全部通过。[v0.4.0 Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.4.0) 已公开，tag 精确指向该构建提交。
+
+- 账号额度独立面板；本机趋势不再绘制账号线，移除差值卡片与设备归因阻断提示。账号旧历史在使用历史中单独展开，所选日期只来自日志。
+- Schema 4 保留旧账本、开关、安装身份和检查点，新增设备报告表。Windows 桌面支持导出/导入/移除；Mac ARM64/Intel 有同协议独立采集器。
+- 报告白名单、复制去重、冲突排除、未知分量与大整数、按范围/UTC 日归档、旧/同时间冲突快照拒绝覆盖、重启恢复、隐私字段不导出、CLI 稳定身份和输出不覆盖均有合成测试。首次同步取消后的已提交记录仍可展示和导出。
+- 公共验证：35 项前端测试、3 项源码边界、5 项实际 SQLite 迁移、2 项离线发布校验，TypeScript、ESLint、生产构建及 Linux 57 项、Windows 56 项、Mac ARM64/Intel 各 57 项 Rust 测试、全部严格 clippy 通过。
+- 本地浏览器用临时合成 UsageClient 检查真实 App 的概览与设置：Mac 未接入、导入文件后设备状态更新、去重汇总文案、移除入口、单一本机曲线；控制台无 error/warn。临时页面已删除，不进入公开提交。截图留在本机 `.local-data/qa-0.4.0`。
+- Mac CI 分别测试 native arm64 / Intel。发布只在全部测试和打包成功后创建精确提交的版本 tag；四个包和校验清单单独提供，公开 tag / 文件不可覆盖。
+
+本轮没有读取真实账号、访问用户的 Mac 或执行真实跨设备校准。平台标签表示日志采集地点；日志复制和不同观察形态不能证明所有请求的执行设备或完整消费。交互验证使用合成数据，原生 UI 下载保存/安装升级仍未手动验收。
+
+## 0.4.0 公开产物复核
+
+公开的四个包已下载到 `.local-data/release-0.4.0/published`，重新计算 SHA-256 与清单、GitHub asset digest 一致。Mac 两个压缩包的 Mach-O CPU 架构和可执行权限均检查通过，包含采集器、操作说明和许可证。
+
+| 文件 | 字节 | SHA-256 |
+| --- | ---: | --- |
+| `Agent-Usage-Monitor_0.4.0_x64-portable.zip` | 4481243 | `43f63b9b636efaec9322a7055a2f46561bf1a3b04bfcecf3d8f4f1ad59abef31` |
+| `Agent-Usage-Monitor_0.4.0_x64-setup.exe` | 2692762 | `fa2bff081e3f64a94f19e13e03ea2cc8a3dca0a8c350703f5d2cb83d8eeb2667` |
+| `Agent-Usage-Monitor_0.4.0_macos-arm64-collector.tar.gz` | 946062 | `cf8c474fe2486362a30307b978c0f894be2141511c85cb125052d82518adb537` |
+| `Agent-Usage-Monitor_0.4.0_macos-x64-collector.tar.gz` | 1018115 | `32d45d0a61233c0e2d05240ce5038361773ebf80f6d4dfc1d45092656dd6e9d4` |
+
+公开 Windows 便携包包含 monitor-desktop.exe、monitor-collector.exe、device-collection.md 和许可证。本机运行公开 desktop 的 --verify-synthetic-store、--verify-local-collector 均返回 0；再运行公开 collector，对明确指定的合成日志根目录输出 2 条去重记录、39 Token、Windows 平台。检查数据限定在 `.local-data/native-release-0.4.0`，没有读取真实日志或账号。NSIS 安装升级及完整原生窗口交互未手动执行。
+
+后续仅提交 Markdown 验证记录，不改变已测试的代码、版本 tag 或公开文件。
+
+---
+
 # 0.3.2 账号默认与 Release 验证
 
 日期：2026-10-13（America/Phoenix）。用户明确要求首次说明、账号查询默认开启、可点击的关闭开关，以及 CI 自动发布版本 tag / Release，安装版与便携版分开。`0.3.1` 的前端、Linux/Windows Rust、clippy 和打包已通过，但发布草稿的空格文件名被 GitHub 改名，触发校验阻断。`0.3.2` 统一无空格文件名后，完整 CI 和自动公开发布均已通过，既有 tag 未移动。

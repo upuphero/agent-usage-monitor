@@ -12,6 +12,8 @@ Windows 桌面端同步本机日志，设置中支持导出、导入和移除设
 
 账号查询保持 0.3.2 的首次说明、默认开启及可关闭选择；额度使用现有账号查询接口，独立于日志 Token。首次说明处理前不读取登录；关闭后停止后续请求并保留缓存。后端固定 GET、TLS 校验、无重定向，凭据只在内存短暂使用。账号历史、额度与设备日志互不相加。
 
+[v0.4.0 Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.4.0) 已公开，Windows 安装版、便携版、Mac Apple Silicon/Intel 采集器与 SHA-256 清单分别下载。[完整验证记录](docs/release-validation.md) 包含 CI、公开文件哈希与本机原生合成检查。
+
 Schema 4 保留两个历史账本、账号快照、增量检查点、安装标记和关闭选择；仅新增设备报告表。CI 在 Linux、Windows 和两种 Mac 架构测试，再发布不可变版本 tag 的 Release。当前开发验证和构建使用合成日志；没有读取你的 Mac 或查询真实账号。
 
 ## A 阶段本机账本
