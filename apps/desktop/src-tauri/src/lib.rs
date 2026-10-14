@@ -16,6 +16,7 @@ struct AppState {
     syncing: AtomicBool,
     cancel: AtomicBool,
     account_syncing: AtomicBool,
+    account_cancel: AtomicBool,
 }
 
 #[tauri::command]
@@ -97,14 +98,18 @@ fn set_account_queries(
     request: AccountQueriesRequest,
     state: tauri::State<'_, Arc<AppState>>,
 ) -> Result<(), ApiError> {
-    let guard = state
+    let mut guard = state
         .store
         .lock()
         .map_err(|_| error(ErrorCode::Storage, "Database is unavailable"))?;
     guard
-        .as_ref()
+        .as_mut()
         .map_err(|error| error.clone())?
-        .set_account_queries(request.enabled)
+        .set_account_queries(request.enabled)?;
+    if !request.enabled {
+        state.account_cancel.store(true, Ordering::Release);
+    }
+    Ok(())
 }
 
 #[tauri::command]
@@ -123,6 +128,7 @@ async fn sync_account(
         ));
     }
     let worker = state.inner().clone();
+    state.account_cancel.store(false, Ordering::Release);
     let result = tauri::async_runtime::spawn_blocking(move || {
         let now = chrono::Utc::now();
         {
@@ -178,7 +184,11 @@ async fn sync_account(
         }
         let fetched = match transport {
             Ok(transport) => {
-                monitor_adapters::server::fetch(&transport, &credentials, &request, summary, now)
+                let guarded = monitor_adapters::server::CancellableTransport {
+                    inner: &transport,
+                    cancel: &worker.account_cancel,
+                };
+                monitor_adapters::server::fetch(&guarded, &credentials, &request, summary, now)
             }
             Err(_) => monitor_adapters::server::fetch(
                 &OfflineTransport,
@@ -345,6 +355,7 @@ pub fn run() {
                 syncing: AtomicBool::new(false),
                 cancel: AtomicBool::new(false),
                 account_syncing: AtomicBool::new(false),
+                account_cancel: AtomicBool::new(false),
             }));
             Ok(())
         })
@@ -365,6 +376,9 @@ pub fn run() {
             ) {
                 app.state::<Arc<AppState>>()
                     .cancel
+                    .store(true, Ordering::Release);
+                app.state::<Arc<AppState>>()
+                    .account_cancel
                     .store(true, Ordering::Release);
             }
         });

@@ -5,7 +5,8 @@ import { API_VERSION, type Dashboard } from './generated/monitor';
 import { parseDashboard } from './client';
 import { I18nProvider } from '../i18n/I18nContext';
 import { History, Overview, Quality, Settings, selectDay } from '../features/DashboardPages';
-import { AccountSettings } from '../features/AccountPanel';
+import { AccountSettings, AccountQuerySwitch } from '../features/AccountPanel';
+import { AccountNotice } from '../features/AccountNotice';
 import { latestRows } from '../components/format';
 import { seriesPoints } from '../features/TrendChart';
 import { SyntheticClient } from './transports/mock/SyntheticClient';
@@ -72,9 +73,22 @@ describe('observed account cache and UI', () => {
   it('has explicit desktop consent and date bounds; browser cannot query accounts', async () => {
     const data = dashboard(); data.account!.enabled = false;
     const settings = render(<AccountSettings data={data} onSetAccountQueries={async () => {}} onSyncAccount={async () => {}} />);
-    expect(settings).toContain('允许手动查询'); expect(settings).toContain('最多 31'); expect(settings).toContain('非公开接口'); expect(settings).toContain('disabled');
+    expect(settings).toContain('上方“账号查询”开关'); expect(settings).toContain('最多 31'); expect(settings).toContain('非公开接口'); expect(settings).toContain('disabled');
     expect(new SyntheticClient().supportsAccountSync).toBe(false);
     await expect(new SyntheticClient().syncAccount()).rejects.toThrow();
     await expect(new SyntheticClient().setAccountQueries()).rejects.toThrow();
+  });
+  it('places an enabled switch on the account-query row and keeps it usable during a sync', () => {
+    const data = dashboard();
+    const html = render(<Settings data={data} timezone="UTC" setTimezone={() => {}} accountBusy onSetAccountQueries={async () => {}} onSyncAccount={async () => {}} />);
+    expect(html).toContain('role="switch"'); expect(html).toContain('aria-checked="true"');
+    expect(html).toContain('aria-label="账号查询"'); expect(html).not.toContain('type="checkbox"');
+    const control = render(<AccountQuerySwitch data={data} onSetAccountQueries={async () => {}} accountBusy />);
+    expect(control).not.toContain('disabled');
+  });
+  it('explains the default and provides an immediate off option in the first-use notice', () => {
+    const html = render(<AccountNotice onContinue={async () => {}} />);
+    expect(html).toContain('账号查询默认开启'); expect(html).toContain('chatgpt.com');
+    expect(html).toContain('关闭账号查询'); expect(html).toContain('开始使用（保持开启）');
   });
 });

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "0.3.0";
+pub const API_VERSION: &str = "0.3.1";
 pub const COMMANDS: &[(&str, &str)] = &[
     ("getDashboard", "get_dashboard"),
     ("syncLocal", "sync_local"),
@@ -240,6 +240,7 @@ dto!(RuntimeInfo {
     storage: String,
     installation_ref: String,
     network_enabled: bool,
+    account_notice_pending: bool,
     local_collection_enabled: bool
 });
 dto!(SyncReport { files_found: u32, files_parsed: u32, files_unchanged: u32, files_rebuilt: u32, new_snapshots: u32, duplicate_snapshots: u32, bytes_parsed: String, bytes_verified: String, partial_tails: u32, reason_codes: Vec<ReasonCode> });

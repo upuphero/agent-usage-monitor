@@ -125,6 +125,26 @@ pub trait Transport {
         credentials: &Credentials,
     ) -> Result<HttpReply, ApiError>;
 }
+pub struct CancellableTransport<'a, T> {
+    pub inner: &'a T,
+    pub cancel: &'a std::sync::atomic::AtomicBool,
+}
+impl<T: Transport> Transport for CancellableTransport<'_, T> {
+    fn get(
+        &self,
+        endpoint: Endpoint,
+        request: &AccountSyncRequest,
+        credentials: &Credentials,
+    ) -> Result<HttpReply, ApiError> {
+        if self.cancel.load(std::sync::atomic::Ordering::Acquire) {
+            return Err(error(
+                ErrorCode::NetworkDisabled,
+                "Account queries disabled",
+            ));
+        }
+        self.inner.get(endpoint, request, credentials)
+    }
+}
 pub struct HttpsTransport {
     client: reqwest::blocking::Client,
 }
@@ -135,7 +155,7 @@ impl HttpsTransport {
             .redirect(reqwest::redirect::Policy::none())
             .connect_timeout(Timeout::from_secs(10))
             .timeout(Timeout::from_secs(20))
-            .user_agent("AgentUsageMonitor/0.3.0")
+            .user_agent(concat!("AgentUsageMonitor/", env!("CARGO_PKG_VERSION")))
             .build()
             .map_err(|_| error(ErrorCode::Offline, "Account connection unavailable"))?;
         Ok(Self { client })
@@ -936,6 +956,8 @@ mod tests {
     #[test]
     fn disabled_queries_throttle_and_account_switches_are_enforced() {
         let mut store = store();
+        assert!(store.account_queries_enabled().unwrap());
+        assert!(store.account_notice_pending().unwrap());
         assert_eq!(
             store
                 .reserve_account_sync(&request(), now())
@@ -1069,5 +1091,100 @@ mod tests {
         );
         drop(store);
         std::fs::remove_file(path).unwrap();
+    }
+    #[test]
+    fn first_notice_gates_queries_and_an_explicit_off_choice_survives_reopen() {
+        let mut store = store();
+        let data = store.dashboard(DemoScenario::Local).unwrap();
+        assert!(data.runtime.network_enabled && data.runtime.account_notice_pending);
+        assert_eq!(
+            store
+                .reserve_account_sync(&request(), now())
+                .unwrap_err()
+                .code,
+            ErrorCode::NetworkDisabled
+        );
+        store.set_account_queries(false).unwrap();
+        let connection = store.connection;
+        let mut reopened = Store::initialize(connection).unwrap();
+        assert!(!reopened.account_queries_enabled().unwrap());
+        assert!(!reopened.account_notice_pending().unwrap());
+        assert_eq!(
+            reopened
+                .reserve_account_sync(&request(), now())
+                .unwrap_err()
+                .code,
+            ErrorCode::NetworkDisabled
+        );
+        reopened.set_account_queries(true).unwrap();
+        reopened.reserve_account_sync(&request(), now()).unwrap();
+    }
+    #[test]
+    fn old_opt_in_default_gets_one_notice_without_losing_cached_ledgers() {
+        let mut store = store();
+        store.seed_synthetic().unwrap();
+        let installation = store
+            .dashboard(DemoScenario::Ready)
+            .unwrap()
+            .runtime
+            .installation_ref;
+        store.connection.execute("DELETE FROM app_settings WHERE key IN ('account-default-policy-v1','account-notice-seen-v1')",[]).unwrap();
+        store
+            .connection
+            .execute(
+                "UPDATE app_settings SET value='false' WHERE key='account-query-enabled'",
+                [],
+            )
+            .unwrap();
+        let connection = store.connection;
+        let reopened = Store::initialize(connection).unwrap();
+        assert!(
+            reopened.account_queries_enabled().unwrap()
+                && reopened.account_notice_pending().unwrap()
+        );
+        let data = reopened.dashboard(DemoScenario::Ready).unwrap();
+        assert_eq!(data.runtime.installation_ref, installation);
+        assert_eq!(data.account_rows.len(), 8);
+    }
+    #[test]
+    fn cancelling_between_endpoints_stops_the_quota_request() {
+        use std::sync::atomic::{AtomicBool, Ordering};
+        struct CancelAfterHistory<'a> {
+            cancel: &'a AtomicBool,
+            calls: Cell<u32>,
+        }
+        impl Transport for CancelAfterHistory<'_> {
+            fn get(
+                &self,
+                _: Endpoint,
+                _: &AccountSyncRequest,
+                _: &Credentials,
+            ) -> Result<HttpReply, ApiError> {
+                self.calls.set(self.calls.get() + 1);
+                self.cancel.store(true, Ordering::Release);
+                Ok(HttpReply {
+                    status: 200,
+                    body: HISTORY.to_vec(),
+                    retry_after_seconds: None,
+                })
+            }
+        }
+        let cancel = AtomicBool::new(false);
+        let inner = CancelAfterHistory {
+            cancel: &cancel,
+            calls: Cell::new(0),
+        };
+        let transport = CancellableTransport {
+            inner: &inner,
+            cancel: &cancel,
+        };
+        let mut store = store();
+        store.set_account_queries(true).unwrap();
+        let credentials = credentials("synthetic-cancel");
+        let summary = store.bind_account(&credentials.account_ref()).unwrap();
+        let result = fetch(&transport, &credentials, &request(), summary, now());
+        assert_eq!(inner.calls.get(), 1);
+        assert!(!result.rows.is_empty());
+        assert_eq!(result.summary.quota_error, Some(ErrorCode::NetworkDisabled));
     }
 }

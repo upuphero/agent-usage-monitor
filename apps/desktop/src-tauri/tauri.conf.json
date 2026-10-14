@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Agent Usage Monitor", "version": "0.3.0", "identifier": "dev.agentusage.monitor",
+  "productName": "Agent Usage Monitor", "version": "0.3.1", "identifier": "dev.agentusage.monitor",
   "build": {
     "beforeDevCommand": "pnpm --filter @monitor/dashboard dev",
     "beforeBuildCommand": "pnpm --filter @monitor/dashboard build",

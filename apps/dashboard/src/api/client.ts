@@ -13,7 +13,7 @@ export function parseDashboard(payload: unknown): Dashboard {
   if (data?.apiVersion !== API_VERSION) throw { apiVersion: API_VERSION, code: 'API_VERSION_UNSUPPORTED', message: 'Unsupported contract version', retryable: false } satisfies ApiError;
   try {
     if (!['synthetic','observed'].includes(data.dataMode) || !Array.isArray(data.providers) || !Array.isArray(data.comparisons) || !Array.isArray(data.models) || !Array.isArray(data.sessions)
-      || typeof data.runtime.networkEnabled !== 'boolean' || !Array.isArray(data.accountRows) || !Array.isArray(data.localRows)) throw new Error('invalid mode');
+      || typeof data.runtime.networkEnabled !== 'boolean' || typeof data.runtime.accountNoticePending !== 'boolean' || !Array.isArray(data.accountRows) || !Array.isArray(data.localRows)) throw new Error('invalid mode');
     if (data.dataMode === 'synthetic' && (data.runtime.networkEnabled || data.account !== null)) throw new Error('invalid demo');
     if (data.dataMode === 'observed') {
       if (data.comparisons.length !== 0 || !data.collector || (data.runtime.networkEnabled && !data.account?.enabled)) throw new Error('invalid observed source');

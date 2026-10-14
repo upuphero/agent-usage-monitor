@@ -35,7 +35,7 @@ const reasons: Record<ReasonCode, [string, string]> = {
   FRESHNESS_UNKNOWN: ['回填水位未知', 'Freshness unknown'], NEGATIVE_RESIDUAL: ['存在负差值', 'Negative residual'],
   INVALID_TOKEN: ['Token 数值无效', 'Invalid Token value'], INCONSISTENT_COMPONENTS: ['分量口径矛盾', 'Inconsistent components'],
   NO_DATA: ['尚无数据', 'No data'], WINDOW_NOT_REPORTED: ['窗口未报告', 'Window not reported'], NETWORK_DISABLED: ['账号查询关闭', 'Account queries disabled'],
-  ACCOUNT_LEDGER_UNAVAILABLE: ['账号账本未接入', 'Account ledger not connected'], THREAD_IDENTITY_MISSING: ['线程身份缺失', 'Missing thread identity'],
+  ACCOUNT_LEDGER_UNAVAILABLE: ['当前范围尚无账号数据', 'No account data in this scope'], THREAD_IDENTITY_MISSING: ['线程身份缺失', 'Missing thread identity'],
   INITIAL_COUNTER_BASELINE: ['初始余额仅作为基线', 'Initial balance is baseline only'], COUNTER_RESET: ['计数回退；后续 epoch 未计入', 'Counter reset; later epoch excluded'],
   COUNTER_GAP: ['累计增量与响应不符', 'Counter delta and response disagree'], REPEATED_COUNTER_CONFLICT: ['重复累计状态存在矛盾', 'Conflicting repeated counter'],
   INHERITED_HISTORY: ['继承历史边界未核实', 'Inherited history boundary unverified'], CHILD_SCOPE_UNVERIFIED: ['子代理单独统计', 'Subagents reported separately'],

@@ -1,6 +1,6 @@
 {
   "ready": {
-    "apiVersion": "0.3.0",
+    "apiVersion": "0.3.1",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -1459,16 +1459,17 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.0",
+      "appVersion": "0.3.1",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
+      "accountNoticePending": false,
       "localCollectionEnabled": false
     }
   },
   "missing": {
-    "apiVersion": "0.3.0",
+    "apiVersion": "0.3.1",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -2939,16 +2940,17 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.0",
+      "appVersion": "0.3.1",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
+      "accountNoticePending": false,
       "localCollectionEnabled": false
     }
   },
   "negative": {
-    "apiVersion": "0.3.0",
+    "apiVersion": "0.3.1",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -4408,16 +4410,17 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.0",
+      "appVersion": "0.3.1",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
+      "accountNoticePending": false,
       "localCollectionEnabled": false
     }
   },
   "empty": {
-    "apiVersion": "0.3.0",
+    "apiVersion": "0.3.1",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -4464,16 +4467,17 @@
     "models": [],
     "sessions": [],
     "runtime": {
-      "appVersion": "0.3.0",
+      "appVersion": "0.3.1",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
       "networkEnabled": false,
+      "accountNoticePending": false,
       "localCollectionEnabled": false
     }
   },
   "local": {
-    "apiVersion": "0.3.0",
+    "apiVersion": "0.3.1",
     "dataMode": "observed",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -5263,11 +5267,12 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.0",
+      "appVersion": "0.3.1",
       "schemaVersion": 3,
       "storage": "monitor.sqlite3",
       "installationRef": "fixture-installation",
       "networkEnabled": false,
+      "accountNoticePending": false,
       "localCollectionEnabled": true
     }
   }

@@ -29,8 +29,19 @@ export function AccountStatus({ data, timezone }: { data: Dashboard; timezone: s
   </Notice>;
 }
 
-export interface AccountActions { onSetAccountQueries?: (enabled: boolean) => Promise<void>; onSyncAccount?: (request: AccountSyncRequest) => Promise<void> }
-export function AccountSettings({ data, onSetAccountQueries, onSyncAccount }: { data: Dashboard } & AccountActions) {
+export interface AccountActions { onSetAccountQueries?: (enabled: boolean) => Promise<void>; onSyncAccount?: (request: AccountSyncRequest) => Promise<void>; accountBusy?: boolean }
+export function AccountQuerySwitch({ data, onSetAccountQueries }: { data: Dashboard } & AccountActions) {
+  const { t } = useI18n(); const [saving, setSaving] = useState(false); const [error, setError] = useState('');
+  const enabled = data.account?.enabled === true;
+  return <div className="setting-row"><div><h3>{t('账号查询', 'Account queries')}</h3><p className="muted">{t('开启后，启动时自动读取账号用量和额度。关闭后保留已有数据。', 'When enabled, account usage and quotas sync on startup. Turning it off keeps existing data.')}</p>{error && <p role="alert" className="small">{error}</p>}</div>
+    <button className="account-query-switch" role="switch" aria-label={t('账号查询', 'Account queries')} aria-checked={enabled} disabled={!onSetAccountQueries || saving} onClick={() => {
+      if (!onSetAccountQueries) return;
+      setSaving(true); setError('');
+      void onSetAccountQueries(!enabled).catch(failure => setError(`${t('设置未保存', 'Setting not saved')}: ${safeError(failure).code}`)).finally(() => setSaving(false));
+    }}><span className="account-switch-track" aria-hidden="true"><i /></span><span>{saving ? t('保存中', 'Saving') : enabled ? t('开启', 'On') : t('关闭', 'Off')}</span></button>
+  </div>;
+}
+export function AccountSettings({ data, onSyncAccount, accountBusy = false }: { data: Dashboard } & AccountActions) {
   const { t } = useI18n(); const today = new Date().toISOString().slice(0, 10);
   const [startDate, setStartDate] = useState(() => new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10));
   const [endDate, setEndDate] = useState(today); const [busy, setBusy] = useState(false); const [status, setStatus] = useState('');
@@ -44,10 +55,10 @@ export function AccountSettings({ data, onSetAccountQueries, onSyncAccount }: { 
     finally { setBusy(false); }
   }
   return <Panel title={t('账号历史与额度', 'Account history and quotas')}>
-    <p className="small muted">{t('启用后，点击“同步账号快照”会在内存中读取官方 Codex 已有登录并向 chatgpt.com 查询历史和额度。使用非公开接口，可能变化或受账号权限、服务条款限制。默认关闭；不会自动刷新登录或定时请求。', 'After enabling, Sync account snapshots reads the existing official Codex login in memory and queries chatgpt.com for history and quotas. These private endpoints may change or be restricted by account permissions and service terms. Disabled by default; no login refresh or scheduled requests.')}</p>
-    {onSetAccountQueries && onSyncAccount ? <>
-      <label className="setting-row"><span>{t('允许手动查询账号历史与额度', 'Allow manual account history and quota queries')}</span><input type="checkbox" checked={enabled} disabled={busy} onChange={event => { const checked = event.target.checked; void run(() => onSetAccountQueries(checked)); }} /></label>
-      <div className="monitor-toolbar"><label>{t('开始日期标签', 'Start date label')}<input type="date" value={startDate} disabled={busy} onChange={event => setStartDate(event.target.value)} /></label><label>{t('结束日期标签（包含）', 'End date label (inclusive)')}<input type="date" value={endDate} disabled={busy} onChange={event => setEndDate(event.target.value)} /></label><button className="button" disabled={!enabled || busy || !validRange} onClick={() => void run(() => onSyncAccount({ startDate, endDate }))}>{busy ? t('操作进行中…', 'Working…') : t('同步账号快照', 'Sync account snapshots')}</button></div>
+    <p className="small muted">{t('开启账号查询后，启动时自动同步最近七天。这里可以选择其他日期，手动更新账号数据。使用非公开接口，可能变化或受账号权限、服务条款限制。', 'With account queries enabled, the last seven days sync on startup. Choose other dates here to update account data manually. These private endpoints may change or be restricted by account permissions and service terms.')}</p>
+    {onSyncAccount ? <>
+      {!enabled && <p className="small muted">{t('账号查询已关闭。请使用上方“账号查询”开关开启。', 'Account queries are off. Use the Account queries switch above to enable them.')}</p>}
+      <div className="monitor-toolbar"><label>{t('开始日期标签', 'Start date label')}<input type="date" value={startDate} disabled={busy || accountBusy} onChange={event => setStartDate(event.target.value)} /></label><label>{t('结束日期标签（包含）', 'End date label (inclusive)')}<input type="date" value={endDate} disabled={busy || accountBusy} onChange={event => setEndDate(event.target.value)} /></label><button className="button" disabled={!enabled || busy || accountBusy || !validRange} onClick={() => void run(() => onSyncAccount({ startDate, endDate }))}>{busy || accountBusy ? t('正在查询账号…', 'Querying account…') : t('同步账号数据', 'Sync account data')}</button></div>
       <p className="panel-footnote">{t('单次最多 31 个日期；每次请求至少间隔 60 秒，服务端限流可能要求更久。历史与额度状态分别记录，刷新视图只读缓存。', 'At most 31 dates per sync; requests are at least 60 seconds apart and server rate limits may require longer. History and quota statuses are separate. Refresh view reads cache only.')}</p>
     </> : <p>{t('浏览器预览只读；手动账号同步需要桌面端。', 'Browser previews are read-only; manual account synchronization requires desktop.')}</p>}
     {status && <p role="status" className="small">{status}</p>}

@@ -626,6 +626,7 @@ impl Store {
                     .meta("installation-ref")?
                     .ok_or_else(|| error(ErrorCode::Storage, "Installation identity missing"))?,
                 network_enabled: false,
+                account_notice_pending: false,
                 local_collection_enabled: true,
             },
             collector: Some(collector),

@@ -1,4 +1,4 @@
-name: Validate and package
+name: Validate, package and release
 on:
   push:
     branches: [main]
@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: p0-${{ github.ref }}
+  group: monitor-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   validate:
@@ -67,3 +67,23 @@ jobs:
           if-no-files-found: error
           retention-days: 14
           compression-level: 0
+  release:
+    needs: [validate, windows]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Publish version tag and separate Windows release assets
+        shell: pwsh
+        run: |
+          gh run download $env:GITHUB_RUN_ID --repo $env:GITHUB_REPOSITORY --name "agent-usage-monitor-windows-$env:GITHUB_SHA" --dir artifacts/windows
+          if ($LASTEXITCODE -ne 0) { throw 'Could not download validated Windows packages' }
+          ./scripts/publish-release.ps1 -ArtifactDirectory artifacts/windows -Commit $env:GITHUB_SHA -Repository $env:GITHUB_REPOSITORY

@@ -1,6 +1,6 @@
 {
   "name": "agent-usage-monitor",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "packageManager": "pnpm@9.15.0",
   "engines": { "node": ">=24.19.0 <25" },
@@ -14,8 +14,9 @@
     "contracts:check": "node scripts/generate-contracts.mjs --check",
     "boundaries:check": "node --test scripts/boundaries.test.mjs",
     "migrations:test": "node --test scripts/migrations.test.mjs",
+    "release:test": "node --test scripts/release.test.mjs",
     "desktop:dev": "pnpm --filter @monitor/desktop dev",
     "desktop:build": "pnpm --filter @monitor/desktop build --no-bundle",
-    "check": "pnpm contracts:check && pnpm boundaries:check && pnpm migrations:test && pnpm typecheck && pnpm lint && pnpm test && pnpm build"
+    "check": "pnpm contracts:check && pnpm boundaries:check && pnpm migrations:test && pnpm release:test && pnpm typecheck && pnpm lint && pnpm test && pnpm build"
   }
 }

@@ -29,6 +29,37 @@ fn empty_summary(enabled: bool) -> AccountSummary {
     }
 }
 impl Store {
+    /// Adopt the user-requested default once, including upgrades from the old opt-in default.
+    pub(crate) fn initialize_account_defaults(&mut self) -> Result<(), ApiError> {
+        let initialized: bool = self
+            .connection
+            .query_row(
+                "SELECT EXISTS(SELECT 1 FROM app_settings WHERE key='account-default-policy-v1')",
+                [],
+                |row| row.get(0),
+            )
+            .map_err(storage_error)?;
+        if initialized {
+            return Ok(());
+        }
+        let transaction = self.connection.transaction().map_err(storage_error)?;
+        transaction
+            .execute(
+                "UPDATE app_settings SET value='true' WHERE key='account-query-enabled'",
+                [],
+            )
+            .map_err(storage_error)?;
+        transaction
+            .execute(
+                "INSERT INTO app_settings VALUES ('account-default-policy-v1','true')",
+                [],
+            )
+            .map_err(storage_error)?;
+        transaction.commit().map_err(storage_error)
+    }
+    pub fn account_notice_pending(&self) -> Result<bool, ApiError> {
+        self.connection.query_row("SELECT NOT EXISTS(SELECT 1 FROM app_settings WHERE key='account-notice-seen-v1' AND value='true')", [], |row| row.get(0)).map_err(storage_error)
+    }
     pub fn account_queries_enabled(&self) -> Result<bool, ApiError> {
         let value: String = self
             .connection
@@ -40,14 +71,16 @@ impl Store {
             .map_err(storage_error)?;
         Ok(value == "true")
     }
-    pub fn set_account_queries(&self, enabled: bool) -> Result<(), ApiError> {
-        self.connection
+    pub fn set_account_queries(&mut self, enabled: bool) -> Result<(), ApiError> {
+        let transaction = self.connection.transaction().map_err(storage_error)?;
+        transaction
             .execute(
                 "UPDATE app_settings SET value=?1 WHERE key='account-query-enabled'",
                 [if enabled { "true" } else { "false" }],
             )
             .map_err(storage_error)?;
-        Ok(())
+        transaction.execute("INSERT INTO app_settings VALUES ('account-notice-seen-v1','true') ON CONFLICT(key) DO UPDATE SET value=excluded.value", []).map_err(storage_error)?;
+        transaction.commit().map_err(storage_error)
     }
     /// Reserve a bounded request slot before any credential file is opened.
     pub fn reserve_account_sync(
@@ -56,7 +89,7 @@ impl Store {
         now: DateTime<Utc>,
     ) -> Result<(), ApiError> {
         server::validate_range(request)?;
-        if !self.account_queries_enabled()? {
+        if !self.account_queries_enabled()? || self.account_notice_pending()? {
             return Err(error(
                 ErrorCode::NetworkDisabled,
                 "Enable account queries before synchronizing",
@@ -260,6 +293,7 @@ impl Store {
     pub fn populate_account(&self, dashboard: &mut Dashboard) -> Result<(), ApiError> {
         let summary = self.account_summary()?;
         dashboard.runtime.network_enabled = summary.enabled;
+        dashboard.runtime.account_notice_pending = self.account_notice_pending()?;
         dashboard.providers[0].capabilities.account_ledger = true;
         if let Some(account) = &summary.account_ref {
             let mut statement = self.connection.prepare("SELECT row_json FROM server_daily_snapshots WHERE provider_id='codex' AND account_ref=?1 AND data_mode='observed' ORDER BY date_label,julianday(collected_at),row_id").map_err(storage_error)?;

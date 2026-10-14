@@ -35,3 +35,18 @@
 @media (max-width: 1150px) { .monitor-overview-grid { grid-template-columns: 1fr; } .monitor-metrics .metric-number { font-size: 25px; } }
 @media (max-width: 850px) { .monitor-toolbar { flex-wrap: wrap; } .account-caption { text-align: left; margin: 0; width: 100%; } .monitor-metrics { grid-template-columns: 1fr; } .monitor-quality { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .sidebar .brand { display: none; } .sidebar nav { margin: 0; width: 100%; justify-content: space-between; } .sidebar .nav-item { width: auto; } .quota-strip { grid-template-columns: 1fr; } .monitor-footer { flex-direction: column; gap: 8px; } .monitor-toolbar { padding: 14px; gap: 12px; } .quality-check { align-items: flex-start; } .storage-details { grid-template-columns: 110px 1fr; } }
+
+.account-query-switch { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-width: 92px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--input); color: var(--text); font: inherit; cursor: pointer; flex-shrink: 0; }
+.account-query-switch[aria-checked="true"] { color: var(--accent); border-color: var(--accent); }
+.account-query-switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.account-query-switch:disabled { opacity: .55; cursor: default; }
+.account-switch-track { position: relative; display: inline-block; width: 30px; height: 18px; border-radius: 12px; background: var(--muted); }
+.account-switch-track i { position: absolute; width: 12px; height: 12px; left: 3px; top: 3px; border-radius: 50%; background: var(--bg); transition: transform .15s; }
+.account-query-switch[aria-checked="true"] .account-switch-track { background: var(--accent); }
+.account-query-switch[aria-checked="true"] i { transform: translateX(12px); }
+.account-notice-dialog { width: min(520px, calc(100vw - 36px)); margin: auto; padding: 28px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); box-shadow: 0 16px 60px #0006; }
+.account-notice-dialog::backdrop { background: #0008; }
+.account-notice-dialog h2 { font-size: 20px; margin: 0 0 16px; }
+.account-notice-dialog p { font-size: 13px; line-height: 1.8; margin-bottom: 16px; }
+.account-notice-dialog .button-group { justify-content: flex-end; flex-wrap: wrap; margin-top: 22px; }
+.account-continue { background: var(--accent-bg); color: var(--accent); border-color: var(--accent); }
