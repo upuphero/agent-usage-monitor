@@ -1,6 +1,6 @@
 {
   "ready": {
-    "apiVersion": "0.3.1",
+    "apiVersion": "0.3.2",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -1459,7 +1459,7 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.1",
+      "appVersion": "0.3.2",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
@@ -1469,7 +1469,7 @@
     }
   },
   "missing": {
-    "apiVersion": "0.3.1",
+    "apiVersion": "0.3.2",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -2940,7 +2940,7 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.1",
+      "appVersion": "0.3.2",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
@@ -2950,7 +2950,7 @@
     }
   },
   "negative": {
-    "apiVersion": "0.3.1",
+    "apiVersion": "0.3.2",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -4410,7 +4410,7 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.1",
+      "appVersion": "0.3.2",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
@@ -4420,7 +4420,7 @@
     }
   },
   "empty": {
-    "apiVersion": "0.3.1",
+    "apiVersion": "0.3.2",
     "dataMode": "synthetic",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -4467,7 +4467,7 @@
     "models": [],
     "sessions": [],
     "runtime": {
-      "appVersion": "0.3.1",
+      "appVersion": "0.3.2",
       "schemaVersion": 3,
       "storage": "browser-memory",
       "installationRef": "synthetic-browser",
@@ -4477,7 +4477,7 @@
     }
   },
   "local": {
-    "apiVersion": "0.3.1",
+    "apiVersion": "0.3.2",
     "dataMode": "observed",
     "displayTimezone": "America/Phoenix",
     "providers": [
@@ -5267,7 +5267,7 @@
       }
     ],
     "runtime": {
-      "appVersion": "0.3.1",
+      "appVersion": "0.3.2",
       "schemaVersion": 3,
       "storage": "monitor.sqlite3",
       "installationRef": "fixture-installation",

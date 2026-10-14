@@ -9,7 +9,7 @@ const version = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')).ver
 const fixtureRoot = join(root, '.local-data');
 mkdirSync(fixtureRoot, { recursive: true });
 const hash = value => createHash('sha256').update(value).digest('hex');
-const names = [`Agent Usage Monitor_${version}_x64-setup.exe`, `Agent-Usage-Monitor_${version}_x64-portable.zip`];
+const names = [`Agent-Usage-Monitor_${version}_x64-setup.exe`, `Agent-Usage-Monitor_${version}_x64-portable.zip`];
 const run = directory => spawnSync('pwsh', ['-NoProfile','-File',join(root,'scripts/publish-release.ps1'),'-ArtifactDirectory',directory,'-Commit','a'.repeat(40),'-Repository','fixture/repository','-VerifyOnly'], { cwd: root, encoding:'utf8' });
 
 test('release verification accepts separate correctly hashed packages without GitHub requests', () => {

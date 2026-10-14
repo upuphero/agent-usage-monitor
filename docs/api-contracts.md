@@ -1,6 +1,6 @@
 # 数据契约与存储
 
-API `0.3.1`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
+API `0.3.2`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
 
 ## 范围与单位
 
@@ -42,7 +42,7 @@ Schema 2 事务升级保留 P0 合成数据与安装 ID，新增文件游标、�
 
 Schema 3 事务升级保留两个账本、全部快照、游标与安装标记，新增按账号隔离的 `account_reader_state`。历史与额度只追加，状态和开关保存在独立偏好/状态表。
 
-新增 IPC：`set_account_queries({ request: { enabled } })` 在同一事务保存开关和首次说明已显示状态；`sync_account({ request: { startDate, endDate } })` 读取官方 Codex 现有登录并同步。日期为包含两端的标签范围，最多 31 天；请求前先检查开关、首次说明、范围和持久化节流。最少间隔 60 秒，429 支持秒数或 HTTP 日期的 Retry-After；不循环重试或探测替代路由。`0.3.1` 按用户要求默认开启：首次说明处理后，在启动时同步最近七天，关闭选择在重启后保留；刷新视图只读取缓存，没有定时轮询。
+新增 IPC：`set_account_queries({ request: { enabled } })` 在同一事务保存开关和首次说明已显示状态；`sync_account({ request: { startDate, endDate } })` 读取官方 Codex 现有登录并同步。日期为包含两端的标签范围，最多 31 天；请求前先检查开关、首次说明、范围和持久化节流。最少间隔 60 秒，429 支持秒数或 HTTP 日期的 Retry-After；不循环重试或探测替代路由。`0.3.2` 按用户要求默认开启：首次说明处理后，在启动时同步最近七天，关闭选择在重启后保留；刷新视图只读取缓存，没有定时轮询。
 
 `RuntimeInfo.accountNoticePending` 只表示当前安装的首次说明状态，不写入账号快照。升级旧 opt-in 默认时显示一次说明并转为默认开启，以后不覆盖关闭选择。说明处理前 `reserve_account_sync` 拒绝请求；关闭查询会设置取消标记，阻止两个端点间的后续请求，并在提交时再次检查开关。已发出的请求有固定超时，其结果在关闭后不提交。
 
@@ -62,7 +62,7 @@ B 的 observed 输出 `comparisons` 仍为空，账号与日志身份/产品/日
 
 ## 来源与边界
 
-Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/develop/calling-rust/) 与 [配置参考](https://v2.tauri.app/reference/config/)。0.3.1 实现首次说明后的默认开启账号查询与内存登录读取代码；本次开发没有执行真实账号读取或请求。真实账号兼容性及设备校准属于后续独立验收。
+Tauri 命令和配置用法参照 [官方 IPC 文档](https://v2.tauri.app/develop/calling-rust/) 与 [配置参考](https://v2.tauri.app/reference/config/)。0.3.2 实现首次说明后的默认开启账号查询与内存登录读取代码；本次开发没有执行真实账号读取或请求。真实账号兼容性及设备校准属于后续独立验收。
 
 ## A 阶段验证（2026-10-12 America/Phoenix）
 

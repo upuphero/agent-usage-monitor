@@ -11,7 +11,7 @@ $version = (Get-Content -LiteralPath (Join-Path $projectRoot 'package.json') -Ra
 if ($version -notmatch '^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(-[0-9A-Za-z.-]+)?$') { throw 'Invalid package version' }
 if ($Commit -notmatch '^[0-9a-f]{40}$' -or $Repository -notmatch '^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$') { throw 'Invalid release target' }
 $tag = "v$version"
-$installerName = "Agent Usage Monitor_${version}_x64-setup.exe"
+$installerName = "Agent-Usage-Monitor_${version}_x64-setup.exe"
 $portableName = "Agent-Usage-Monitor_${version}_x64-portable.zip"
 $packageNames = @($installerName, $portableName)
 $manifestPath = Join-Path $artifactRoot 'SHA256SUMS.txt'

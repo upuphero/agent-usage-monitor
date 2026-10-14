@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 $projectRoot = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$version = (Get-Content -LiteralPath (Join-Path $projectRoot 'package.json') -Raw | ConvertFrom-Json).version
 $artifactDirectory = Join-Path $projectRoot 'artifacts\windows'
 $portableDirectory = Join-Path $projectRoot 'artifacts\portable'
 $binary = Join-Path $projectRoot 'target\release\monitor-desktop.exe'
@@ -13,11 +14,10 @@ if ($smoke.ExitCode -ne 0) { throw 'Packaged application synthetic storage smoke
 $localSmoke = Start-Process -FilePath $binary -ArgumentList '--verify-local-collector' -Wait -PassThru -WindowStyle Hidden
 if ($localSmoke.ExitCode -ne 0) { throw 'Packaged application incremental collector smoke failed' }
 New-Item -ItemType Directory -Path $artifactDirectory, $portableDirectory -Force | Out-Null
-Copy-Item -LiteralPath $installers[0].FullName -Destination $artifactDirectory
+Copy-Item -LiteralPath $installers[0].FullName -Destination (Join-Path $artifactDirectory "Agent-Usage-Monitor_${version}_x64-setup.exe")
 Copy-Item -LiteralPath $binary -Destination $portableDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE') -Destination $portableDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'THIRD_PARTY_NOTICES.md') -Destination $portableDirectory
-$version = (Get-Content -LiteralPath (Join-Path $projectRoot 'package.json') -Raw | ConvertFrom-Json).version
 $portableZip = Join-Path $artifactDirectory "Agent-Usage-Monitor_${version}_x64-portable.zip"
 Compress-Archive -Path (Join-Path $portableDirectory '*') -DestinationPath $portableZip -Force
 $checksums = Get-ChildItem -LiteralPath $artifactDirectory -File | Where-Object Name -ne 'SHA256SUMS.txt' | Sort-Object Name | ForEach-Object {

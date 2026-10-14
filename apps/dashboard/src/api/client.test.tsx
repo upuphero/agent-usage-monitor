@@ -59,7 +59,7 @@ describe('independent dual ledger contract', () => {
     expect(segments).toHaveLength(2);
   });
   it('sanitizes transport errors and selects browser memory explicitly', async () => {
-    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.3.1', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
+    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.3.2', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
     expect(safeError({ code: 'STORAGE', message: 'private SQL' }).message).not.toContain('private');
     expect((await createClient(false)) instanceof SyntheticClient).toBe(true);
   });
