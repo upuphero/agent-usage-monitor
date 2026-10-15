@@ -1,3 +1,34 @@
+# 0.4.2 按日志来源核对与缺失窗口隐藏
+
+日期：2026-10-14（America/Phoenix）。用户授权继续核查剩余 Windows 未计入记录，修复后测试发布，并隐藏账号未返回的五小时额度卡片。
+
+构建提交 `65675168c5de99ac6c6bb53b01e30e19c3513614`；[CI 38691492455](https://github.com/upuphero/agent-usage-monitor/actions/runs/38691492455) 的公共验证、Windows、Mac ARM64/Intel 及发布任务全部通过。[v0.4.2 Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.4.2) 已公开，版本 tag 精确指向该构建提交。
+
+- 按每个活动日志来源和计数段独立核对累计数，再合并同一观察的有效证据、去重副本。相同会话 ID/创建时间的不同物理日志不再交叉充当前序，避免伪重置和伪间隙。
+- 完整副本可为截断副本的相同观察提供已验证前序；独立通过检查的计数矛盾、重复或冲突响应标记有对应防重复规则。首条继承余额、同文件真实间隙/回退和跨日区间继续排除。
+- 以 `source-counters/3` 标记事务重建，Schema 4 和设备报告 V1 不变。保留原始归一化统计、来源关联、增量检查点、账号快照、偏好和设备报告。数据质量页逐项解释当前排除原因，历史采集提示单独说明。
+- 账号额度仅展示实际返回的窗口。weekly-only 响应不再呈现五小时占位卡，每周卡占满整行；真实返回的 0% 仍显示，无快照时只显示未获取状态。组件渲染回归覆盖这些状态。
+- 38 项前端、3 项源码边界、5 项 SQL 迁移、2 项离线发布校验、TypeScript、ESLint 和生产构建通过；Linux 69 项、Windows 67 项、Mac ARM64/Intel 各 69 项 Rust 测试及全部严格 clippy 通过。
+
+## 0.4.2 公开产物与本机复核
+
+公开四个包已重新下载，SHA-256 与发布清单及 GitHub asset digest 一致；Mac 两个包的 Mach-O CPU 架构、可执行权限和随附说明/许可证检查通过。
+
+| 文件 | 字节 | SHA-256 |
+| --- | ---: | --- |
+| `Agent-Usage-Monitor_0.4.2_x64-portable.zip` | 4540467 | `2eeb131a00049430022119c0fad9567ba928041d089dbfbf43456c76b9ecfbce` |
+| `Agent-Usage-Monitor_0.4.2_x64-setup.exe` | 2717102 | `e47e1e3c73e0433fc5408b2797e0ae1a71f0668d9dc49a7cca6f1aedb269ee44` |
+| `Agent-Usage-Monitor_0.4.2_macos-arm64-collector.tar.gz` | 969344 | `fcd08b564bb3e35de8fd326f150b4621f3ba8b30734e5539a0613a8c81e1b700` |
+| `Agent-Usage-Monitor_0.4.2_macos-x64-collector.tar.gz` | 1047306 | `f89f0b658f87cb848f5fde919e2ea3fd915bc326fb4bb2810d9c96052a41360d` |
+
+公开 Windows desktop 的 `--verify-synthetic-store` 与 `--verify-local-collector` 均返回 0。对固定历史缓存与较新缓存的项目内副本分别运行 `--inspect-local-cache` 后，逐事件比较确认：恢复了可核实增量，旧的已计入事件没有丢失，没有凭空新增事件；从投影移除的记录均逐条核实为同来源计数段内的重复观察。主要排除原因合计与剩余总数一致，跨日项均验证为真正跨 UTC 午夜，没有缺失或未来时间下界。
+
+两份副本的原始观察、来源关联、游标/解析状态、账号/额度快照、偏好、迁移记录和设备报告全表指纹保持一致；Schema 保持 4，`app_meta` 仅更新投影版本标记。私有数量、事件标记、路径和缓存留在 `.local-data`，不上传公共仓库或 CI。
+
+本轮只读取已归一化统计缓存，没有扫描新的会话正文、没有查询真实账号，也没有改动已安装应用数据库。检查使用公开二进制与隔离目录；NSIS 安装升级及完整原生窗口交互未手动执行。后续仅提交 Markdown 验证记录，不改动已测试代码、版本 tag 或公开文件。
+
+---
+
 # 0.4.1 历史计数修复与额度诊断
 
 日期：2026-10-14（America/Phoenix）。用户授权调查 Windows 未计入记录及五小时缺窗，修复后测试并发布新版。

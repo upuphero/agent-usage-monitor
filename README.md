@@ -12,6 +12,8 @@
 
 Schema 4 和设备报告 V1 保持兼容。测试、公开产物及本机缓存副本验证见 [release-validation.md](docs/release-validation.md)。
 
+[v0.4.2 Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.4.2) 已公开，安装版和便携版分别提供，另附两种 Mac 采集器。公开 Windows 程序已在固定历史缓存与较新缓存的本机副本上完成离线重算复核，原始统计、检查点和设置保持一致。
+
 ## 0.4.1：历史计数修复与额度说明
 
 会话续接/回退保持同一线程 ID 时，按创建时间和继承标记独立核对计数段；这些变化不再导致整条线程被排除。计数重置只排除不确定边界，后续增量和响应值重新对上后恢复计数。跨 UTC 午夜的长会话使用最近已知观察点，仍不分摊跨日边界。
