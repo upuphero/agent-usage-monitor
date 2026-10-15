@@ -19,7 +19,7 @@ export function EmptyState() {
   const { t } = useI18n();
   return <div className="empty-state"><span className="empty-icon"><Icon name="sessions" /></span><h3>{t('当前范围尚无数据', 'No data in this scope')}</h3><p>{t('未知与零分别表示。可切换服务商或演示场景。', 'Unknown values are distinct from zero. Change the provider or demo scenario.')}</p></div>;
 }
-export function ReasonList({ codes }: { codes: ReasonCode[] }) {
-  const { language } = useI18n();
-  return <div className="reason-list">{codes.map(code => <span className="pill" key={code} title={code}>{reasonLabel(code, language)}</span>)}</div>;
+export function ReasonList({ codes, historical = false }: { codes: ReasonCode[]; historical?: boolean }) {
+  const { language, t } = useI18n();
+  return <div className="reason-list">{codes.map(code => <span className="pill" key={code} title={code}>{historical && code === 'METADATA_CONFLICT' ? t('元信息变化（历史采集提示）', 'Metadata changes (historical collection hint)') : reasonLabel(code, language)}</span>)}</div>;
 }

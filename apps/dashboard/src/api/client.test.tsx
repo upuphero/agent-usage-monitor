@@ -59,7 +59,7 @@ describe('independent dual ledger contract', () => {
     expect(segments).toHaveLength(2);
   });
   it('sanitizes transport errors and selects browser memory explicitly', async () => {
-    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.4.1', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
+    expect(safeError(new Error('private path and token'))).toEqual({ apiVersion: '0.4.2', code: 'INTERNAL', message: 'Dashboard unavailable', retryable: false });
     expect(safeError({ code: 'STORAGE', message: 'private SQL' }).message).not.toContain('private');
     expect((await createClient(false)) instanceof SyntheticClient).toBe(true);
   });
@@ -72,7 +72,7 @@ describe('synthetic UI integration', () => {
   it('separates quota from local Tokens and removes account comparison cards', () => {
     const html = render(<Overview {...props} />);
     expect(html).toContain('账号额度'); expect(html).toContain('Windows 已观测部分');
-    expect(html).toContain('服务端未提供此窗口'); expect(html).not.toContain('未归因诊断差值'); expect(html).not.toContain('series-account');
+    expect(html).not.toContain('5 小时窗口'); expect(html).not.toContain('未归因诊断差值'); expect(html).not.toContain('series-account');
     expect(html).not.toContain('总用量');
   });
   it('renders missing and inconsistent scenarios without inventing values', () => {

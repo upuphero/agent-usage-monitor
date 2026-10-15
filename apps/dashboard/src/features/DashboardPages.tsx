@@ -21,16 +21,15 @@ export function selectDay(data: Dashboard, provider: string, date: string) {
 function Quota({ data, provider, timezone }: PageProps) {
   const { t, locale } = useI18n();
   const quota = data.quota?.scope.providerId === provider ? data.quota : null;
-  return <div className="quota-strip">{(['five-hour', 'weekly'] as const).map(kind => {
-    const window = quota?.windows.find(item => item.kind === kind);
-    const absent = window?.reasonCodes.includes('WINDOW_NOT_REPORTED') === true;
-    return <div className="quota-item" key={kind}>
-      <span className="small muted">{kind === 'five-hour' ? t('5 小时窗口', '5-hour window') : t('每周窗口', 'Weekly window')}</span>
-      <strong>{!quota && data.dataMode === 'observed' ? t('账号额度尚无快照', 'No account quota snapshot') : absent ? t('服务端未提供此窗口', 'Window not provided by server') : window?.usedPercent == null ? t('未报告', 'Not reported') : `${window.usedPercent}% ${t('已用', 'used')}`}</strong>
-      <span className="small muted">{absent ? kind === 'five-hour' ? t('该次账号响应没有五小时窗口；不是 0%，也不需要开启其他设置。', 'That account response has no five-hour window. This is not 0%; no extra setting is needed.') : t('该次账号响应没有每周窗口。', 'That account response has no weekly window.') : window?.resetsAt ? `${data.dataMode === 'observed' ? t('快照重置', 'Snapshot reset') : t('演示重置', 'Demo reset')}: ${formatTime(window.resetsAt, timezone, locale)} · ${timezone}` : t('重置时间未知', 'Reset time unknown')}</span>
-      {quota && data.dataMode === 'observed' && <span className="small muted">{window?.reasonCodes.includes('QUOTA_STALE') ? t('过期缓存', 'Stale cache') : t('采集快照', 'Captured snapshot')} · {formatTime(quota.source.collectedAt, timezone, locale)}</span>}
-    </div>;
-  })}</div>;
+  if (!quota) return <p className="small muted">{t('账号额度尚无快照', 'No account quota snapshot')}</p>;
+  const windows = quota.windows.filter(window => !window.reasonCodes.includes('WINDOW_NOT_REPORTED'));
+  if (!windows.length) return <p className="small muted">{t('该次账号响应没有可显示的额度窗口', 'No quota windows in this account response')}</p>;
+  return <div className={`quota-strip ${windows.length === 1 ? 'quota-single' : ''}`}>{windows.map(window => <div className="quota-item" key={window.kind}>
+    <span className="small muted">{window.kind === 'five-hour' ? t('5 小时窗口', '5-hour window') : t('每周窗口', 'Weekly window')}</span>
+    <strong>{window.usedPercent === null ? t('未报告', 'Not reported') : `${window.usedPercent}% ${t('已用', 'used')}`}</strong>
+    <span className="small muted">{window.resetsAt ? `${data.dataMode === 'observed' ? t('快照重置', 'Snapshot reset') : t('演示重置', 'Demo reset')}: ${formatTime(window.resetsAt, timezone, locale)} · ${timezone}` : t('重置时间未知', 'Reset time unknown')}</span>
+    {data.dataMode === 'observed' && <span className="small muted">{window.reasonCodes.includes('QUOTA_STALE') ? t('过期缓存', 'Stale cache') : t('采集快照', 'Captured snapshot')} · {formatTime(quota.source.collectedAt, timezone, locale)}</span>}
+  </div>)}</div>;
 }
 function Composition({ row, local = false }: { row?: LedgerRow; local?: boolean }) {
   const { t, locale } = useI18n();
@@ -98,6 +97,17 @@ function DailyTable({ rows, locale }: { rows: LedgerRow[]; locale: string }) {
   if (!rows.length) return <EmptyState />;
   return <div className="table-scroll"><table><thead><tr>{[t('UTC 日期', 'UTC date'), t('未缓存输入', 'Uncached input'), t('缓存输入', 'Cached input'), t('输出', 'Output'), t('已观测文本总量', 'Observed text total')].map(label => <th key={label}>{label}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.rowId}><td>{row.day.dateLabel}<span className="cell-subtitle">{t('覆盖未核实', 'Coverage unverified')}</span></td>{(['uncachedInput','cachedInput','output','textTotal'] as const).map(key => <td className="numeric" key={key}>{formatCount(row.tokens[key].value,locale)}</td>)}</tr>)}</tbody></table></div>;
 }
+function exclusionExplanation(reason: string, t: (zh: string,en: string) => string) {
+  const explanations: Record<string,[string,string]> = {
+    COUNTER_RESET: ['同一日志文件内累计值回退，无法确认重置边界中的新增量。', 'Counters regressed within the same log; usage at the reset boundary is uncertain.'],
+    COUNTER_GAP: ['同一日志文件内累计差值仍与本次响应不符，无法确认中间用量。', 'The same-file counter delta disagrees with the response; intervening usage is uncertain.'],
+    INITIAL_COUNTER_BASELINE: ['计数段首条含继承标记或已有余额，没有可靠前序值，不能直接当成新增用量。', 'The first observation has inherited or existing balances without a verified baseline.'],
+    CROSS_DAY_INTERVAL: ['计数区间确实跨越 UTC 午夜，缺少分别归日的证据，不做平均分摊。', 'The interval crosses UTC midnight without evidence to split it across days.'],
+    EVENT_OWNERSHIP_AMBIGUOUS: ['响应标记或多个有效来源出现矛盾，不能任意选择一份计数。', 'Response identities or validated sources conflict; no reading is chosen arbitrarily.'],
+    METADATA_CONFLICT: ['账号、父线程或执行范围存在真实身份冲突。', 'Account, parent thread or execution scope identities conflict.'],
+  };
+  return explanations[reason] ? t(...explanations[reason]) : t('现有日志证据不足，保留原因等待核实。', 'Current log evidence is insufficient; the reason is retained.');
+}
 function LocalQuality({ data, timezone }: { data: Dashboard; timezone: string }) {
   const { t, locale, language } = useI18n(); const collector = data.collector;
   return <div className="page-stack"><AccountStatus data={data} timezone={timezone} /><Panel title={t('本机采集与持久化', 'Local collection and persistence')}><div className="quality-grid monitor-quality">{[
@@ -105,8 +115,8 @@ function LocalQuality({ data, timezone }: { data: Dashboard; timezone: string })
     [t('有效增量事件', 'Validated increments'), collector?.acceptedEvents ?? 0], [t('未计入的歧义事件', 'Excluded ambiguous events'), collector?.ambiguousEvents ?? 0]
   ].map(([label,value]) => <div className="quality-item" key={String(label)}><span className="muted">{label}</span><span>{value}</span></div>)}</div><p className="panel-footnote">{t('文件发现覆盖不等于真实执行覆盖。账号归属、后台/云端调用、父子计数范围仍未核实。', 'File discovery is distinct from execution coverage. Account identity, background/cloud activity and parent/child counter scope remain unverified.')}</p></Panel><Panel title={t('未计入记录的主要原因', 'Primary exclusion reasons')}>
     <p className="small muted">{t('统计全部历史记录，非所选当天。每条记录只归入一个主要原因，各项合计等于未计入记录数。计数段的起始余额、重置边界和无法确认日期的区间继续排除；后续经核对的增量可以恢复计入。', 'This covers all history, not the selected day. Each excluded record has one primary reason; counts sum to the excluded total. Starting balances, reset boundaries and uncertain day intervals remain excluded; subsequent verified increments can be counted.')}</p>
-    {!collector?.excludedBreakdown.length ? <p>{t('没有未计入记录', 'No excluded records')}</p> : <div className="table-scroll"><table><thead><tr><th>{t('原因', 'Reason')}</th><th>{t('记录数（全部历史）', 'Records (all history)')}</th></tr></thead><tbody>{collector.excludedBreakdown.map(group => <tr key={group.reasonCode}><td>{reasonLabel(group.reasonCode,language)}</td><td className="numeric">{formatCount(String(group.events),locale)}</td></tr>)}</tbody></table></div>}
-  </Panel><Panel title={t('上次增量同步', 'Last incremental sync')}><dl className="storage-details"><dt>{t('状态', 'State')}</dt><dd>{collector?.state ?? 'never-synced'}</dd><dt>{t('未重解析文件', 'Unchanged files')}</dt><dd>{collector?.lastRun?.filesUnchanged ?? '—'}</dd><dt>{t('解析新增字节', 'New bytes parsed')}</dt><dd>{collector?.lastRun?.bytesParsed ?? '—'}</dd><dt>{t('完整性检查字节', 'Integrity bytes checked')}</dt><dd>{collector?.lastRun?.bytesVerified ?? '—'}</dd><dt>{t('半行尾部等待', 'Incomplete tails pending')}</dt><dd>{collector?.lastRun?.partialTails ?? '—'}</dd></dl><p className="panel-footnote">{t('变化文件会核对已提交前缀摘要；该检查读取旧字节，但不会重解析旧 JSONL 记录。', 'Changed files verify the committed prefix digest. Integrity checks read old bytes without reparsing old JSONL records.')}</p></Panel><Panel title={t('质量与排除原因', 'Quality and exclusion reasons')}><ReasonList codes={collector?.reasonCodes ?? ['NO_DATA']} /></Panel></div>;
+    {!collector?.excludedBreakdown.length ? <p>{t('没有未计入记录', 'No excluded records')}</p> : <div className="table-scroll"><table><thead><tr><th>{t('原因', 'Reason')}</th><th>{t('记录数（全部历史）', 'Records (all history)')}</th><th>{t('为什么还不能计入', 'Why it remains excluded')}</th></tr></thead><tbody>{collector.excludedBreakdown.map(group => <tr key={group.reasonCode}><td>{reasonLabel(group.reasonCode,language)}</td><td className="numeric">{formatCount(String(group.events),locale)}</td><td>{exclusionExplanation(group.reasonCode,t)}</td></tr>)}</tbody></table></div>}
+  </Panel><Panel title={t('上次增量同步', 'Last incremental sync')}><dl className="storage-details"><dt>{t('状态', 'State')}</dt><dd>{collector?.state ?? 'never-synced'}</dd><dt>{t('未重解析文件', 'Unchanged files')}</dt><dd>{collector?.lastRun?.filesUnchanged ?? '—'}</dd><dt>{t('解析新增字节', 'New bytes parsed')}</dt><dd>{collector?.lastRun?.bytesParsed ?? '—'}</dd><dt>{t('完整性检查字节', 'Integrity bytes checked')}</dt><dd>{collector?.lastRun?.bytesVerified ?? '—'}</dd><dt>{t('半行尾部等待', 'Incomplete tails pending')}</dt><dd>{collector?.lastRun?.partialTails ?? '—'}</dd></dl><p className="panel-footnote">{t('变化文件会核对已提交前缀摘要；该检查读取旧字节，但不会重解析旧 JSONL 记录。', 'Changed files verify the committed prefix digest. Integrity checks read old bytes without reparsing old JSONL records.')}</p></Panel><Panel title={t('采集提示（包含历史记录）', 'Collection hints (including history)')}><p className="small muted">{t('提示可能来自旧采集，也可能相互重叠。当前未计入的数量和主要原因以上表为准。', 'Hints may come from earlier scans and may overlap. Current excluded counts and primary reasons are listed above.')}</p><ReasonList historical codes={collector?.reasonCodes ?? ['NO_DATA']} /></Panel></div>;
 }
 function RootSettings({ onSave }: { onSave: (roots: string[]) => Promise<void> }) {
   const { t } = useI18n(); const [value,setValue] = useState(''); const [status,setStatus] = useState('');

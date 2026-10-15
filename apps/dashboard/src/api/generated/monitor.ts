@@ -1,5 +1,5 @@
 // GENERATED from crates/monitor-contracts/src/lib.rs. Do not edit.
-export const API_VERSION = "0.4.1" as const;
+export const API_VERSION = "0.4.2" as const;
 export const COMMANDS = {
   getDashboard: "get_dashboard",
   syncLocal: "sync_local",

@@ -6,7 +6,7 @@ use chrono::{Duration, NaiveDate, Utc};
 use monitor_contracts::*;
 use monitor_core::{
     error,
-    local::{add_reason, aggregate, opaque_id, project_thread, LocalEvent, Snapshot},
+    local::{add_reason, aggregate, opaque_id, project_sources, LocalEvent, Snapshot},
 };
 use rusqlite::{params, OptionalExtension, Transaction};
 use std::{
@@ -33,7 +33,7 @@ type SessionKey = (
     Option<String>,
     Option<String>,
 );
-type ThreadProjection = (Vec<Snapshot>, bool, BTreeSet<String>);
+type ThreadProjection = (Vec<Vec<Snapshot>>, bool, BTreeSet<String>);
 const ACTIVE:&str="EXISTS(SELECT 1 FROM local_source_snapshots links WHERE links.event_key=r.event_key AND links.active=1)";
 
 fn thread_snapshots(
@@ -50,7 +50,7 @@ fn thread_snapshots(
             ))
         })
         .map_err(storage_error)?;
-    let mut snapshots = Vec::new();
+    let mut streams: BTreeMap<String, Vec<Snapshot>> = BTreeMap::new();
     let mut conflict = false;
     let mut metadata = BTreeSet::new();
     let mut ownership = BTreeSet::new();
@@ -74,9 +74,22 @@ fn thread_snapshots(
         if owners > 1 {
             ownership.insert(snapshot.ownership_key.clone());
         }
-        snapshots.push(snapshot);
+        let mut links = transaction.prepare("SELECT source_id FROM local_source_snapshots WHERE event_key=?1 AND active=1 ORDER BY source_id").map_err(storage_error)?;
+        for source in links
+            .query_map([&snapshot.key], |row| row.get::<_, String>(0))
+            .map_err(storage_error)?
+        {
+            streams
+                .entry(source.map_err(storage_error)?)
+                .or_default()
+                .push(snapshot.clone());
+        }
     }
-    Ok((snapshots, conflict || metadata.len() > 1, ownership))
+    Ok((
+        streams.into_values().collect(),
+        conflict || metadata.len() > 1,
+        ownership,
+    ))
 }
 fn load_events(
     transaction: &Transaction<'_>,
@@ -184,8 +197,8 @@ fn rebuild_threads(
                 [thread],
             )
             .map_err(storage_error)?;
-        let (snapshots, conflict, ownership) = thread_snapshots(transaction, thread)?;
-        for (ordinal, event) in project_thread(snapshots, &ownership, conflict)
+        let (streams, conflict, ownership) = thread_snapshots(transaction, thread)?;
+        for (ordinal, event) in project_sources(streams, &ownership, conflict)
             .into_iter()
             .enumerate()
         {
@@ -216,7 +229,7 @@ fn rebuild_threads(
 
 impl Store {
     pub(crate) fn reproject_local_if_needed(&mut self) -> Result<(), ApiError> {
-        const VERSION: &str = "counter-segments/2";
+        const VERSION: &str = "source-counters/3";
         if self.meta("local-projection-version")?.as_deref() == Some(VERSION) {
             return Ok(());
         }

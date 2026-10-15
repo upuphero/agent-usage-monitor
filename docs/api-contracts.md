@@ -1,6 +1,6 @@
 # 数据契约与存储
 
-API `0.4.1`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
+API `0.4.2`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
 
 ## 范围与单位
 
@@ -106,3 +106,11 @@ CollectorSummary.excludedBreakdown 记录每条被排除事件的一个主要原
 Windows 的外来 POSIX 路径判定不再应用于 Mac/Linux 本机；Unix 缓存中由旧规则产生的 imported 标记与增量解析状态在同一重算事务修正。
 
 显式 --inspect-local-cache 只打开 AGENT_USAGE_MONITOR_DATA_DIR 下的 monitor.sqlite3，输出 local-diagnostics.json（CollectorSummary），不发现日志或读取登录。升级重算会写该缓存，因此人工调查使用数据库副本。
+
+## 0.4.2 来源内计数与额度显示
+
+投影版本 source-counters/3，Schema 4 和设备报告 V1 不变。thread_snapshots 使用已有 active 来源关联建立每个文件的观察流；各流内部继续按 (created_at,inherited) 分段。project_sources 对每流分别核对累计增量与 last，再按原 event key 合并，避免不同文件交叉充当前序。
+
+相同观察的一份完整来源通过检查时，可证明另一截断副本首条的增量，计数只保留一次；只合并不矛盾的已验证分量。多个有效来源或同一响应标记给出矛盾计数时排除，重复响应计数不会相加。来源内真正的重置、间隙、无已验证前序的继承余额以及跨 UTC 日边界保留排除原因。去重后不再作为独立事件的重复观察不属于新增消费，调查会与恢复计数分别记录。
+
+CollectorSummary.excludedBreakdown 继续为互斥主要原因；前端增加原因解释，采集期历史提示另行标注。账号窗口仅在未带 WINDOW_NOT_REPORTED 时显示；仍保留后端占位契约以兼容旧快照。真实 0% 窗口不隐藏；无快照与无返回窗口是独立空状态，不渲染伪造额度。

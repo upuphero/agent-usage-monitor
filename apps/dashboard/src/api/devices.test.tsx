@@ -68,6 +68,7 @@ describe('device reports and separate account quota', () => {
     const html = render(<Quality data={dashboard} provider="codex" date="2026-10-11" timezone="UTC" />);
     expect(html).toContain('未计入记录的主要原因'); expect(html).toContain('统计全部历史记录，非所选当天');
     expect(html).toContain('每条记录只归入一个主要原因'); expect(html).toContain('累计增量与响应不符');
+    expect(html).toContain('无法确认中间用量'); expect(html).toContain('采集提示（包含历史记录）');
     const inflated = data(); inflated.collector!.excludedBreakdown[0].events += 1;
     expect(() => parseDashboard(inflated)).toThrowError();
     const repeated = data(); repeated.collector!.excludedBreakdown.push(structuredClone(repeated.collector!.excludedBreakdown[0]));

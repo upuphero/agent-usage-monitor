@@ -123,6 +123,35 @@ fn failed_reprojection_rolls_back_events_daily_rows_and_version_marker() {
         .unwrap();
     assert_eq!(marker, 0);
 }
+
+#[test]
+fn independent_files_keep_their_own_counter_order_while_archive_copies_count_once() {
+    let root =
+        std::env::temp_dir().join(format!("monitor-source-counters-{}", uuid::Uuid::new_v4()));
+    let home = root.join("home");
+    std::fs::create_dir_all(home.join("sessions")).unwrap();
+    std::fs::create_dir_all(home.join("archived_sessions")).unwrap();
+    let meta="{\"type\":\"session_meta\",\"timestamp\":\"2026-10-01T08:00:00Z\",\"payload\":{\"id\":\"same-thread\",\"cwd\":\"C:/Synthetic\"}}\n";
+    let usage = |minute, i, c, o, li, lc, lo| {
+        serde_json::json!({"type":"event_msg","timestamp":format!("2026-10-01T08:{minute:02}:00Z"),"payload":{"type":"token_count","info":{"total_token_usage":{"input_tokens":i,"cached_input_tokens":c,"output_tokens":o,"total_tokens":i+o},"last_token_usage":{"input_tokens":li,"cached_input_tokens":lc,"output_tokens":lo,"total_tokens":li+lo}}}}).to_string()+"\n"
+    };
+    let a = meta.to_string() + &usage(1, 20, 8, 6, 20, 8, 6) + &usage(3, 30, 12, 9, 10, 4, 3);
+    let b = meta.to_string() + &usage(2, 5, 2, 1, 5, 2, 1) + &usage(4, 10, 4, 2, 5, 2, 1);
+    std::fs::write(home.join("sessions/a.jsonl"), &a).unwrap();
+    std::fs::write(home.join("sessions/b.jsonl"), b).unwrap();
+    std::fs::write(home.join("archived_sessions/a-copy.jsonl"), a).unwrap();
+    let mut store = Store::open(&root.join("monitor.sqlite3")).unwrap();
+    store
+        .synchronize_local(&[home], &AtomicBool::new(false))
+        .unwrap();
+    let dashboard = store.local_dashboard().unwrap();
+    assert_eq!(
+        dashboard.local_rows[0].tokens.text_total.value.as_deref(),
+        Some("51")
+    );
+    assert_eq!(dashboard.collector.unwrap().accepted_events, 4);
+    assert_eq!(store.export_device_report().unwrap().events.len(), 4);
+}
 #[test]
 #[cfg(not(windows))]
 fn unix_cached_foreign_path_flag_is_repaired_along_with_parser_state() {

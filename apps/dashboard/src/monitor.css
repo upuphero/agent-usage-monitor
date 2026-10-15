@@ -54,3 +54,5 @@
 .collector-command { overflow-x: auto; padding: 16px; border-radius: 8px; background: var(--bg-secondary, #151b24); max-width: 100%; }
 .account-history-details > summary, .notice details > summary { cursor: pointer; padding: 8px 0; }
 .account-history-details > .panel { margin-top: 12px; }
+
+.quota-strip.quota-single { grid-template-columns: minmax(0, 1fr); }

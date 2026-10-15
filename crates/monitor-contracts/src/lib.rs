@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "0.4.1";
+pub const API_VERSION: &str = "0.4.2";
 pub const COMMANDS: &[(&str, &str)] = &[
     ("getDashboard", "get_dashboard"),
     ("syncLocal", "sync_local"),

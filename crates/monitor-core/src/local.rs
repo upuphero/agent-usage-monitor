@@ -431,6 +431,127 @@ pub fn exclusion_reason(event: &LocalEvent) -> ReasonCode {
 }
 
 /// Cumulative and per-response values must agree. Reset epochs are diagnostic only.
+pub fn project_sources(
+    sources: Vec<Vec<Snapshot>>,
+    ownership_conflicts: &BTreeSet<String>,
+    metadata_conflict: bool,
+) -> Vec<LocalEvent> {
+    let mut responses = BTreeMap::new();
+    let mut candidates: BTreeMap<String, Vec<LocalEvent>> = BTreeMap::new();
+    for snapshots in sources {
+        for snapshot in &snapshots {
+            if let Some(response) = &snapshot.response_ref {
+                responses.insert(snapshot.key.clone(), response.clone());
+            }
+        }
+        for event in project_thread(snapshots, ownership_conflicts, metadata_conflict) {
+            candidates.entry(event.key.clone()).or_default().push(event);
+        }
+    }
+    let mut result = Vec::new();
+    for group in candidates.into_values() {
+        let accepted: Vec<_> = group.iter().filter(|event| event.allocated).collect();
+        let mut chosen = (*accepted.first().copied().unwrap_or(&group[0])).clone();
+        let evidence = if accepted.is_empty() {
+            group.iter().collect::<Vec<_>>()
+        } else {
+            accepted
+        };
+        // A truncated copy may lack a baseline; a complete copy can supply the same observation's proof.
+        // Merge only compatible values that independently passed the interval checks.
+        let merge = |pick: fn(&Counters) -> Option<i64>| {
+            let values: BTreeSet<_> = evidence
+                .iter()
+                .filter_map(|event| pick(&event.counts))
+                .collect();
+            (values.len() <= 1, values.first().copied())
+        };
+        let input = merge(|c| c.input);
+        let cached = merge(|c| c.cached);
+        let output = merge(|c| c.output);
+        let reasoning = merge(|c| c.reasoning);
+        chosen.reason_codes.clear();
+        for event in &evidence {
+            for reason in &event.reason_codes {
+                add_reason(&mut chosen.reason_codes, *reason);
+            }
+        }
+        if chosen.allocated {
+            chosen.counts = Counters {
+                input: input.1,
+                cached: cached.1,
+                output: output.1,
+                reasoning: reasoning.1,
+            };
+            if ![input.0, cached.0, output.0, reasoning.0]
+                .into_iter()
+                .all(|same| same)
+                || !chosen.counts.valid()
+            {
+                chosen.allocated = false;
+                chosen.counts = Counters::default();
+                add_reason(
+                    &mut chosen.reason_codes,
+                    ReasonCode::EventOwnershipAmbiguous,
+                );
+            }
+        }
+        result.push(chosen);
+    }
+    result.sort_by(|a, b| a.at.cmp(&b.at).then(a.key.cmp(&b.key)));
+    let mut response_groups: BTreeMap<String, Vec<usize>> = BTreeMap::new();
+    for (index, event) in result
+        .iter()
+        .enumerate()
+        .filter(|(_, event)| event.allocated)
+    {
+        if let Some(response) = responses.get(&event.key) {
+            response_groups
+                .entry(response.clone())
+                .or_default()
+                .push(index);
+        }
+    }
+    for indices in response_groups
+        .into_values()
+        .filter(|indices| indices.len() > 1)
+    {
+        let merge = |pick: fn(&Counters) -> Option<i64>| {
+            let values: BTreeSet<_> = indices
+                .iter()
+                .filter_map(|index| pick(&result[*index].counts))
+                .collect();
+            (values.len() <= 1, values.first().copied())
+        };
+        let input = merge(|c| c.input);
+        let cached = merge(|c| c.cached);
+        let output = merge(|c| c.output);
+        let reasoning = merge(|c| c.reasoning);
+        let merged = Counters {
+            input: input.1,
+            cached: cached.1,
+            output: output.1,
+            reasoning: reasoning.1,
+        };
+        let conflicting = ![input.0, cached.0, output.0, reasoning.0]
+            .into_iter()
+            .all(|same| same)
+            || !merged.valid();
+        if !conflicting {
+            result[indices[0]].counts = merged;
+        }
+        for index in indices.into_iter().skip(usize::from(!conflicting)) {
+            result[index].allocated = false;
+            result[index].counts = Counters::default();
+            add_reason(
+                &mut result[index].reason_codes,
+                ReasonCode::EventOwnershipAmbiguous,
+            );
+        }
+    }
+    result
+}
+
 pub fn project_thread(
     snapshots: Vec<Snapshot>,
     ownership_conflicts: &BTreeSet<String>,

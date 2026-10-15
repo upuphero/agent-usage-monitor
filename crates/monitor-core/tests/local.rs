@@ -188,6 +188,104 @@ fn native_posix_workspace_is_not_treated_as_imported_on_mac_or_linux() {
         !cfg!(windows)
     );
 }
+
+#[test]
+fn separate_rollout_files_with_same_metadata_never_subtract_each_others_counters() {
+    let mut state = records();
+    let a1 = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    let a2 = counter(&mut state, "2026-10-01T08:03:00Z", (30, 12, 9), (10, 4, 3));
+    let b1 = counter(&mut state, "2026-10-01T08:02:00Z", (5, 2, 1), (5, 2, 1));
+    let b2 = counter(&mut state, "2026-10-01T08:04:00Z", (10, 4, 2), (5, 2, 1));
+    let events = project_sources(vec![vec![a1, a2], vec![b1, b2]], &BTreeSet::new(), false);
+    assert!(events.iter().all(|e| e.allocated));
+    assert_eq!(
+        aggregate(&events.iter().collect::<Vec<_>>())
+            .unwrap()
+            .text_total
+            .value
+            .as_deref(),
+        Some("51")
+    );
+}
+
+#[test]
+fn full_copies_deduplicate_and_a_verified_copy_can_supply_a_truncated_copys_baseline() {
+    let mut state = records();
+    let first = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    let later = counter(&mut state, "2026-10-01T08:02:00Z", (30, 12, 9), (10, 4, 3));
+    let full = vec![first, later.clone()];
+    let events = project_sources(
+        vec![full.clone(), full, vec![later]],
+        &BTreeSet::new(),
+        false,
+    );
+    assert_eq!(events.len(), 2);
+    assert!(events.iter().all(|e| e.allocated));
+    assert!(!events[1]
+        .reason_codes
+        .contains(&ReasonCode::InitialCounterBaseline));
+    assert_eq!(
+        aggregate(&events.iter().collect::<Vec<_>>())
+            .unwrap()
+            .text_total
+            .value
+            .as_deref(),
+        Some("39")
+    );
+}
+
+#[test]
+fn unresolved_inherited_balances_and_genuine_same_file_gaps_remain_excluded() {
+    let mut state = records();
+    let mut inherited = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    inherited.metadata.inherited = true;
+    let events = project_sources(
+        vec![vec![inherited.clone()], vec![inherited]],
+        &BTreeSet::new(),
+        false,
+    );
+    assert_eq!(events.len(), 1);
+    assert!(!events[0].allocated);
+    let first = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    let gap = counter(&mut state, "2026-10-01T08:02:00Z", (60, 20, 12), (10, 4, 2));
+    let events = project_sources(vec![vec![first, gap]], &BTreeSet::new(), false);
+    assert!(!events[1].allocated);
+    assert_eq!(exclusion_reason(&events[1]), ReasonCode::CounterGap);
+    assert_eq!(
+        aggregate(&events.iter().collect::<Vec<_>>())
+            .unwrap()
+            .text_total
+            .value
+            .as_deref(),
+        Some("26")
+    );
+}
+
+#[test]
+fn contradictory_or_repeated_response_ids_across_sources_are_not_added() {
+    let mut state = records();
+    let mut first = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    first.response_ref = Some(opaque_id("response", "same-response"));
+    let mut second = counter(&mut state, "2026-10-01T08:02:00Z", (20, 8, 6), (20, 8, 6));
+    second.response_ref = first.response_ref.clone();
+    let events = project_sources(
+        vec![vec![first.clone()], vec![second]],
+        &BTreeSet::new(),
+        false,
+    );
+    assert_eq!(events.iter().filter(|e| e.allocated).count(), 1);
+    let mut conflicting = counter(&mut state, "2026-10-01T08:03:00Z", (30, 12, 9), (30, 12, 9));
+    conflicting.response_ref = first.response_ref.clone();
+    let events = project_sources(
+        vec![vec![first], vec![conflicting]],
+        &BTreeSet::new(),
+        false,
+    );
+    assert!(events.iter().all(|e| !e.allocated));
+    assert!(events.iter().all(|e| e
+        .reason_codes
+        .contains(&ReasonCode::EventOwnershipAmbiguous)));
+}
 #[test]
 fn gap_is_excluded_then_next_verified_interval_can_resume() {
     let mut state = records();
