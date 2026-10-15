@@ -1,4 +1,4 @@
-import { API_VERSION, ERROR_CODES, type ApiError, type Dashboard, type DashboardQuery, type SyncReport, type AccountSyncRequest, type AccountSummary, type TokenComponents } from './generated/monitor';
+import { API_VERSION, ERROR_CODES, REASON_CODES, type ApiError, type Dashboard, type DashboardQuery, type SyncReport, type AccountSyncRequest, type AccountSummary, type TokenComponents } from './generated/monitor';
 
 export interface UsageClient { readonly localView: boolean; readonly supportsLocalSync: boolean; readonly supportsAccountSync: boolean; getDashboard(query: DashboardQuery): Promise<Dashboard>; syncLocal(): Promise<SyncReport>; cancelLocalSync(): Promise<void>; setLocalRoots(roots: string[]): Promise<void>; setAccountQueries(enabled: boolean): Promise<void>; syncAccount(request: AccountSyncRequest): Promise<AccountSummary>; exportDeviceReport?(): Promise<string>; importDeviceReport?(reportJson: string): Promise<void>; removeDeviceReport?(deviceRef: string): Promise<void> }
 const MAX = 9223372036854775807n;
@@ -38,6 +38,10 @@ export function parseDashboard(payload: unknown): Dashboard {
           || [account.lastAttemptAt, account.historyFetchedAt, account.quotaFetchedAt, account.nextAllowedAt].some(value => value !== null && (typeof value !== 'string' || !Number.isFinite(Date.parse(value))))
           || [account.historyError, account.quotaError].some(value => value !== null && !(ERROR_CODES as readonly string[]).includes(value))) throw new Error('invalid account state');
       }
+      const breakdown = data.collector.excludedBreakdown;
+      if (!Array.isArray(breakdown) || breakdown.some(group => !(REASON_CODES as readonly string[]).includes(group.reasonCode) || !Number.isInteger(group.events) || group.events <= 0 || group.events > 4294967295)
+        || new Set(breakdown.map(group => group.reasonCode)).size !== breakdown.length
+        || breakdown.reduce((total,group) => total + group.events,0) !== data.collector.ambiguousEvents) throw new Error('invalid exclusion breakdown');
       if (data.accountRows.some(row => row.ledger !== 'account' || row.source.kind !== 'server-observation' || row.scope.providerId !== 'codex' || row.scope.identityEvidence !== 'verified' || row.scope.accountRef !== data.account?.accountRef || !row.scope.accountRef || row.day.basis !== 'server-date-label' || row.day.startUtc !== null || row.day.endUtc !== null || row.quality.coverage !== 'unknown' || row.quality.freshness !== 'unknown')) throw new Error('invalid account binding');
       if (data.localRows.some(row => row.ledger !== 'windows' || row.source.kind !== 'local-log')) throw new Error('invalid local ledger');
     }

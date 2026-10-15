@@ -314,6 +314,21 @@ pub fn collect_local_report() -> Result<(), ApiError> {
         .map_err(|_| error(ErrorCode::Storage, "Could not write local report"))
 }
 
+/// Offline inspection of normalized cache statistics; no log discovery or account requests.
+pub fn inspect_local_cache() -> Result<(), ApiError> {
+    let directory = validation_directory()?;
+    let store = initialize_store(directory.clone())?;
+    let dashboard = store.local_dashboard()?;
+    let bytes = serde_json::to_vec_pretty(&dashboard.collector).map_err(|_| {
+        error(
+            ErrorCode::Internal,
+            "Could not encode collector diagnostics",
+        )
+    })?;
+    std::fs::write(directory.join("local-diagnostics.json"), bytes)
+        .map_err(|_| error(ErrorCode::Storage, "Could not save collector diagnostics"))
+}
+
 /// A separate fixture database verifies append, half-line recovery, restart and archive dedup.
 pub fn verify_local_collector() -> Result<(), ApiError> {
     let directory = validation_directory()?.join(format!(

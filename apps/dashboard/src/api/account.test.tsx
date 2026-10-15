@@ -62,7 +62,7 @@ describe('observed account cache and UI', () => {
   it('shows stale quota, missing dates and unverified date labels without hiding history', () => {
     const data = parseDashboard(dashboard()); const props = { data, provider: 'codex', date: '2026-10-11', timezone: 'America/Phoenix' };
     const overview = render(<Overview {...props} />);
-    expect(overview).toContain('36.5%'); expect(overview).toContain('过期缓存'); expect(overview).toContain('未报告');
+    expect(overview).toContain('36.5%'); expect(overview).toContain('过期缓存'); expect(overview).toContain('服务端未提供此窗口');
     expect(overview).toContain('OFFLINE'); expect(overview).toContain('缺失不补零'); expect(overview).not.toContain('口径未对齐'); expect(overview).not.toContain('series-account');
     expect(overview).not.toContain('合成服务端观测'); expect(overview).not.toContain('账号额度尚无快照');
     const history = render(<History {...props} />);
@@ -90,5 +90,14 @@ describe('observed account cache and UI', () => {
     const html = render(<AccountNotice onContinue={async () => {}} />);
     expect(html).toContain('账号查询默认开启'); expect(html).toContain('chatgpt.com');
     expect(html).toContain('关闭账号查询'); expect(html).toContain('开始使用（保持开启）');
+  });
+  it('explains a weekly-only response without inventing a five-hour reading or a missing switch', () => {
+    const data = dashboard(); data.account!.state = 'partial'; data.account!.historyError = null;
+    const props = { data: parseDashboard(data), provider: 'codex', date: '2026-10-11', timezone: 'UTC' };
+    const html = render(<Overview {...props} />);
+    expect(html).toContain('服务端未提供此窗口');
+    expect(html).toContain('不是 0%，也不需要开启其他设置');
+    expect(html).toContain('额度已更新，账号历史有日期待补齐');
+    expect(html).toContain('36.5%'); expect(html).not.toContain('账号同步部分完成');
   });
 });

@@ -84,6 +84,8 @@ Agent Usage Monitor $version — Windows desktop + Mac log collectors
 
 报告只含匿名统计，不含对话正文或登录信息；汇总代表日志所覆盖部分。便携版同时包含 Windows 采集器。Mac 包为独立命令行采集器，附操作说明。账号查询默认开启，首次提示可以关闭，关闭选择会保留。
 
+本版修复历史日志计数：会话续接/回退按计数段独立核对，重置边界和跨日不明区间仍排除，后续已核实增量恢复计入。升级会在事务中重新核对已有缓存，不重置检查点。“数据质量”提供全部历史的主要排除原因及数量；额度缺失窗口明确标注服务端未提供。
+
 构建提交：$Commit
 发布前已通过前端、Rust、Windows 原生、Mac ARM64/Intel 采集器及打包检查；CI 使用合成日志，没有查询真实账号。
 "@ | Set-Content -LiteralPath $notesPath -Encoding utf8

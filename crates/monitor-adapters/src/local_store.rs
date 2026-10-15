@@ -55,13 +55,20 @@ fn thread_snapshots(
     let mut metadata = BTreeSet::new();
     let mut ownership = BTreeSet::new();
     for record in records {
-        let (text, issue, meta) = record.map_err(storage_error)?;
+        let (text, issue, _meta) = record.map_err(storage_error)?;
         let snapshot: Snapshot = decode(&text)?;
         if monitor_core::local::utc(&snapshot.at).is_none() {
             return Err(error(ErrorCode::Storage, "Invalid cached observation time"));
         }
         conflict |= issue;
-        metadata.insert(meta);
+        // Creation time and inherited-history markers describe a counter segment, not identity.
+        metadata.insert(json(&(
+            &snapshot.metadata.thread_ref,
+            &snapshot.metadata.account_ref,
+            &snapshot.metadata.parent_ref,
+            snapshot.metadata.child,
+            snapshot.metadata.imported,
+        ))?);
         let eligible="json_extract(snapshot_json,'$.metadata.imported')=0 AND (json_extract(snapshot_json,'$.metadata.created_at') IS NULL OR at_utc>=json_extract(snapshot_json,'$.metadata.created_at'))";
         let owners:i64=transaction.query_row(&format!("SELECT count(DISTINCT thread_ref) FROM local_raw_snapshots r WHERE (ownership_key=?1 OR (?2 IS NOT NULL AND response_ref=?2)) AND {eligible} AND {ACTIVE}"),params![snapshot.ownership_key,snapshot.response_ref],|row|row.get(0)).map_err(storage_error)?;
         if owners > 1 {
@@ -208,6 +215,45 @@ fn rebuild_threads(
 }
 
 impl Store {
+    pub(crate) fn reproject_local_if_needed(&mut self) -> Result<(), ApiError> {
+        const VERSION: &str = "counter-segments/2";
+        if self.meta("local-projection-version")?.as_deref() == Some(VERSION) {
+            return Ok(());
+        }
+        let transaction = self.connection.transaction().map_err(storage_error)?;
+        // The old Windows-only foreign-path heuristic also ran on Mac/Linux native logs.
+        // Repair that derived flag and parser state without rereading message bodies.
+        if !cfg!(windows) {
+            let rows: Vec<(String, String)> = {
+                let mut statement = transaction.prepare("SELECT event_key,snapshot_json FROM local_raw_snapshots WHERE json_extract(snapshot_json,'$.metadata.imported')=1").map_err(storage_error)?;
+                let rows = statement
+                    .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+                    .map_err(storage_error)?
+                    .collect::<Result<_, _>>()
+                    .map_err(storage_error)?;
+                rows
+            };
+            for (key, text) in rows {
+                let mut snapshot: Snapshot = decode(&text)?;
+                snapshot.metadata.imported = false;
+                transaction.execute("UPDATE local_raw_snapshots SET snapshot_json=?2,metadata_digest=?3 WHERE event_key=?1", params![key,json(&snapshot)?,opaque_id("metadata", &json(&snapshot.metadata)?)]).map_err(storage_error)?;
+            }
+            transaction.execute("UPDATE local_streams SET state_json=json_set(state_json,'$.metadata.imported',json('false')) WHERE json_type(state_json,'$.metadata')='object'", []).map_err(storage_error)?;
+        }
+        let mut threads = BTreeSet::new();
+        {
+            let mut statement = transaction.prepare("SELECT thread_ref FROM local_raw_snapshots UNION SELECT thread_ref FROM local_usage_events WHERE event_json IS NOT NULL").map_err(storage_error)?;
+            for row in statement
+                .query_map([], |row| row.get::<_, String>(0))
+                .map_err(storage_error)?
+            {
+                threads.insert(row.map_err(storage_error)?);
+            }
+        }
+        rebuild_threads(&transaction, &threads)?;
+        transaction.execute("INSERT INTO app_meta VALUES ('local-projection-version',?1) ON CONFLICT(key) DO UPDATE SET value=excluded.value", [VERSION]).map_err(storage_error)?;
+        transaction.commit().map_err(storage_error)
+    }
     pub(crate) fn checkpoint(&self, source: &str) -> Result<Option<Checkpoint>, ApiError> {
         self.connection.query_row("SELECT source_id,root_ref,parser_version,byte_offset,file_size,modified_tag,prefix_digest,head_digest,tail_digest,state_json FROM local_streams WHERE source_id=?1",[source],|row|Ok((row.get::<_,String>(0)?,row.get::<_,String>(1)?,row.get::<_,String>(2)?,row.get::<_,u64>(3)?,row.get::<_,u64>(4)?,row.get::<_,String>(5)?,row.get::<_,String>(6)?,row.get::<_,String>(7)?,row.get::<_,String>(8)?,row.get::<_,String>(9)?)))
             .optional().map_err(storage_error)?.map(|(source_id,root_ref,parser_version,offset,size,modified,digest,head,tail,state)|Ok(Checkpoint {source_id,root_ref,parser_version,offset,size,modified,digest,head,tail,state:decode(&state)?})).transpose()
@@ -548,6 +594,25 @@ impl Store {
                 add_reason(&mut reasons, *reason);
             }
         }
+        let mut excluded_breakdown: Vec<ExclusionCount> = Vec::new();
+        for event in events.iter().filter(|event| !event.allocated) {
+            let reason = monitor_core::local::exclusion_reason(event);
+            if let Some(group) = excluded_breakdown
+                .iter_mut()
+                .find(|group| group.reason_code == reason)
+            {
+                group.events = group
+                    .events
+                    .checked_add(1)
+                    .ok_or_else(|| error(ErrorCode::Storage, "Exclusion count exceeds range"))?;
+            } else {
+                excluded_breakdown.push(ExclusionCount {
+                    reason_code: reason,
+                    events: 1,
+                });
+            }
+        }
+        excluded_breakdown.sort_by(|a, b| b.events.cmp(&a.events));
         let collector = CollectorSummary {
             state,
             last_sync_at: self.meta("local-last-sync")?,
@@ -567,6 +632,7 @@ impl Store {
                 .map_err(storage_error)?,
             reason_codes: reasons,
             last_run,
+            excluded_breakdown,
         };
         let has_data = !local_rows.is_empty();
         Ok(Dashboard {

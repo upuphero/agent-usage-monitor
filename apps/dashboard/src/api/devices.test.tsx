@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import fixtures from '../../../../tests/fixtures/demo.json';
 import type { Dashboard, DeviceDay, DeviceUsage } from './generated/monitor';
 import { parseDashboard } from './client';
-import { Overview } from '../features/DashboardPages';
+import { Overview, Quality } from '../features/DashboardPages';
 import { combineLocalDays, DeviceTransfer, DeviceUsagePanel, sumDeviceMetric } from '../features/DeviceUsage';
 import { filterLocalScope } from '../app/App';
 import { I18nProvider } from '../i18n/I18nContext';
@@ -62,5 +62,15 @@ describe('device reports and separate account quota', () => {
     const combined = combineLocalDays(rows);
     expect(combined).toHaveLength(1); expect(combined[0].scope.accountRef).toBeNull();
     expect(combined[0].tokens.textTotal.value).toBe((BigInt(rows[0].tokens.textTotal.value!) * 2n).toString());
+  });
+  it('explains exclusions as all-history primary counts whose sum must match the total', () => {
+    const dashboard = parseDashboard(data());
+    const html = render(<Quality data={dashboard} provider="codex" date="2026-10-11" timezone="UTC" />);
+    expect(html).toContain('未计入记录的主要原因'); expect(html).toContain('统计全部历史记录，非所选当天');
+    expect(html).toContain('每条记录只归入一个主要原因'); expect(html).toContain('累计增量与响应不符');
+    const inflated = data(); inflated.collector!.excludedBreakdown[0].events += 1;
+    expect(() => parseDashboard(inflated)).toThrowError();
+    const repeated = data(); repeated.collector!.excludedBreakdown.push(structuredClone(repeated.collector!.excludedBreakdown[0]));
+    expect(() => parseDashboard(repeated)).toThrowError();
   });
 });

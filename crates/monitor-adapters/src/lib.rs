@@ -142,6 +142,7 @@ impl Store {
         connection.execute("UPDATE app_meta SET value='\"cancelled\"' WHERE key='local-sync-state' AND value='\"syncing\"'",[]).map_err(storage_error)?;
         let mut store = Self { connection };
         store.initialize_account_defaults()?;
+        store.reproject_local_if_needed()?;
         Ok(store)
     }
     pub fn seed_synthetic(&mut self) -> Result<(), ApiError> {

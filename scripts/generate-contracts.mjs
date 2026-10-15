@@ -47,6 +47,7 @@ export function generate(source) {
     const values = variants.map(v => JSON.stringify(rename === 'kebab-case' ? words(v).toLowerCase().replaceAll('_', '-') : words(v).toUpperCase()));
     output += `export type ${name} = ${values.join(' | ')};\n`;
     if (name === 'ErrorCode') output += `export const ERROR_CODES = [${values.join(', ')}] as const;\n`;
+    if (name === 'ReasonCode') output += `export const REASON_CODES = [${values.join(', ')}] as const;\n`;
   }
   for (const [, name, parameter, body] of generic) output += `export interface ${name}<${parameter}> {\n${fields(body, parameter)}\n}\n`;
   for (const [, name, body] of structs) output += `export interface ${name} {\n${fields(body)}\n}\n`;

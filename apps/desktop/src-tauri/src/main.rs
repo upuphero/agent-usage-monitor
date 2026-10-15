@@ -8,6 +8,8 @@ fn main() {
         Some(monitor_desktop::verify_local_collector)
     } else if args.iter().any(|arg| arg == "--sync-local") {
         Some(monitor_desktop::collect_local_report)
+    } else if args.iter().any(|arg| arg == "--inspect-local-cache") {
+        Some(monitor_desktop::inspect_local_cache)
     } else {
         None
     };

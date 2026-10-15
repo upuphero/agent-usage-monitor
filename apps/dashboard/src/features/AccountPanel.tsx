@@ -16,7 +16,8 @@ export function AccountStatus({ data, timezone }: { data: Dashboard; timezone: s
     'rate-limited': ['账号请求受限，请稍后手动重试', 'Account requests limited; retry manually later'], offline: ['账号请求离线，显示已有缓存', 'Account offline; showing cached observations'],
     incompatible: ['账号响应格式不兼容', 'Account response incompatible']
   };
-  const label = states[account.state] ?? states.incompatible;
+  const historyPending = account.state === 'partial' && account.historyError === null && account.quotaError === null && account.quotaFetchedAt !== null && account.missingDates.length > 0;
+  const label: [string,string] = historyPending ? ['额度已更新，账号历史有日期待补齐', 'Quota updated; some account history dates are pending'] : states[account.state] ?? states.incompatible;
   const rangeStart = Date.parse(account.requestedStart ?? ''), rangeEnd = Date.parse(account.requestedEnd ?? '');
   const successfulRange = account.historyError === null && account.historyFetchedAt !== null && Number.isFinite(rangeStart) && Number.isFinite(rangeEnd) && rangeEnd >= rangeStart && rangeEnd - rangeStart < 31 * 86400000;
   const returnedDates = new Set(data.accountRows.filter(row => Date.parse(row.source.collectedAt) === Date.parse(account.historyFetchedAt!)).map(row => row.day.dateLabel));

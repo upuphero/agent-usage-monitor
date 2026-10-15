@@ -106,6 +106,13 @@ pub struct Metadata {
     pub imported: bool,
 }
 impl Metadata {
+    pub fn same_identity_scope(&self, other: &Self) -> bool {
+        self.thread_ref == other.thread_ref
+            && self.account_ref == other.account_ref
+            && self.parent_ref == other.parent_ref
+            && self.child == other.child
+            && self.imported == other.imported
+    }
     pub fn product(&self) -> &'static str {
         if self.child {
             "codex-subagent"
@@ -286,13 +293,18 @@ impl ParserState {
                         || raw.history_base.is_some_and(|v| !v.is_null())
                         || raw.subagent_history_start_ordinal.is_some_and(|n| n > 0),
                     child,
-                    imported: raw.cwd.as_deref().is_some_and(|cwd| {
-                        cwd.starts_with("/Users/")
-                            || cwd.starts_with("/home/")
-                            || cwd.starts_with("/mnt/")
-                    }),
+                    imported: cfg!(windows)
+                        && raw.cwd.as_deref().is_some_and(|cwd| {
+                            cwd.starts_with("/Users/")
+                                || cwd.starts_with("/home/")
+                                || cwd.starts_with("/mnt/")
+                        }),
                 };
-                if self.metadata.as_ref().is_some_and(|old| old != &metadata) {
+                if self
+                    .metadata
+                    .as_ref()
+                    .is_some_and(|old| !old.same_identity_scope(&metadata))
+                {
                     add_reason(&mut self.reason_codes, ReasonCode::MetadataConflict);
                 }
                 self.metadata = Some(metadata);
@@ -400,11 +412,60 @@ pub struct LocalEvent {
     pub reason_codes: Vec<ReasonCode>,
 }
 
+/// Exclusive primary reason for the exclusion table. Informational flags are not blockers.
+pub fn exclusion_reason(event: &LocalEvent) -> ReasonCode {
+    [
+        ReasonCode::ImportedSource,
+        ReasonCode::MetadataConflict,
+        ReasonCode::EventOwnershipAmbiguous,
+        ReasonCode::CounterReset,
+        ReasonCode::RepeatedCounterConflict,
+        ReasonCode::CounterGap,
+        ReasonCode::InitialCounterBaseline,
+        ReasonCode::CrossDayInterval,
+        ReasonCode::InheritedHistory,
+    ]
+    .into_iter()
+    .find(|reason| event.reason_codes.contains(reason))
+    .unwrap_or(ReasonCode::NoData)
+}
+
 /// Cumulative and per-response values must agree. Reset epochs are diagnostic only.
 pub fn project_thread(
+    snapshots: Vec<Snapshot>,
+    ownership_conflicts: &BTreeSet<String>,
+    metadata_conflict: bool,
+) -> Vec<LocalEvent> {
+    // Revert/resume can retain a thread id while starting a distinct counter history.
+    // Never subtract counters across these boundaries, or reject the whole thread for them.
+    let mut segments: BTreeMap<(Option<String>, bool), Vec<Snapshot>> = BTreeMap::new();
+    for snapshot in snapshots {
+        segments
+            .entry((
+                snapshot.metadata.created_at.clone(),
+                snapshot.metadata.inherited,
+            ))
+            .or_default()
+            .push(snapshot);
+    }
+    let mut result = Vec::new();
+    let mut responses = BTreeMap::new();
+    for segment in segments.into_values() {
+        result.extend(project_segment(
+            segment,
+            ownership_conflicts,
+            metadata_conflict,
+            &mut responses,
+        ));
+    }
+    result.sort_by(|a, b| a.at.cmp(&b.at).then(a.key.cmp(&b.key)));
+    result
+}
+fn project_segment(
     mut snapshots: Vec<Snapshot>,
     ownership_conflicts: &BTreeSet<String>,
     metadata_conflict: bool,
+    responses: &mut BTreeMap<String, String>,
 ) -> Vec<LocalEvent> {
     snapshots.sort_by(|a, b| {
         a.at.cmp(&b.at)
@@ -413,8 +474,6 @@ pub fn project_thread(
             .then(a.key.cmp(&b.key))
     });
     let mut previous: Option<Snapshot> = None;
-    let mut reset_epoch = false;
-    let mut responses: BTreeMap<String, String> = BTreeMap::new();
     let mut result = Vec::new();
     for snapshot in snapshots {
         if previous.as_ref().is_some_and(|old| {
@@ -459,7 +518,6 @@ pub fn project_thread(
                 allocated = false;
                 counts = Counters::default();
             } else if snapshot.total.regressed(&old.total) {
-                reset_epoch = true;
                 add_reason(&mut reasons, ReasonCode::CounterReset);
                 allocated = false;
             } else {
@@ -473,10 +531,6 @@ pub fn project_thread(
             add_reason(&mut reasons, ReasonCode::InitialCounterBaseline);
             allocated = false;
         }
-        if reset_epoch {
-            add_reason(&mut reasons, ReasonCode::CounterReset);
-            allocated = false;
-        }
         if snapshot
             .metadata
             .created_at
@@ -486,11 +540,14 @@ pub fn project_thread(
             add_reason(&mut reasons, ReasonCode::InheritedHistory);
             allocated = false;
         }
-        let lower = snapshot
-            .turn_start
-            .as_ref()
-            .or_else(|| previous.as_ref().map(|old| &old.at))
-            .or(snapshot.metadata.created_at.as_ref());
+        let lower = [
+            snapshot.turn_start.as_ref(),
+            previous.as_ref().map(|old| &old.at),
+            snapshot.metadata.created_at.as_ref(),
+        ]
+        .into_iter()
+        .flatten()
+        .max();
         if snapshot.metadata.inherited
             && snapshot
                 .metadata

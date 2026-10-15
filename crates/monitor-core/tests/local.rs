@@ -88,21 +88,104 @@ fn initial_balance_is_baseline_not_new_usage() {
     );
 }
 #[test]
-fn reset_epoch_never_silently_adds_last_or_new_cumulative_values() {
+fn reset_boundary_is_excluded_but_next_verified_delta_recovers() {
     let mut state = records();
     let first = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
     let reset = counter(&mut state, "2026-10-01T08:02:00Z", (5, 2, 1), (5, 2, 1));
     let later = counter(&mut state, "2026-10-01T08:03:00Z", (10, 4, 2), (5, 2, 1));
     let events = project_thread(vec![first, reset, later], &BTreeSet::new(), false);
-    assert_eq!(events.iter().filter(|event| event.allocated).count(), 1);
-    assert!(events[2].reason_codes.contains(&ReasonCode::CounterReset));
+    assert_eq!(events.iter().filter(|event| event.allocated).count(), 2);
+    assert!(!events[2].reason_codes.contains(&ReasonCode::CounterReset));
+    assert!(events[1].reason_codes.contains(&ReasonCode::CounterReset));
     assert_eq!(
         aggregate(&events.iter().collect::<Vec<_>>())
             .unwrap()
             .text_total
             .value
             .as_deref(),
-        Some("26")
+        Some("32")
+    );
+}
+
+#[test]
+fn revert_segments_do_not_mix_counters_or_invalidate_original_thread() {
+    let mut state = records();
+    let original = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    let continued = counter(&mut state, "2026-10-01T08:04:00Z", (30, 12, 9), (10, 4, 3));
+    state.project_line(br#"{"type":"session_meta","timestamp":"2026-10-01T08:01:30Z","payload":{"id":"thread-a","creator_account_id":"account-a","cwd":"C:/Synthetic","history_base":{}}}"#);
+    assert!(!state.reason_codes.contains(&ReasonCode::MetadataConflict));
+    let baseline = counter(
+        &mut state,
+        "2026-10-01T08:02:00Z",
+        (100, 50, 20),
+        (10, 4, 2),
+    );
+    let verified = counter(
+        &mut state,
+        "2026-10-01T08:03:00Z",
+        (110, 54, 22),
+        (10, 4, 2),
+    );
+    let events = project_thread(
+        vec![original, baseline, verified, continued],
+        &BTreeSet::new(),
+        false,
+    );
+    assert_eq!(events.iter().filter(|e| e.allocated).count(), 3);
+    assert_eq!(
+        aggregate(&events.iter().collect::<Vec<_>>())
+            .unwrap()
+            .text_total
+            .value
+            .as_deref(),
+        Some("51")
+    );
+    assert_eq!(
+        exclusion_reason(&events[1]),
+        ReasonCode::InitialCounterBaseline
+    );
+}
+
+#[test]
+fn identity_conflicts_and_shared_responses_still_block_accounting() {
+    let mut state = records();
+    let mut original = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    original.response_ref = Some(opaque_id("response", "same-request"));
+    let mut copied = counter(&mut state, "2026-10-01T08:02:00Z", (20, 8, 6), (20, 8, 6));
+    copied.metadata.created_at = Some(utc("2026-10-01T08:01:30Z").unwrap());
+    copied.response_ref = original.response_ref.clone();
+    let events = project_thread(vec![original.clone(), copied], &BTreeSet::new(), false);
+    assert_eq!(events.iter().filter(|e| e.allocated).count(), 1);
+    assert!(events[1]
+        .reason_codes
+        .contains(&ReasonCode::EventOwnershipAmbiguous));
+    state.project_line(br#"{"type":"session_meta","timestamp":"2026-10-01T08:03:00Z","payload":{"id":"thread-a","creator_account_id":"another-account","cwd":"C:/Synthetic"}}"#);
+    assert!(state.reason_codes.contains(&ReasonCode::MetadataConflict));
+    assert!(!project_thread(vec![original], &BTreeSet::new(), true)[0].allocated);
+}
+
+#[test]
+fn a_long_turn_crossing_midnight_uses_latest_verified_observation() {
+    let mut state = records();
+    state.project_line(br#"{"type":"turn_context","timestamp":"2026-10-01T23:58:00Z","payload":{"model":"synthetic-model"}}"#);
+    let first = counter(&mut state, "2026-10-01T23:59:00Z", (20, 8, 6), (20, 8, 6));
+    let crossing = counter(&mut state, "2026-10-02T00:01:00Z", (30, 12, 9), (10, 4, 3));
+    let same_day = counter(&mut state, "2026-10-02T00:02:00Z", (40, 16, 12), (10, 4, 3));
+    let events = project_thread(vec![first, crossing, same_day], &BTreeSet::new(), false);
+    assert!(!events[1].allocated);
+    assert!(events[2].allocated);
+    assert_eq!(events[2].date, "2026-10-02");
+}
+
+#[test]
+fn native_posix_workspace_is_not_treated_as_imported_on_mac_or_linux() {
+    let mut state = ParserState::default();
+    state.project_line(br#"{"type":"session_meta","timestamp":"2026-10-01T08:00:00Z","payload":{"id":"native-posix","cwd":"/Users/synthetic/project"}}"#);
+    let snapshot = counter(&mut state, "2026-10-01T08:01:00Z", (20, 8, 6), (20, 8, 6));
+    assert_eq!(snapshot.metadata.imported, cfg!(windows));
+    assert_eq!(
+        project_thread(vec![snapshot], &BTreeSet::new(), false)[0].allocated,
+        !cfg!(windows)
     );
 }
 #[test]

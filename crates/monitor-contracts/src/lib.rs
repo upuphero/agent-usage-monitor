@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-pub const API_VERSION: &str = "0.4.0";
+pub const API_VERSION: &str = "0.4.1";
 pub const COMMANDS: &[(&str, &str)] = &[
     ("getDashboard", "get_dashboard"),
     ("syncLocal", "sync_local"),
@@ -247,7 +247,11 @@ dto!(RuntimeInfo {
     local_collection_enabled: bool
 });
 dto!(SyncReport { files_found: u32, files_parsed: u32, files_unchanged: u32, files_rebuilt: u32, new_snapshots: u32, duplicate_snapshots: u32, bytes_parsed: String, bytes_verified: String, partial_tails: u32, reason_codes: Vec<ReasonCode> });
-dto!(CollectorSummary { state: SyncState, last_sync_at: Option<String>, files_indexed: u32, retained_sources: u32, snapshots: u32, accepted_events: u32, ambiguous_events: u32, sessions_total: u32, reason_codes: Vec<ReasonCode>, last_run: Option<SyncReport> });
+dto!(ExclusionCount {
+    reason_code: ReasonCode,
+    events: u32
+});
+dto!(CollectorSummary { state: SyncState, last_sync_at: Option<String>, files_indexed: u32, retained_sources: u32, snapshots: u32, accepted_events: u32, ambiguous_events: u32, sessions_total: u32, reason_codes: Vec<ReasonCode>, last_run: Option<SyncReport>, excluded_breakdown: Vec<ExclusionCount> });
 dto!(LocalRootsRequest { roots: Vec<String> });
 enumeration!(DevicePlatform, "kebab-case", Windows, Macos, Linux, Unknown);
 dto!(DeviceIdentity {

@@ -1,6 +1,6 @@
 # 数据契约与存储
 
-API `0.4.0`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
+API `0.4.1`。Rust `monitor-contracts` 是 DTO 唯一来源，`pnpm contracts:generate` 生成 TypeScript；`pnpm contracts:check` 拒绝漂移。序列化使用 camelCase，拒绝未知字段。前端只通过 UsageClient 查询，Tauri 调用局限在 transport。
 
 ## 范围与单位
 
@@ -94,3 +94,15 @@ Schema 4 在原事务迁移末尾新增 device_reports，主键为稳定设备�
 Dashboard.deviceUsage 包含设备摘要和 UTC 日投影，deviceRef=null 表示去重汇总。只有原增量解析中 allocated=1 的已计入事件导出，其匿名 event_ref 不含设备路径，副本在各设备间可识别。相同标记但范围、时间或计数冲突的记录从汇总排除；此标记代表日志观察，不承诺全请求身份或物理执行归属。平台日投影仍分别展示该设备报告的记录，因此与去重汇总可不相加。账号、主线程/子代理、UTC 日期保持独立范围。模型/会话视图仍为 Windows 本机，不导入远端正文或模型细节。
 
 报告格式版本 1 独立于 app/API 版本；规范见 device-collection.md。静态历史 LedgerKind.Windows 是旧本机账本 wire 分类，Mac 采集器导出使用新的 DevicePlatform.Macos，不通过旧分类声称设备。API 版本更新后浏览器旧开发报告需重新生成。
+
+## 0.4.1 本机重算与排除统计
+
+统计投影版本 counter-segments/2 保存在 app_meta。首次打开在同一事务中从白名单 local_raw_snapshots 重建 local_usage_events 和 local_daily，并写版本标记；来源检查点、账号快照及偏好不变，失败不提交。无需重新读取对话正文。历史的完整元数据摘要继续保留，身份冲突依据线程、账号、父线程、主/子线程和导入标记，创建时刻/继承状态用于计数分段。
+
+project_thread 按 (created_at,inherited) 独立计算增量，重复 response 标记在所有段中仍去重；起始未知余额、继承历史、真实身份冲突和重置边界仍排除。重置后的已验证增量可恢复。UTC 日下界取已知 turn_start、前一观察和创建时间的最大值；跨日边界不分摊。
+
+CollectorSummary.excludedBreakdown 记录每条被排除事件的一个主要原因，互斥计数之和等于 ambiguousEvents；前端拒绝重复原因、无效数量或合计不符的投影。数组不包含会话 ID、路径或正文。设备报告 V1 不变，设备表的记录数明确为全报告历史。
+
+Windows 的外来 POSIX 路径判定不再应用于 Mac/Linux 本机；Unix 缓存中由旧规则产生的 imported 标记与增量解析状态在同一重算事务修正。
+
+显式 --inspect-local-cache 只打开 AGENT_USAGE_MONITOR_DATA_DIR 下的 monitor.sqlite3，输出 local-diagnostics.json（CollectorSummary），不发现日志或读取登录。升级重算会写该缓存，因此人工调查使用数据库副本。
