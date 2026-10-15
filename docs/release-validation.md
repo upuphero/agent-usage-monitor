@@ -1,3 +1,38 @@
+# 0.4.1 历史计数修复与额度诊断
+
+日期：2026-10-14（America/Phoenix）。用户授权调查 Windows 未计入记录及五小时缺窗，修复后测试并发布新版。
+
+构建提交 `f08a99fa93ca116870873a639b7b6a04c29a11aa`；[CI 38686777436](https://github.com/upuphero/agent-usage-monitor/actions/runs/38686777436) 公共验证、Windows 与两种 Mac 原生测试/打包、Release 发布全部通过。[v0.4.1 Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.4.1) 已公开，tag 精确指向该提交。
+
+- 修复线程创建时间/继承标记变化造成的整线程冲突排除，按计数段独立核对；账号、父线程、执行范围等真实身份冲突继续阻断。
+- 计数重置只排除边界，后续经 cumulative delta / last 检查成功的增量恢复。跨 UTC 日区间仍不分摊；午夜后的同日已验证观察可作为新的下界。
+- 升级首次以事务从已有白名单观察重算投影，失败回滚，保留来源检查点、原统计观察、账号快照及关闭选择；二次打开不重复重算。Unix 原生工作目录不再误用 Windows 的外来路径判定。
+- 数据质量页增加互斥的主要排除原因计数，客户端验证合计与总数一致。设备表明确统计全部历史，非当前选中日期。
+- 五小时缺窗不会被填零或用每周值替代，界面明确说明服务器该次没有返回该窗口。额度成功、历史缺日期的状态单独解释。
+- 当前用户明确授权的一次 HTTPS GET 仅核对额度窗口白名单，未刷新或写入登录，没有保存原始响应。结果确认 weekly-only 形状，不是解析漏项。账号计划、数值、登录信息和调查缓存均不进入公开仓库。
+- 公共验证通过：37 项前端、3 项源码边界、5 项实际 SQL 迁移、2 项离线发布校验、TypeScript、ESLint、生产构建；Linux 64 项、Windows 62 项、Mac ARM64/Intel 各 64 项 Rust 及全部严格 clippy。合成回归覆盖分段、回退边界恢复、跨日、身份/响应冲突、重算/回滚及检查点/偏好保留。
+
+真实缓存只通过 SQLite read-only 连接读取，并用备份 API 在本机 `.local-data/investigation-0.4.1/cache-copy` 留一致性副本；新版离线 --inspect-local-cache 会在该副本重算并输出统计。不会改动正在使用的已安装数据库，不向 CI 上传缓存或原始日志。
+
+代码依据：官方 [HistoryPosition / SessionMeta 协议](https://github.com/openai/codex/blob/main/codex-rs/protocol/src/protocol.rs) 说明回退后物理 rollout 可不同、线程 ID 保持稳定；创建时间和继承标记的变化不能直接当成账号或线程身份冲突。
+
+## 0.4.1 公开产物与本机复核
+
+四个公开包已下载并重新计算 SHA-256，与清单及 GitHub asset digest 一致；Mac Mach-O 架构和可执行权限检查通过。公开 Windows desktop 的 --verify-synthetic-store、--verify-local-collector 均返回 0。
+
+| 文件 | 字节 | SHA-256 |
+| --- | ---: | --- |
+| `Agent-Usage-Monitor_0.4.1_x64-portable.zip` | 4505103 | `0361a7415630e40c008013f244d95a19e29351d04edd3ef7aed156ad1bd5d3a4` |
+| `Agent-Usage-Monitor_0.4.1_x64-setup.exe` | 2703427 | `5b122aec913eb75832eeefccb4aec489dadc843b7f7e119c74cb8aac370ed718` |
+| `Agent-Usage-Monitor_0.4.1_macos-arm64-collector.tar.gz` | 955813 | `f299961c9ac18440be5367beef9e323234e6d3499c2d7f7642302ab1297cc3eb` |
+| `Agent-Usage-Monitor_0.4.1_macos-x64-collector.tar.gz` | 1028498 | `5722d27cae16156adad65fcb6d3b0f57539f8fb03d9b31b025deb148d7ed56d9` |
+
+用公开 Windows 程序 --inspect-local-cache 对先前保存的真实缓存副本重算成功。逐事件比较确认恢复可核实的历史增量，没有丢失原已计入事件，没有新增或删除观察事件；记录总数保持不变。剩余排除项有互斥主要原因。原观察、来源游标/解析状态、来源关联、账号/额度快照、偏好、迁移记录和设备报告的全表指纹不变；旧 app_meta 值不变，只新增投影版本标记。源数据库仅只读，私有统计详情及缓存均留在 .local-data。
+
+CollectorSummary.reasonCodes 和 lastRun 保留采集期的历史提示，可能重叠；当前未计入记录的可加总解释以 excludedBreakdown 为准。此检查没有扫描新的会话正文、没有再次查询真实账号、没有改动已安装应用数据库，也没有手动执行 NSIS 安装升级。公开文件、校验清单和版本 tag 不覆盖。
+
+---
+
 # 0.4.0 设备日志与独立账号额度验证
 
 日期：2026-10-13（America/Phoenix）。用户明确要求参考 CodexBar，将账号额度和本机 Token 分开；Windows/Mac 各自采集日志再汇总，不通过差值猜 Mac，并分别发布安装版、便携版及版本 tag。

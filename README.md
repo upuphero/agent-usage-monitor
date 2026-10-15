@@ -10,7 +10,7 @@
 
 额度按真实窗口时长识别。服务器只返回每周窗口时，五小时卡片明确显示该次响应没有该窗口，不补 0% 或借用其他窗口。额度成功但账号历史有缺日时，状态明确说明日期待补齐。诊断只读取归一化本机缓存；真实账号检查需用户当前授权，不写入登录或保存原始响应。
 
-验证与发布记录见 [release-validation.md](docs/release-validation.md)。0.4.0 的分设备报告协议和 Schema 4 保持兼容。
+[v0.4.1 Release](https://github.com/upuphero/agent-usage-monitor/releases/tag/v0.4.1) 已公开，安装版、便携版和 Mac 采集器分别下载。CI 和公开程序的本机缓存副本重算检查通过；验证记录见 [release-validation.md](docs/release-validation.md)。0.4.0 的分设备报告协议和 Schema 4 保持兼容。
 
 ## 0.4.0：账号额度和设备日志分开
 
