@@ -226,12 +226,10 @@ impl Store {
         if !cfg!(windows) {
             let rows: Vec<(String, String)> = {
                 let mut statement = transaction.prepare("SELECT event_key,snapshot_json FROM local_raw_snapshots WHERE json_extract(snapshot_json,'$.metadata.imported')=1").map_err(storage_error)?;
-                let rows = statement
+                let records = statement
                     .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
-                    .map_err(storage_error)?
-                    .collect::<Result<_, _>>()
                     .map_err(storage_error)?;
-                rows
+                records.collect::<Result<_, _>>().map_err(storage_error)?
             };
             for (key, text) in rows {
                 let mut snapshot: Snapshot = decode(&text)?;
